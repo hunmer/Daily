@@ -9,7 +9,7 @@
     <meta name="msapplication-navbutton-color" content="#000000">
     <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="neysummer2000">
     <meta name="keywords" content="">
     <link rel="icon" href="./favicon.ico">
     <!-- <meta http-equiv="Pragma" content="no-cache"> -->
@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="css/halfmoon-variables.min.css">
     <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/index.css">
-    <title></title>
+    <title>Daily</title>
 </head>
 
 <body class="with-custom-webkit-scrollbars with-custom-css-scrollbars animated fadeIn" animated='fadeIn' data-dm-shortcut-enabled="true" data-sidebar-shortcut-enabled="true" data-set-preferred-mode-onload="true">
@@ -93,13 +93,12 @@
                 </a> -->
                 <div class="sidebar-content">
                     <input type="text" class="form-control" placeholder="Search">
-                    <div class="mt-10 font-size-12">
-                        Press <kbd>/</kbd> to focus
-                    </div>
                 </div>
                 <div id='sidebar_icons_float'>
-                    <a data-action="darkMode" href="javascript: void(0)" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-moon-o" aria-hidden="true"></i></a>
-                    <a data-action="openSetting" href="javascript: void(0)" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                    <a data-action="sync" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-download" aria-hidden="true"></i></a>
+                    <a data-action="uploadData" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-upload" aria-hidden="true"></i></a>
+                    <a data-action="darkMode" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-moon-o" aria-hidden="true"></i></a>
+                    <a data-action="openSetting" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-cog" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
@@ -110,6 +109,7 @@
         <nav class="navbar navbar-fixed-bottom">
         </nav>
     </div>
+    <script src="js/md5.js"></script>
     <script src="js/until.js"></script>
     <script src="js/vars.js"></script>
     <script src="js/lang.js"></script>

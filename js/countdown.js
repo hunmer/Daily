@@ -17,7 +17,7 @@ var g_cd = {
                 <span class="text-muted cnt hide">1/3</span>
                 </div>
                     <div class="input-group">
-                      <select class="form-control flex-reset w-100"> 
+                      <select class="form-control flex-reset w-auto"> 
                         <option value="" disabled>`+_l('计时类型')+`</option>
                         <option value="add" selected>`+_l('正计时')+`</option>
                         <option value="reduce">`+_l('倒计时')+`</option>
