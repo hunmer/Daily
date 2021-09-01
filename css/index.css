@@ -1,0 +1,188 @@
+
+.ns {
+    user-select: none;
+}
+
+.dark-mode {
+    color: var(--dm-base-text-color);
+}
+
+@font-face {
+    font-family: janFont;
+    src: url(../fonts/KosugiMaru-Regular.ttf);
+}
+:root {
+    /*--dm-navbar-bg-color: unset;*/
+    /*--lm-base-body-bg-image: linear-gradient(rgb(35 35 35 / 50%), rgb(111 111 111)),url(../res/bg.jpg),url(../res/bg.jpg);*/
+    --lm-base-body-bg-color: transparent;
+    --lm-navbar-bg-color: unset;
+    --lm-table-striped-bg-color: unset;
+    --lm-table-border-color: unset;
+    --lm-button-bg-color: unset;
+    --lm-sidebar-bg-color: unset;
+    --lm-button-primary-border-color: transparent;
+    --lm-button-primary-bg-color: #4ca9ff47;
+    /*--dm-base-body-bg-image: url(../res/bg.jpg);*/
+}
+
+body {
+    color: var(--lm-base-text-color);
+    overflow-x: hidden;
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: janFont, -apple-system, BlinkMacSystemFont, Roboto, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+#sidebar_icons_float {
+    position: absolute;
+    right: 5%;
+    display: grid;
+    bottom: 0;
+}
+
+#sidebar_icons_float a {
+    margin-bottom: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    width: 5px;
+    background: rgba(#101F1C, 0.1);
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(144, 147, 153, .5);
+    background-clip: padding-box;
+    min-height: 28px;
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius: 2em;
+    transition: background-color .3s;
+    cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(144, 147, 153, .3);
+}
+
+
+
+
+.mainContent {
+    margin-bottom: 100px;
+}
+.w-75 {
+    width: 75px;
+}
+.ftb {
+        width: min-content;
+    position: fixed;
+    right: 30px;
+    bottom: 60px;
+}
+.ftb a {
+    margin-bottom: 10px;
+}
+.badge {
+    cursor: pointer;
+}
+
+.hand {
+    cursor: pointer;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.hide {
+    display: none;
+}
+
+.show {}
+
+
+/* chat */
+.chat_list {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+}
+.w-fit {
+    width: fit-content;
+}
+
+
+.icon {
+    border-radius: 50%;
+    background-color: #000;
+    min-width: 50px;
+    min-height: 50px;
+    text-align: center;
+    line-height: 50px;
+    color: white;
+}
+
+.icon_small {
+    color: white;
+    border-radius: 50%;
+    background-color: #000;
+    min-width: 40px;
+    min-height: 40px;
+    text-align: center;
+    line-height: 40px;
+}
+
+.rt {
+    right: 15px;
+    top: 10px;
+    position: absolute;
+}
+
+.rb {
+    right: 15px;
+    bottom: 10px;
+    position: absolute;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.mw-80 {
+    max-width: 80%;
+}
+
+/*.msg {
+    max-width: 80%;
+    position: relative;
+    display: inline-flex;
+    float: right;
+    margin-top: 20px;
+    margin-right: 10px;
+}*/
+
+.msg .alert {
+    border-radius: 5px 10px;
+    max-width: 80%;
+}
+/*
+.msg .time {
+    position: absolute;
+    bottom: 0;
+    left: -40px;
+}
+
+*/

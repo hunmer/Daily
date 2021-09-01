@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <link rel="icon" href="./favicon.ico">
+    <!-- <meta http-equiv="Pragma" content="no-cache"> -->
+    <!-- <meta http-equiv="Cache-Control" content="no-cache"> -->
+    <!-- <meta http-equiv="Expires" content="0"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="block-all-mixed-content"> -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="full-screen" content="yes">
+    <meta name="browsermode" content="application">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="x5-page-mode" content="app">
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="Author" contect="liaoyanjie2000@gmail.com">
+    <link rel="stylesheet" href="css/halfmoon.min.css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/halfmoon-variables.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <title></title>
+</head>
+
+<body class="with-custom-webkit-scrollbars with-custom-css-scrollbars animated fadeIn" animated='fadeIn' data-dm-shortcut-enabled="true" data-sidebar-shortcut-enabled="true" data-set-preferred-mode-onload="true">
+    <div class="modal modal-full" id="modal-custom" tabindex="-1" role="dialog" data-overlay-dismissal-disabled='...' data-esc-dismissal-disabled='...' style="z-index: 99999;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-content-media w-500">
+                <a class="close" role="button" aria-label="Close" onclick="halfmoon.toggleModal('modal-custom');g_cache.closeCustom();g_cache.closeCustom = () => {}">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+                <h5 class="modal-title text-center">Title</h5>
+                <div class="modal-html">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-full" id="modal-custom-1" tabindex="-1" role="dialog" data-overlay-dismissal-disabled='...' data-esc-dismissal-disabled='...' style="z-index: 99999;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-content-media w-500">
+                <a class="close" role="button" aria-label="Close" onclick="halfmoon.toggleModal('modal-custom-1');g_cache.closeCustom1();g_cache.closeCustom1 = () => {}">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+                <h5 class="modal-title text-center">Title</h5>
+                <div class="modal-html">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-full" id="modal-search" tabindex="-1" role="dialog" data-overlay-dismissal-disabled='...' data-esc-dismissal-disabled='...' style="z-index: 99999;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <a class="close" role="button" aria-label="Close" onclick="halfmoon.toggleModal('modal-custom')">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+                <h5 class="modal-title text-center">Title</h5>
+                <div class="modal-html">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page-wrapper" class="page-wrapper with-navbar with-sidebar with-navbar-fixed-bottom with-transitions" data-sidebar-hidden="hidden">
+        <div class="sticky-alerts"></div>
+        <nav class="navbar">
+            <div class="navbar-content">
+                <button class="btn btn-action" type="button" onclick="halfmoon.toggleSidebar();">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+            <a class="navbar-brand"></a>
+            <ul class="navbar-nav ml-auto">
+                <!--   <li class="nav-item active">
+                  <a href="#" class="nav-link">Docs</a>
+                </li> -->
+            </ul>
+        </nav>
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <!-- <a href="#" class="sidebar-brand">
+                    <img src="..." alt="...">
+                    Brand
+                </a> -->
+                <div class="sidebar-content">
+                    <input type="text" class="form-control" placeholder="Search">
+                    <div class="mt-10 font-size-12">
+                        Press <kbd>/</kbd> to focus
+                    </div>
+                </div>
+                <div id='sidebar_icons_float'>
+                    <a data-action="darkMode" href="javascript: void(0)" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-moon-o" aria-hidden="true"></i></a>
+                    <a data-action="openSetting" href="javascript: void(0)" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="content-wrapper">
+            
+            
+        </div>
+        <nav class="navbar navbar-fixed-bottom">
+        </nav>
+    </div>
+    <script src="js/until.js"></script>
+    <script src="js/vars.js"></script>
+    <script src="js/lang.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/halfmoon.min.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/habbit.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/countdown.js"></script>
+    <script src="js/choose.js"></script>
+    <script src="js/todo.js"></script>
+    <!-- <script src="js/tts.js"></script> -->
+</body>
+
+</html>
