@@ -39,7 +39,7 @@ var g_todo = {
         	lable.html(h);
         })
         // 
-      registerContextMenu('div[data-time]', (dom) => {doAction(dom[0], 'todo_list_item_detail')});;
+      registerContextMenu('details div[data-time]', (dom) => {doAction(dom[0], 'todo_list_item_detail')});;
     },
 
     getHtml_task: (action, button) => {
@@ -80,7 +80,7 @@ var g_todo = {
         	  g_cache.closeCustom = () => {}
             $('#modal-custom').find('.modal-title').html(_l('弹出_代办_修改'));
             var d = $(g_todo.getHtml_task('todo_create,'+time, _l('弹出_代办_修改_按钮_确定')));
-            d.find('option[value="'+data.priority+'"]').prop('checked', true);
+            d.find('option[value="'+(data.priority||'default')+'"]').prop('checked', true);
             d.find('input[type="text"]').val(data.name);
             d.find('textarea').val(data.desc);
             $('#modal-custom').attr('data-type', 'todo_list_item_detail').find('.modal-html').html(d);

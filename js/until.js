@@ -208,19 +208,21 @@ function cutStrings1(s_text, s_start, filter = false){
 function registerContextMenu(selector, callback){
   $('body')
     .on('touchstart', selector, function(event) {
+        
         var dom = $(this);
         g_down.start = getNow();
         g_down.element = dom;
         g_down.task = setTimeout(function() {
             if (g_down.start > 0) {
                 g_down.holding = true;
-                callback(g_down.element);
+                event.originalEvent.preventDefault(true);
+                event.originalEvent.stopPropagation();
+                callback(g_down.element, event);
             }
             g_down.start = 0;
             g_down.task = -1;
-            event.originalEvent.preventDefault(true);
-            event.originalEvent.stopPropagation();
-        }, 1000);
+            
+        }, 1500);
     })
     .on('touchend', selector, function(event) {
         if (g_down.task != -1) {
@@ -234,10 +236,32 @@ function registerContextMenu(selector, callback){
         g_down.holding = false;
     })
     .on('contextmenu', selector, function(event) {
+        var dom = $(this);
         event.originalEvent.preventDefault(true);
         event.originalEvent.stopPropagation();
-        g_down.element = $(this);
-       callback(g_down.element);
+        g_down.element = dom;
+       callback(g_down.element, event);
     });
+}
+
+function copyText(text) {
+    if(!$('#modal-copy').length){
+        $(`<div class="modal" id="modal-copy" tabindex="-1" role="dialog" style="z-index: 99999;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-content-media w-500">
+                <a class="close" role="button" aria-label="Close" onclick="halfmoon.toggleModal('modal-copy');">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+                <h5 class="modal-title text-center">`+_l('弹出_复制_标题')+`</h5>
+                <div class="modal-html"><div class="input-group">
+          <textarea class="form-control" id="input_copy">`+text+`</textarea>
+        </div>
+        <button class="form-control bg-primary btn-block" onclick="$('#input_copy').select();document.execCommand('copy');halfmoon.toggleModal('modal-copy');">`+_l('复制')+`</button>
+                </div>
+            </div>
+        </div>
+    </div>`).appendTo('body');
+    }
+    halfmoon.toggleModal('modal-copy');
 }
 
