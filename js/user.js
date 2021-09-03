@@ -30,18 +30,19 @@ var g_user = {
           // password: v[2],
           // desc: $('#user_input_desc').val(),
       }
-       toastPAlert('applying...', 'alert-secondary');
+      dom.html(_l('弹出_用户_按钮_上传中'));
       queryMsg({type: 'setProfile', data: data});
     });
 
     registerRevice('setProfile', (data) => {
+      $('[data-action="user_setProfile]').html(_l('弹出_用户_修改_按钮_确定'));
       g_config.user = data.data;
       $('#sidebar_icons_float img').attr('src', g_config.user.icon);
       local_saveJson('config', g_config);
       closeModal('modal-custom', 'user', () => {
          halfmoon.toggleModal('modal-custom');
       });
-       toastPAlert('saved...', 'alert-success');
+       toastPAlert(_l('用户_上传成功'), 'alert-success');
     })
 	},
 /*
@@ -50,7 +51,7 @@ var g_user = {
 
   upload: () => {
     var s_data = getFormatedTime(2);
-    if(1 || g_config.lastUpload != s_data){
+    if(g_config.lastUpload != s_data){
       g_config.lastUpload = s_data;
       local_saveJson('config', g_config);
       var cnt = g_chat.countMsg(s_data);

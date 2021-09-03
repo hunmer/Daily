@@ -223,6 +223,7 @@ var connection;
 
 function initWebsock() {
     connection = new WebSocket(_vars.socket);
+    console.log(connection);
     connection.onopen = () => {
         for(var msg of g_cache.query){
          connection.send(msg);
@@ -236,7 +237,6 @@ function initWebsock() {
     }
 
      connection.onclose = (e) => {
-        console.log('close');
      }
 }
 
