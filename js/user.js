@@ -37,7 +37,7 @@ var g_user = {
     registerRevice('setProfile', (data) => {
       $('[data-action="user_setProfile]').html(_l('弹出_用户_修改_按钮_确定'));
       g_config.user = data.data;
-      $('#sidebar_icons_float img').attr('src', g_config.user.icon);
+      $('#sidebar_icons_float img').attr('src', _vars.img+ g_config.user.icon);
       local_saveJson('config', g_config);
       closeModal('modal-custom', 'user', () => {
          halfmoon.toggleModal('modal-custom');
