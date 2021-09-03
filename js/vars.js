@@ -1,11 +1,19 @@
 var _GET = getGETArray();
 // var socket_url = 'wss:///daily-websock.glitch.me';
-// var ip = '127.0.0.1';
-var ip = 'daily-websock.glitch.me';
-var _vars = {
-	img: 'http://'+ip+'/Daily-websocket/',
-	socket: 'ws:///'+ip+':8000'
+// var ip = '';
+var _vars
+if(0){
+	_vars = {
+		img: 'http://127.0.0.1/Daily-websocket/',
+		socket: 'ws:///127.0.0.1:8000'
+	}
+}else{
+	_vars = {
+		img: 'https://daily-websock.glitch.me/Daily-websocket/',
+		socket: 'wss:///daily-websock.glitch.me:8000'
+	}
 }
+
 var g_localKey = 'lifeRPG';
 var g_config = local_readJson('config', {
       debug: false,
