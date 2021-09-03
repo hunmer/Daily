@@ -69,6 +69,8 @@ function getFormatedTime(i = 0, date = new Date()) {
             return date.getMonth() + 1 + '/' + date.getDate();
         case 3:
             return date.getFullYear()+'_'+(Number(date.getMonth())+1)+'_'+date.getDate();
+        case 4: 
+            return date.getFullYear() + '/' + (Number(date.getMonth())+1) + '/' + date.getDate();
     }
 }
 
@@ -299,10 +301,12 @@ function closeModal(id, type, fun) {
     var modal = $('#' + id)
     if (modal.hasClass('show')) {
         if (type && modal.attr('data-type') != type) {
-            return;
+            return false;
         }
-        fun();
+        if(typeof(fun) == 'function') fun();
+        return true;
     }
+    return false;
 }
 
 

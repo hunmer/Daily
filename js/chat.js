@@ -1,5 +1,3 @@
-
-
 var g_chat = {
     lastData: '',
     preInit: () => {
@@ -13,7 +11,7 @@ var g_chat = {
             </a>`).appendTo('.sidebar-menu');
     },
     init: () => {
-        if(g_chat.inited) return;
+        if (g_chat.inited) return;
         g_chat.inited = true;
         $(`<div id='content_chatList' class="_content p-10 hide animated fadeIn" animated='fadeIn'>
             <div class="mainContent"></div>
@@ -35,7 +33,7 @@ var g_chat = {
                 </div>
             </div>
         </div>`).appendTo('.content-wrapper');
-        
+
 
         g_chat.registerActions();
         g_chat.initHtml();
@@ -62,28 +60,28 @@ var g_chat = {
                 <div class="btn-group-vertical p-5" role="group" aria-label="Vertical button group">
 
                     <div class="btn-group dropdown with-arrow mb-10" role="group">
-                        <button class="btn text-dark" data-toggle="dropdown" type="button" id="dropdown-toggle-btn-3" aria-haspopup="true" aria-expanded="false">`+_l('消息_操作')+`
+                        <button class="btn text-dark" data-toggle="dropdown" type="button" id="dropdown-toggle-btn-3" aria-haspopup="true" aria-expanded="false">` + _l('消息_操作') + `
                             <i class="fa fa-angle-down" aria-hidden="true"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-center" aria-labelledby="dropdown-toggle-btn-3">
                             <div class="dropdown-content text-center">
                                <button class="btn mb-10 btn-secondary" data-action="chat_msg_mark" type="button">
                                 <i class="fa fa-star-o " aria-hidden="true"></i>
-                                `+_l('星标')+`</button>
+                                ` + _l('星标') + `</button>
                                 <button class="btn mb-10" data-action="chat_msg_task" type="button">
                                 <i class="fa fa-tasks" aria-hidden="true"></i>
-                                `+_l('任务')+`</button>
+                                ` + _l('任务') + `</button>
                                 <button class="btn mb-10" data-action="chat_msg_copy" type="button">
                                 <i class="fa fa-clipboard" aria-hidden="true"></i>
-                                `+_l('复制')+`</button>
+                                ` + _l('复制') + `</button>
                                 <button class="btn btn-primary" data-action="chat_msg_edit" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
-                                `+_l('编辑')+`</button>
+                                ` + _l('编辑') + `</button>
                             </div>
                         </div>
                     </div>
                     <div class="btn-group dropdown with-arrow mb-10" role="group">
-                        <button class="btn text-dark" data-toggle="dropdown" type="button" id="dropdown-toggle-btn-3" aria-haspopup="true" aria-expanded="false">`+_l('消息_样式')+`
+                        <button class="btn text-dark" data-toggle="dropdown" type="button" id="dropdown-toggle-btn-3" aria-haspopup="true" aria-expanded="false">` + _l('消息_样式') + `
                             <i class="fa fa-angle-down" aria-hidden="true"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-center" aria-labelledby="dropdown-toggle-btn-3">
@@ -91,49 +89,49 @@ var g_chat = {
                                 
                                 <button class="btn mb-10" data-action="chat_msg_style,bold" type="button">
                                 <i class="fa fa-bold" aria-hidden="true"></i>
-                                `+_l('加粗')+`</button>
+                                ` + _l('加粗') + `</button>
                                 <button class="btn mb-10" data-action="chat_msg_style,italic" type="button">
                                 <i class="fa fa-italic" aria-hidden="true"></i>
-                                `+_l('斜体')+`</button>
+                                ` + _l('斜体') + `</button>
                                 <button class="btn mb-10" data-action="chat_msg_style,del" type="button">
                                 <i class="fa fa-strikethrough" aria-hidden="true"></i>
-                                `+_l('删除线')+`</button>
+                                ` + _l('删除线') + `</button>
                                 <button class="btn mb" data-action="chat_msg_style,u" type="button">
                                 <i class="fa fa-underline" aria-hidden="true"></i>
-                                `+_l('下划线')+`</button>
+                                ` + _l('下划线') + `</button>
                             </div>
                         </div>
                     </div>
                     <div class="btn-group dropdown with-arrow mb-10" role="group">
-                        <button class="btn text-dark" data-toggle="dropdown" type="button" id="dropdown-toggle-btn-3" aria-haspopup="true" aria-expanded="false">`+_l('消息_颜色')+`
+                        <button class="btn text-dark" data-toggle="dropdown" type="button" id="dropdown-toggle-btn-3" aria-haspopup="true" aria-expanded="false">` + _l('消息_颜色') + `
                             <i class="fa fa-angle-down" aria-hidden="true"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-center" aria-labelledby="dropdown-toggle-btn-3">
                             <div class="dropdown-content text-center">
                                 <button class="btn mb-10" data-action="chat_msg_color,primary" type="button">
                                     <i class="fa fa-circle text-primary" aria-hidden="true"></i>
-                                    `+_l('蓝色')+`</button>
+                                    ` + _l('蓝色') + `</button>
                                     <button class="btn mb-10" data-action="chat_msg_color,success" type="button">
                                     <i class="fa fa-circle text-success" aria-hidden="true"></i>
-                                    `+_l('绿色')+`</button>
+                                    ` + _l('绿色') + `</button>
                                     <button class="btn mb-10" data-action="chat_msg_color,secondary" type="button">
                                     <i class="fa fa-circle text-secondary" aria-hidden="true"></i>
-                                    `+_l('黄色')+`</button>
+                                    ` + _l('黄色') + `</button>
                                     <button class="btn mb-10" data-action="chat_msg_color,danger" type="button">
                                     <i class="fa fa-circle text-danger" aria-hidden="true"></i>
-                                    `+_l('红色')+`</button>
+                                    ` + _l('红色') + `</button>
                                     <button class="btn mb-10" data-action="chat_msg_color,white" type="button">
                                     <i class="fa fa-circle" aria-hidden="true"></i>
-                                    `+_l('白色')+`</button>
+                                    ` + _l('白色') + `</button>
                                      <button class="btn" data-action="chat_msg_color,default" type="button">
                                     <i class="fa fa-circle-o" aria-hidden="true"></i>
-                                    `+_l('默认')+`</button>
+                                    ` + _l('默认') + `</button>
                             </div>
                         </div>
                     </div>
                     <button class="btn btn-danger mt-10" data-action="chat_msg_delete" type="button">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
-                    `+_l('删除')+`</button>
+                    ` + _l('删除') + `</button>
 
                 </div>
 
@@ -142,54 +140,53 @@ var g_chat = {
             </div>
         `).appendTo('body');
 
-      registerContextMenu('.msg .main', (dom, event) => {
-        g_chat.rm_showing = dom.parent('[data-time]').attr('data-time');
-        g_chat.rm.css('display', 'unset');
+        registerContextMenu('.msg .main', (dom, event) => {
+            g_chat.rm_showing = dom.parent('[data-time]').attr('data-time');
+            g_chat.rm.css('display', 'unset');
 
-        var div = $('#msg_rm');
-        var i = div.width() / 2;
-        var x = event.pageX;
-        var mw = $(window).width();
-        if(x + i > mw){
-            x = mw - div.width() - 10;
-        }else{
-            x -= i;
-        }
-
-        var y = event.pageY + 20;
-        var mh = $(window).height();
-        if(y + div.height() > mh){
-            y = mh - div.height();
-        }
-
-        var data = g_chats[g_chat.name].msgs[dom.parent('[data-time]').attr('data-time')];
-        for(var k of ['u', 'bold', 'italic', 'del']){
-            var d =  $('[data-action="chat_msg_style,'+k+'"]');
-            if(data[k]){
-               d.addClass('btn-primary');
-            }else{
-               d.removeClass('btn-primary');
+            var div = $('#msg_rm');
+            var i = div.width() / 2;
+            var x = event.pageX;
+            var mw = $(window).width();
+            if (x + i > mw) {
+                x = mw - div.width() - 10;
+            } else {
+                x -= i;
             }
-        }
-        addAnimation(div.css({
-                left: x+'px',
-                top: y+'px',
-            }), 'flipInX', () => {
-      });
-    });
+
+            var y = event.pageY + 20;
+            var mh = $(window).height();
+            if (y + div.height() > mh) {
+                y = mh - div.height();
+            }
+
+            var data = g_chats[g_chat.name].msgs[dom.parent('[data-time]').attr('data-time')];
+            for (var k of ['u', 'bold', 'italic', 'del']) {
+                var d = $('[data-action="chat_msg_style,' + k + '"]');
+                if (data[k]) {
+                    d.addClass('btn-primary');
+                } else {
+                    d.removeClass('btn-primary');
+                }
+            }
+            addAnimation(div.css({
+                left: x + 'px',
+                top: y + 'px',
+            }), 'flipInX', () => {});
+        });
     },
-     showSearch: () => {
-         g_cache.closeCustom = () => {}
+    showSearch: () => {
+        g_cache.closeCustom = () => {}
         $('#modal-custom').find('.modal-title').html(_l('弹出_搜索_标题'));
         $('#modal-custom').attr('data-type', 'msg_search').find('.modal-html').html(`
             <div class="input-group">
               <select class="form-control flex-reset w-75" onchange=""> 
-                <option value="" disabled>`+_l('弹出_搜索_选择框_提示')+`</option>
-                <option value="class-1" selected>`+_l('弹出_搜索_选择框_文本')+`</option>
+                <option value="" disabled>` + _l('弹出_搜索_选择框_提示') + `</option>
+                <option value="class-1" selected>` + _l('弹出_搜索_选择框_文本') + `</option>
               </select>
-              <input type="text" class="form-control" placeholder="`+_l('弹出_搜索_输入框_默认')+`">
+              <input type="text" class="form-control" placeholder="` + _l('弹出_搜索_输入框_默认') + `">
               <div class="input-group-append">
-                <button class="btn btn-primary" type="button">`+_l('弹出_搜索_按钮_搜索')+`</button>
+                <button class="btn btn-primary" type="button">` + _l('弹出_搜索_按钮_搜索') + `</button>
               </div>
             </div>
             <div id="result-content">
@@ -198,93 +195,149 @@ var g_chat = {
         `);
         halfmoon.toggleModal('modal-custom');
     },
-    registerActions: () => {
-        
-         registerAction('ranking', (dom, action, params) => {
-            toastPAlert('loading...', 'alert-secondary');
-            queryMsg({type: 'ranking', date: getFormatedTime(2)});
-         });
-         registerRevice('ranking', (data) => {
-            var h = `<table class="table" id='table_ranking'>
-              <thead>
-                <tr>
-                  <th width="50px">`+_l('排行_名次')+`</th>
-                  <th>`+_l('排行_头像')+`</th>
-                  <th>`+_l('排行_用户')+`</th>
-                  <th class="text-right">`+_l('排行_消息数')+`</th>
-                </tr>
-              </thead>
-              <tbody>`;
-            var i = 1;
-            var d = data.data;
-            for(var name of Object.keys(d).sort(function(a,b){return d[b]-d[a]})){
-                var s;
-                switch(i){
-                    case 1:
-                        s = '🥇';
-                        break;
+    showRanking: (date, table = true) => {
+            g_cache.rankingDate = date;
+            var d = g_cache.ranking;
+            if (d[date]) {
+                var h = '';
+                var i = 1;
 
-                     case 2:
-                        s = '🥈';
-                        break;
+                for (var name of Object.keys(d[date]).sort(function(a, b) {
+                    return d[date][b][g_cache.ranking_sort] - d[date][a][g_cache.ranking_sort]
+                })) {
+                    var s;
+                    switch (i) {
+                        case 1:
+                            s = '🥇';
+                            break;
 
-                    case 3:
-                        s = '🥉';
-                        break;
+                        case 2:
+                            s = '🥈';
+                            break;
 
-                    default:
-                        s = i;
-                }
-                 h += `
+                        case 3:
+                            s = '🥉';
+                            break;
+
+                        default:
+                            s = i;
+                    }
+                    h += `
                 <tr>
                   <th>` + s + `</th>
-                  <td><img src="` + _vars['img'] +'icons/'+ name+ `.jpg" class="user-icon"></td>
+                  <td><img src="` + _vars['img'] + 'icons/' + name + `.jpg" class="user-icon"></td>
                   <td>` + name + `</td>
-                  <td class="text-right">` + d[name] + `</td>
+                  <td>` + d[date][name].chars + `</td>
+                  <td class="text-right">` + d[date][name].msgs + `</td>
                 </tr>`;
-                i++;
+                    i++;
+                }
+                if(table){
+                    $('#modal-custom').find('.modal-title').html(_l('弹出_排行榜_标题', date));
+                    $('#modal-custom').attr('data-type', 'ranking').find('.modal-html').html(`
+                
+                <div class="flex-center float-right" data-action="ranking_chooseData">
+                    <i class="fa fa-calendar"  style="position: relative; left: 25px;top: 0;" aria-hidden="true"></i>
+                    <input type="text" class="form-control timepicker text-center pl-20 w-auto" style="width: 125px;" readonly placeholder="日付を選択">
+                </div>
+
+                <table class="table" id='table_ranking'>
+                  <thead>
+                    <tr>
+                      <th width="50px">` + _l('排行_名次') + `</th>
+                      <th>` + _l('排行_头像') + `</th>
+                      <th>` + _l('排行_用户') + `</th>
+                      <th data-action="ranking_sort,chars">` + _l('排行_字符数') + `<i class="fa fa-arrow-up hide" aria-hidden="true"></i></th>
+                      <th data-action="ranking_sort,msgs" class="text-right text-primary">` + _l('排行_消息数') + `<i class="fa fa-arrow-up" aria-hidden="true"></i></th>
+                    </tr>
+                  </thead>
+                  <tbody>`+h+'</tbody></table>');
+                    if(!closeModal('modal-custom', 'ranking')){
+                        halfmoon.toggleModal('modal-custom');
+                    }
+                }else{
+                    closeModal('modal-custom', 'ranking', () => {
+                         $('#modal-custom tbody').html(h);
+                    })
+                }
+                
             }
-            h += '</tbody></table>';
-            $('#modal-custom').find('.modal-title').html(_l('弹出_排行榜_标题', data.date));
-            $('#modal-custom').attr('data-type', 'ranking').find('.modal-html').html(h);
-            halfmoon.toggleModal('modal-custom');
-         });
+
+    },
+    registerActions: () => {
+         registerAction('ranking_sort', (dom, action, params) => {
+            $('#table_ranking').find('.fa-arrow-up').hide().parent().removeClass('text-primary');
+            dom.find('.fa-arrow-up').show().parent().addClass('text-primary');
+            g_cache.ranking_sort = action[1];
+            g_chat.showRanking( g_cache.rankingDate, false);
+        });
+        registerAction('ranking', (dom, action, params) => {
+            toastPAlert('loading...', 'alert-secondary');
+            queryMsg({ type: 'ranking' });
+        });
+        registerAction('ranking_chooseData', (dom, action, params) => {
+            if(!g_cache.ranking){
+                return queryMsg({ type: 'ranking' });
+            }
+            var enable = [true];
+            for(var date in g_cache.ranking){
+                var a = date.split('/');
+                a[1]--; // 月 - 1
+                 enable.push(a);
+            }
+            $('.timepicker').pickadate({
+                 disable: enable,
+                 onOpen: () => {
+                    $('.timepicker').pickadate('picker').set('view', g_cache.rankingDate);
+                 },
+                 onSet: function(thingSet) {
+                    g_chat.showRanking(getFormatedTime(4, new Date(thingSet.select)));
+                 }
+             });
+
+    });            
+        
+        registerRevice('ranking', (data) => {
+             var d = data.data;
+            g_cache.ranking = d;
+            g_chat.showRanking(getFormatedTime(4));
+        });
         registerAction('chat_msg_copy', (dom, action, params) => {
-            copyText($('.msg[data-time="'+ g_chat.rm_showing+'"]').find('.alert-text').text());
-         });
+            copyText($('.msg[data-time="' + g_chat.rm_showing + '"]').find('.alert-text').text());
+        });
         registerAction('chat_msg_edit', (dom, action, params) => {
-            var par = $('.msg[data-time="'+ g_chat.rm_showing+'"]');
+            var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
             var time = par.attr('data-time');
             var old = par.find('.alert-text').text();
             var text = prompt(_l('输入文本'), old);
-            if(text != undefined && text != '' && text != old){
-                g_chats[g_chat.name].msgs[time].text = text; 
+            if (text != undefined && text != '' && text != old) {
+                g_chats[g_chat.name].msgs[time].text = text;
                 local_saveJson('chats', g_chats);
                 par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
             }
-         });
+        });
 
-         registerAction('chat_msg_style', (dom, action, params) => {
-            var par = $('.msg[data-time="'+ g_chat.rm_showing+'"]');
+        registerAction('chat_msg_style', (dom, action, params) => {
+            var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
             var time = par.attr('data-time');
             g_chats[g_chat.name].msgs[time][action[1]] = $(dom).toggleClass('btn-primary').hasClass('btn-primary');
             local_saveJson('chats', g_chats);
             par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
-         });
-         registerAction('chat_msg_color', (dom, action, params) => {
-            var par = $('.msg[data-time="'+ g_chat.rm_showing+'"]');
+        });
+        registerAction('chat_msg_color', (dom, action, params) => {
+            var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
             var time = par.attr('data-time');
-            if(action[1] == 'default'){
-                delete  g_chats[g_chat.name].msgs[time]['color'];
-            }else{
-                 g_chats[g_chat.name].msgs[time]['color'] = action[1];
+            if (action[1] == 'default') {
+                delete g_chats[g_chat.name].msgs[time]['color'];
+            } else {
+                g_chats[g_chat.name].msgs[time]['color'] = action[1];
             }
             local_saveJson('chats', g_chats);
             par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
-         });
+        });
         registerAction('chat_msg_delete', (dom, action, params) => {
-            if(confirm(_l('是否删除消息'))){
-                var par = $('.msg[data-time="'+ g_chat.rm_showing+'"]');
+            if (confirm(_l('是否删除消息'))) {
+                var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
                 halfmoon.toggleModal('modal-custom');
                 delete g_chats[g_chat.name].msgs[par.attr('data-time')];
                 par.remove();
@@ -292,8 +345,8 @@ var g_chat = {
             }
             g_chat.openChat($(dom).attr('data-name'));
         });
-         registerAction('chatList_remove', (dom, action, params) => {
-            if(confirm(_l('是否删除频道'))){
+        registerAction('chatList_remove', (dom, action, params) => {
+            if (confirm(_l('是否删除频道'))) {
                 delete g_chats[g_chat.name];
                 local_saveJson('chats', g_chats);
                 $('[data-action="toTab,chatList"]')[0].click();
@@ -303,11 +356,11 @@ var g_chat = {
         registerAction('chat_openChat', (dom, action, params) => {
             g_chat.openChat($(dom).attr('data-name'));
         });
-        
+
         registerAction('chatList_add', (dom, action, params) => {
-             g_cache.closeCustom = () => {}
-             var edit = action.length > 1;
-             
+            g_cache.closeCustom = () => {}
+            var edit = action.length > 1;
+
             $('#modal-custom').find('.modal-title').html(_l('弹出_频道_' + (edit ? '修改' : '新建')));
             $('#modal-custom').attr('data-type', 'chatList_add').find('.modal-html').html(`
                 <div class="mb-10">
@@ -318,20 +371,20 @@ var g_chat = {
                 </div>
                 <div class="input-group mb-10">
                   <div class="input-group-prepend">
-                    <span class="input-group-text">`+_l('弹出_频道_新建_名称_标题')+`</span>
+                    <span class="input-group-text">` + _l('弹出_频道_新建_名称_标题') + `</span>
                   </div>
-                  <input type="text" id="chatList_input_name" class="form-control" placeholder="`+_l('弹出_频道_新建_名称_默认')+`">
+                  <input type="text" id="chatList_input_name" class="form-control" placeholder="` + _l('弹出_频道_新建_名称_默认') + `">
                 </div>
                 <div class="input-group mb-10">
                   <div class="input-group-prepend">
-                    <span class="input-group-text">`+_l('弹出_频道_新建_注释_标题')+`</span>
+                    <span class="input-group-text">` + _l('弹出_频道_新建_注释_标题') + `</span>
                   </div>
-                  <textarea id="chatList_input_desc" class="form-control" placeholder="`+_l('弹出_频道_新建_注释_默认')+`"></textarea>
+                  <textarea id="chatList_input_desc" class="form-control" placeholder="` + _l('弹出_频道_新建_注释_默认') + `"></textarea>
                 </div>
-                <button class="btn btn-primary btn-block" data-action="chatList_create`+ (edit ? ','+action[1] : '')+`">`+_l('弹出_频道_'+ (edit ? '修改' : '新建')+'_按钮_确定')+`</button>
+                <button class="btn btn-primary btn-block" data-action="chatList_create` + (edit ? ',' + action[1] : '') + `">` + _l('弹出_频道_' + (edit ? '修改' : '新建') + '_按钮_确定') + `</button>
             `);
-            if(edit){
-                var data =  g_chats[action[1]];
+            if (edit) {
+                var data = g_chats[action[1]];
                 $('#chatList_input_name').val(action[1]);
                 $('#chatList_input_desc').val(data.desc);
                 $('#chatList_add_icon').removeClass('fa-edit').addClass(data.icon).attr('data-icon', data.icon);
@@ -341,40 +394,39 @@ var g_chat = {
         registerAction('chatList_create', (dom, action, params) => {
             var input = $('#modal-custom input[type="text"]');
             var edit = action.length > 1
-                var name = input.val();
-                if(name == ''){
-                    return input.focus();
+            var name = input.val();
+            if (name == '') {
+                return input.focus();
+            }
+            if (g_chats[name] && !edit) {
+                return alert(_l('弹出_频道_新建_已存在'));
+            }
+            var data = {
+                icon: $('#chatList_add_icon').attr('data-icon'),
+                desc: $('#modal-custom textarea').val(),
+            }
+            if (edit) {
+                data = Object.assign(g_chats[action[1]], data);
+                g_chats[name] = data;
+                if (name != action[1]) {
+                    delete g_chats[action[1]];
+                    var to = name;
                 }
-                if(g_chats[name] && !edit){
-                    return alert(_l('弹出_频道_新建_已存在'));
-                }
-                var data = {
-                    icon: $('#chatList_add_icon').attr('data-icon'),
-                    desc: $('#modal-custom textarea').val(),
-                }
-                if(edit){
-                    data = Object.assign(g_chats[action[1]], data);
-                    g_chats[name] = data;
-                    if(name != action[1]){
-                        delete g_chats[action[1]];
-                        var to = name;
-                    }
-                }else{
-                    data.enable = true;
-                    data.msgs = {};
-                    data.createAt = new Date().getTime();
-                }
-           
+            } else {
+                data.enable = true;
+                data.msgs = {};
+                data.createAt = new Date().getTime();
+            }
+
             local_saveJson('chats', g_chats);
             halfmoon.toggleModal('modal-custom');
-            if(to){
-               g_chat.openChat(to);
-            }else{
+            if (to) {
+                g_chat.openChat(to);
+            } else {
                 g_chat.initHtml();
             }
         });
-        registerAction('chat_searchTag', (dom, action, params) => {
-        });
+        registerAction('chat_searchTag', (dom, action, params) => {});
         registerAction('chat_sendMsg', (dom, action, params) => {
             var m = $('#msg').val();
             if (m != '') {
@@ -387,29 +439,29 @@ var g_chat = {
                 local_saveJson('chats', g_chats);
                 $('#content_chat .mainContent').append($(g_chat.getHTML_msgs(time, data)).addClass('animated lightSpeedInRight').attr('animated', 'lightSpeedInRight'));
                 toBottom($('#content_chat'));
-                $('.chat_list[data-name="'+g_chat.name+'"]').find('.badge').html(Object.keys( g_chats[g_chat.name].msgs).length);
+                $('.chat_list[data-name="' + g_chat.name + '"]').find('.badge').html(Object.keys(g_chats[g_chat.name].msgs).length);
             }
         });
 
     },
     countMsg: (s_data) => {
-        var cnt = 0;
-          for(var name in g_chats){
-            for(var time in g_chats[name].msgs){
-              if(getFormatedTime(2, new Date(parseInt(time))) == s_data){
-                cnt++;
-              }
+        var cnt = [0, 0];
+        for (var name in g_chats) {
+            for (var time in g_chats[name].msgs) {
+                if (getFormatedTime(2, new Date(parseInt(time))) == s_data) {
+                    cnt[0]++;
+                    cnt[1]+=g_chats[name].msgs[time].text.length;
+                }
             }
-          }
-          console.log(cnt);
-          return cnt;
+        }
+        return cnt;
     },
     initHtml: () => {
         var h = '';
         for (var name in g_chats) {
             h += g_chat.getHtml(g_chats[name], name);
         }
-        
+
         $('#content_chatList .mainContent').html(h);
         $('.navbar-nav').html(`
             <li class="nav-item" data-action="ranking">
@@ -425,14 +477,14 @@ var g_chat = {
             g_chat.lastData = s_data;
             h += `<h6 class='text-muted text-center d-block mt-10'>` + s_data + `</h6>`;
         }
-        for(var tag of cutStrings1(data.text, '#', true)){
-            data.text = data.text.replaceAll('#'+tag, '<a data-action="chat_searchTag">#'+tag+'</a>');
+        for (var tag of cutStrings1(data.text, '#', true)) {
+            data.text = data.text.replaceAll('#' + tag, '<a data-action="chat_searchTag">#' + tag + '</a>');
         }
-        h += `<div class="msg ns row justify-content-end mb-10" data-time="`+time+`" >
+        h += `<div class="msg ns row justify-content-end mb-10" data-time="` + time + `" >
                     <div class="col-auto align-self-end mr-10">
                         <span class='time text-muted text-right'>` + getFormatedTime(0, date) + `</span>
                     </div>
-                <div class="alert`+(data.color ? ' alert-'+data.color : '')+` main filled-dm mt-10 mr-10 col-auto" role="alert">
+                <div class="alert` + (data.color ? ' alert-' + data.color : '') + ` main filled-dm mt-10 mr-10 col-auto" role="alert">
                   <h4 class="alert-heading"></h4>
                   <span class="alert-text">` + g_chat.getStyle(data) + `</span>
                 </div>
@@ -443,17 +495,17 @@ var g_chat = {
 
     getStyle: (data) => {
         var text = data.text;
-        if(data.u){
-            text = '<u>'+text+'</u>';
+        if (data.u) {
+            text = '<u>' + text + '</u>';
         }
-        if(data.del){
-            text = '<s>'+text+'</s>';
+        if (data.del) {
+            text = '<s>' + text + '</s>';
         }
-        if(data.italic){
-            text = '<i>'+text+'</i>';
+        if (data.italic) {
+            text = '<i>' + text + '</i>';
         }
-        if(data.bold){
-            text = '<b>'+text+'</b>';
+        if (data.bold) {
+            text = '<b>' + text + '</b>';
         }
         return text;
     },
@@ -487,14 +539,14 @@ var g_chat = {
                 </button>
             </div>`);
         showContent('chat');
-        $('.navbar-brand').html(`<i data-action="habbit_dots" class="fa ` + g_chats[name].icon + ` mr-10" aria-hidden="true"></i>`+name);
+        $('.navbar-brand').html(`<i data-action="habbit_dots" class="fa ` + g_chats[name].icon + ` mr-10" aria-hidden="true"></i>` + name);
         $('.navbar-nav').html(`
             <li class="nav-item dropdown with-arrow">
           <a class="nav-link" data-toggle="dropdown" id="nav-link-dropdown-toggle">
             <i class="fa fa-ellipsis-v mr-15 " aria-hidden="true"></i> 
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="nav-link-dropdown-toggle">
-            <a data-action="chatList_add,`+name+`" class="dropdown-item">`+_l('频道信息')+`</a>
+            <a data-action="chatList_add,` + name + `" class="dropdown-item">` + _l('频道信息') + `</a>
             <div class="dropdown-divider"></div>
             <div class="dropdown-content">
               <a data-action="chatList_remove" class="btn btn-block btn-danger" role="button">
@@ -517,7 +569,7 @@ var g_chat = {
                     </div>
                     <div style="margin-left: 20px;">
                       <h4 class="alert-heading text-truncate" style="calc(100% - 100px);">` + name + `</h4><span>
-                      ` + (len > 0 ? data.msgs[keys[keys.length-1]].text : _l('什么都没写')) + `</span>
+                      ` + (len > 0 ? data.msgs[keys[keys.length - 1]].text : _l('什么都没写')) + `</span>
                   </div>
                     <span class="text-muted rt">` + getFormatedTime(0, new Date(parseInt(len > 0 ? keys[0] : data.createAt))) + `</span>
                     <span class="badge badge-primary rb">` + len + `</span>

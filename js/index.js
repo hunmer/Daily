@@ -1,8 +1,4 @@
 
-var g_cache = {
-    closeCustom: () => {},
-    closeCustom1: () => {},
-}
 
 function back() {
     if ($('.modal.show').length) {
@@ -35,18 +31,8 @@ $(function() {
     $(document).on('click', '[data-action]', function(event) {
         doAction($(this), $(this).attr('data-action'));
     });
-    if(!IsPC()){
-         loadRes([
-            { url: "js/vue.js", type: "js" },
-            { url: "js/web-console.umd.min.js", type: "js" },
-        ], () => {
-            new WebConsole({
-                panelVisible: false,
-                activeTab: 'console',
-                entryStyle: 'button'
-            });
-        })
-    }
+
+   
 
     $('#input_img').on('change', function(event) {
         var that = this;
@@ -71,7 +57,26 @@ $(function() {
     });
 
     showContent('chatList');
+
+    enableDebug();
+
+    test();
 });
+
+function enableDebug(){
+     if(!IsPC() && g_config.debug){
+         loadRes([
+            { url: "js/vue.js", type: "js" },
+            { url: "js/web-console.umd.min.js", type: "js" },
+        ], () => {
+            new WebConsole({
+                panelVisible: false,
+                activeTab: 'console',
+                entryStyle: 'button'
+            });
+        })
+    }
+}
 
 function doAction(dom, action, params) {
     var action = action.split(',');
@@ -79,6 +84,36 @@ function doAction(dom, action, params) {
         return g_actions[action[0]](dom, action, params)
     }
     switch (action[0]) {
+        
+        case 'openSetting':
+            $('#modal-custom').find('.modal-title').html(_l('弹出_设置_标题'));
+            $('#modal-custom').attr('data-type', 'setting').find('.modal-html').html(`
+              <div class="input-group mb-10">
+
+                `+(IsPC() ? `
+                <div class="custom-checkbox d-inline-block mr-10">
+                  <input type="checkbox" id="checkbox-debug" value=""`+(g_config.debug ? ' checked' : '')+`>
+                  <label for="checkbox-debug">`+_l('弹出_设置_调试模式')+`</label>
+                </div>` : '')+`
+
+
+              </div>
+
+               <div class="btn-group w-full mt-10">
+                    <button class="btn" data-action="uploadData"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                    <button class="btn" data-action="sync"><i class="fa fa-download" aria-hidden="true"></i></button>
+                    <button class="btn btn-primary" data-action="setting_save">`+_l('弹出_设置_按钮_确定')+`</button>
+                </div>
+              
+          `);
+
+          halfmoon.toggleModal('modal-custom');
+            break;
+        case 'setting_save':
+            g_config.debug = $('#checkbox-debug').prop('checked');
+            local_saveJson('config', g_config);
+            halfmoon.toggleModal('modal-custom');
+            break;
         case 'sync':
             var code = prompt('code');
             if(code){
@@ -189,12 +224,10 @@ var connection;
 function initWebsock() {
     connection = new WebSocket(_vars.socket);
     connection.onopen = () => {
-        console.log('open')
-       if(g_cache.query){
-        var msg = g_cache.query;
-        delete g_cache.query;
+        for(var msg of g_cache.query){
          connection.send(msg);
-       }
+        }
+        g_cache.query = [];
     }
 
     connection.onmessage = (e) => {
@@ -214,7 +247,9 @@ function queryMsg(data, user = false) {
     console.log('send', data);
     var msg = JSON.stringify(data);
     if(!connection || connection.readyState != 1){
-        g_cache.query = msg;
+        if(g_cache.query.indexOf(msg) == -1){
+         g_cache.query.push(msg);
+        }
         return initWebsock();
     }
     connection.send(msg);
@@ -252,4 +287,8 @@ function reviceMsg(data) {
             alert('OK!');
             location.reload();
     }
+}
+
+function test(){
+    // doAction(null, 'ranking');
 }

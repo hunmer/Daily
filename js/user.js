@@ -10,6 +10,7 @@ var g_user = {
 		if(!g_config.user){
 			g_user.modal();
 		}else{
+      $('#sidebar_icons_float img').attr('src', g_config.user.icon);
        g_user.upload();
     }
     registerAction('user_uploadIcon', (dom, action, params) => {
@@ -22,7 +23,6 @@ var g_user = {
       // var v = checkInputValue($('#user_input_mail, #user_input_name, #user_input_password'));
       var v = checkInputValue($('#user_input_name'));
       if(!v) return;
-      console.log(v);
       var data = {
           name: v[0],
           icon: $('#user_icon').attr('src'),
@@ -36,6 +36,7 @@ var g_user = {
 
     registerRevice('setProfile', (data) => {
       g_config.user = data.data;
+      $('#sidebar_icons_float img').attr('src', g_config.user.icon);
       local_saveJson('config', g_config);
       closeModal('modal-custom', 'user', () => {
          halfmoon.toggleModal('modal-custom');
@@ -49,12 +50,12 @@ var g_user = {
 
   upload: () => {
     var s_data = getFormatedTime(2);
-    if(g_config.lastUpload != s_data){
+    if(1 || g_config.lastUpload != s_data){
       g_config.lastUpload = s_data;
       local_saveJson('config', g_config);
       var cnt = g_chat.countMsg(s_data);
-      if(cnt > 0){
-        queryMsg({type: 'countMsg', data: cnt}, true);
+      if(cnt[0] > 0){
+        queryMsg({type: 'countMsg', msgs: cnt[0], chars: cnt[1]}, true);
       }
     }
   },
@@ -64,7 +65,7 @@ var g_user = {
 		if(edit){
 			data = g_config.user || {
 				name: '',
-				icon: 'img/photo.jpg'
+				icon: 'img/user.jpg'
     //     email: '',
     //     password: '',
 				// desc: '',

@@ -8,9 +8,16 @@ var _vars = {
 }
 var g_localKey = 'lifeRPG';
 var g_config = local_readJson('config', {
-      index: -1,
-      history: {},
+      debug: false,
   });
+
+var g_cache = {
+    closeCustom: () => {},
+    closeCustom1: () => {},
+    query: [],
+    ranking_sort: 'msgs',
+}
+
 
 var g_down = {
 
