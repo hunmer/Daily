@@ -223,7 +223,6 @@ var connection;
 
 function initWebsock() {
     connection = new WebSocket(_vars.socket);
-    console.log(connection);
     connection.onopen = () => {
         for(var msg of g_cache.query){
          connection.send(msg);

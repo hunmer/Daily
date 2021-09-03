@@ -41,7 +41,6 @@ var g_todo = {
         	}
         	lable.html(h);
         })
-        // 
       registerContextMenu('details div[data-time]', (dom) => {doAction(dom[0], 'todo_list_item_detail')});;
     },
 

@@ -9,8 +9,8 @@ if(0){
 	}
 }else{
 	_vars = {
-		img: 'https://daily-websock.glitch.me/Daily-websocket/',
-		socket: 'wss:///daily-websock.glitch.me'
+		img: 'https://daily-websock.glitch.me/Daily-websocket1/',
+		socket: 'wss:///daily-websock1.glitch.me'
 	}
 }
 
