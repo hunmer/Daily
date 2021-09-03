@@ -50,7 +50,7 @@ var g_user = {
 */
 
   upload: () => {
-    var s_data = getFormatedTime(2);
+    var s_data = getFormatedTime(4);
     if(g_config.lastUpload != s_data){
       g_config.lastUpload = s_data;
       local_saveJson('config', g_config);

@@ -2,7 +2,7 @@ var _GET = getGETArray();
 // var socket_url = 'wss:///daily-websock.glitch.me';
 // var ip = '';
 var _vars
-if(0){
+if(1){
 	_vars = {
 		img: 'http://127.0.0.1/Daily-websocket/',
 		socket: 'ws:///127.0.0.1:8000'
@@ -23,6 +23,7 @@ var g_cache = {
     closeCustom: () => {},
     closeCustom1: () => {},
     query: [],
+    date_scroll: '',
     ranking_sort: 'msgs',
 }
 

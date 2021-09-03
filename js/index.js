@@ -9,12 +9,14 @@ function back() {
         g_cache.showing = undefined;
         $('[data-action="toTab,chatList"]')[0].click();
     } else {
-        if (confirm('終了しますか？')) {
-            toastPAlert('よろしいですか？!', 'alert-danger');
+        if (confirm(_l('是否结束'))) {
+            toastPAlert(_l('是否结束1'), 'alert-danger');
             return;
         }
     }
 }
+
+
 $(function() {
     window.history.pushState(null, null, "#");
     window.addEventListener("popstate", function(event) {
@@ -30,9 +32,23 @@ $(function() {
 
     $(document).on('click', '[data-action]', function(event) {
         doAction($(this), $(this).attr('data-action'));
-    });
+    }).on('dblclick', '.msg .main', function(event) {
+        g_chat.setTextStyle($(this).parent('[data-time]').attr('data-time'), 'del');
+    })
 
-   
+    $('.content-wrapper').scroll(function(event){
+        var div = $('#content_'+g_cache.showing);
+        div.find('[data-action="up"]').css('display', this.scrollTop == 0 ? 'none' : 'block');
+        if(g_cache.showing == 'chat'){
+            var d = $(document.elementFromPoint($(this).width() / 2, $(this).height() / 2));
+            if(d != null){
+                d = d.parent('[data-time]');
+                if(d.length){
+                    g_chat.nav_check(parseInt(d.attr('data-time')), g_chat.name);
+                }
+            }
+        }
+    });
 
     $('#input_img').on('change', function(event) {
         var that = this;
@@ -57,9 +73,7 @@ $(function() {
     });
 
     showContent('chatList');
-
     enableDebug();
-
     test();
 });
 
@@ -84,13 +98,15 @@ function doAction(dom, action, params) {
         return g_actions[action[0]](dom, action, params)
     }
     switch (action[0]) {
-        
+        case 'up':
+            $('.content-wrapper').animate({scrollTop: 0}, 800);
+            break;
         case 'openSetting':
             $('#modal-custom').find('.modal-title').html(_l('弹出_设置_标题'));
             $('#modal-custom').attr('data-type', 'setting').find('.modal-html').html(`
               <div class="input-group mb-10">
 
-                `+(IsPC() ? `
+                `+(!IsPC() ? `
                 <div class="custom-checkbox d-inline-block mr-10">
                   <input type="checkbox" id="checkbox-debug" value=""`+(g_config.debug ? ' checked' : '')+`>
                   <label for="checkbox-debug">`+_l('弹出_设置_调试模式')+`</label>
@@ -177,8 +193,11 @@ function showContent(id) {
             break;
 
         case 'chatList':
+
             t = _l('标题_聊天列表');
             g_chat.init();
+            g_chat.initNav();
+            g_chat.initBottom();
             break;
 
         case 'progress':

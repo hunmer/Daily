@@ -18,7 +18,7 @@ var g_chat = {
             <div class="ftb br">
                 <div class="row mx-auto" style="width: 20%;">
                     <div class="col">
-                        <a data-action="chatList_add" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                        <a data-action="chatList_add" class="btn btn-square btn-primary rounded-circle btn-lg shadow" role="button"><i class="fa fa-plus" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -28,7 +28,9 @@ var g_chat = {
             <div class="ftb br">
                 <div class="row mx-auto" style="width: 20%;">
                     <div class="col">
-                        <a data-action="back" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+                        <a data-action="up" class="btn btn-square btn-primary rounded-circle btn-lg shadow" style="display: none;" role="button"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+
+                        <a data-action="back" class="btn btn-square btn-primary rounded-circle btn-lg shadow" role="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -41,9 +43,8 @@ var g_chat = {
         // showContent('chat');
         // g_chat.openChat('日常');
         // g_chat.showSearch();
-
-
-
+                      //😀😁😂🤣😃😄😅😆😆😉😊😋😎😍😘🥰😗
+        //
         g_chat.rm = $(`
             <div style="position: fixed;top: 0; left: 0;width: 100%;height: 100%;z-index: 99999;display: none;background-color: rgba(0, 0, 0, .5);" onclick="
             if(event.target == this){
@@ -56,7 +57,22 @@ var g_chat = {
             }
         }
             ">
-                <div id="msg_rm" class="bg-white row position-absolute p-5 border rounded w-auto" >
+
+                <div id="msg_rm" class="w-125 bg-white row position-absolute p-5 border rounded w-auto" >
+
+
+                <div class="overflow-y-hidden overflow-x-scroll w-full h-50 w-full">
+                      <div class="w-full font-size-20 d-inline-flex" onmousewheel="this.parentElement.scrollBy(event.deltaY, 0)" id="emoji_recent">
+                          <span data-action="emoji_select">😀</span>
+                          <span data-action="emoji_select">😂</span>
+                          <span data-action="emoji_select">🤣</span>
+                          <span data-action="emoji_select">😅</span>
+                          <span data-action="emoji_select">😭</span>
+                          <span data-action="emoji_select">😵</span>
+                          <span data-action="emoji_select">🤩</span>
+                      </div>
+                </div>
+
                 <div class="btn-group-vertical p-5" role="group" aria-label="Vertical button group">
 
                     <div class="btn-group dropdown with-arrow mb-10" role="group">
@@ -264,7 +280,30 @@ var g_chat = {
             }
 
     },
+     setTextStyle: (time, style, enable) => {
+            var par = $('.msg[data-time="' +time+ '"]');
+            var time = par.attr('data-time');
+            if(enable == undefined){
+               enable = !g_chats[g_chat.name].msgs[time][style]; 
+            }
+            g_chats[g_chat.name].msgs[time][style] = enable;
+            local_saveJson('chats', g_chats);
+            par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
+        },
+
     registerActions: () => {
+        registerAction('emoji_select', (dom, action, params) => {
+            var time = action.length > 1 ? action[1] : g_chat.rm_showing
+            var par = $('.msg[data-time="' +time+ '"]');
+             if(action.length > 1){
+                delete g_chats[g_chat.name].msgs[time].emoji;
+            }else{
+                g_chats[g_chat.name].msgs[time].emoji = $(dom).html();
+            }
+            console.log(g_chats[g_chat.name].msgs[time].emoji);
+            local_saveJson('chats', g_chats);
+            par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
+        });
          registerAction('ranking_sort', (dom, action, params) => {
             $('#table_ranking').find('.fa-arrow-up').hide().parent().removeClass('text-primary');
             dom.find('.fa-arrow-up').show().parent().addClass('text-primary');
@@ -317,12 +356,10 @@ var g_chat = {
             }
         });
 
+       
+
         registerAction('chat_msg_style', (dom, action, params) => {
-            var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
-            var time = par.attr('data-time');
-            g_chats[g_chat.name].msgs[time][action[1]] = $(dom).toggleClass('btn-primary').hasClass('btn-primary');
-            local_saveJson('chats', g_chats);
-            par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
+            g_chat.setTextStyle( g_chat.rm_showing ,action[1], $(dom).toggleClass('btn-primary').hasClass('btn-primary'));
         });
         registerAction('chat_msg_color', (dom, action, params) => {
             var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
@@ -437,18 +474,24 @@ var g_chat = {
                 var time = new Date().getTime();
                 g_chats[g_chat.name].msgs[time] = data;
                 local_saveJson('chats', g_chats);
-                $('#content_chat .mainContent').append($(g_chat.getHTML_msgs(time, data)).addClass('animated lightSpeedInRight').attr('animated', 'lightSpeedInRight'));
+                $('#content_chat .mainContent').append($(g_chat.getHTML_msgs(time, data, false)).addClass('animated lightSpeedInRight').attr('animated', 'lightSpeedInRight'));
                 toBottom($('#content_chat'));
                 $('.chat_list[data-name="' + g_chat.name + '"]').find('.badge').html(Object.keys(g_chats[g_chat.name].msgs).length);
             }
         });
 
     },
-    countMsg: (s_data) => {
+    countMsg: (s_data, channel) => {
         var cnt = [0, 0];
-        for (var name in g_chats) {
+        var channels;
+        if(channel){
+            channels = [channel];
+        }else{
+            channels = Object.keys(g_chats);
+        }
+        for (var name of channels) {
             for (var time in g_chats[name].msgs) {
-                if (getFormatedTime(2, new Date(parseInt(time))) == s_data) {
+                if (getFormatedTime(4, new Date(parseInt(time))) == s_data) {
                     cnt[0]++;
                     cnt[1]+=g_chats[name].msgs[time].text.length;
                 }
@@ -463,28 +506,49 @@ var g_chat = {
         }
 
         $('#content_chatList .mainContent').html(h);
+        
+    },
+    initNav: () => {
         $('.navbar-nav').html(`
             <li class="nav-item" data-action="ranking">
               <a class="nav-link font-size-20">🏆</a>
             </li>
         `);
     },
+    initBottom: () => {
+        var cnt = g_chat.countMsg(getFormatedTime(4));
+         $('.navbar-fixed-bottom').html(`
+            <div id="bottom_chatList" class="row w-full flex-center toolbar">
+                <div class="col-9 flex-center mx-auto" >
+                    
+                </div>
+                <div class='col'>
+                    <a class="badge-group">
+                      <span class="badge bg-dark text-white">`+getFormatedTime(2)+`</span>
+                      <span class="badge badge-primary">`+cnt[0]+`</span>
+                    </a>
+                </div>
+            </div>`);
+    },
     getHTML_msgs: (time, data, replace = true) => {
         var h = '';
         var date = new Date(Number(time));
-        var s_data = getFormatedTime(2, date);
+        var s_data = getFormatedTime(4, date);
         if (!replace && s_data != g_chat.lastData) {
             g_chat.lastData = s_data;
-            h += `<h6 class='text-muted text-center d-block mt-10'>` + s_data + `</h6>`;
+            h += `<h6 class='text-muted text-center d-block mt-20 date'>` + s_data + `</h6>`;
         }
         for (var tag of cutStrings1(data.text, '#', true)) {
             data.text = data.text.replaceAll('#' + tag, '<a data-action="chat_searchTag">#' + tag + '</a>');
         }
         h += `<div class="msg ns row justify-content-end mb-10" data-time="` + time + `" >
+
                     <div class="col-auto align-self-end mr-10">
                         <span class='time text-muted text-right'>` + getFormatedTime(0, date) + `</span>
                     </div>
-                <div class="alert` + (data.color ? ' alert-' + data.color : '') + ` main filled-dm mt-10 mr-10 col-auto" role="alert">
+                <div class="alert` + (data.color ? ' alert-' + data.color : '') + ` main filled-dm mb-5 mr-5 col-auto shadow-sm" role="alert">
+                `+(data.emoji ? '<span class="emoji" data-action="emoji_select,'+time+'">'+data.emoji+'</span>' : '')+`
+                
                   <h4 class="alert-heading"></h4>
                   <span class="alert-text">` + g_chat.getStyle(data) + `</span>
                 </div>
@@ -522,25 +586,34 @@ var g_chat = {
         var h = '';
         // todo 多种消息支持，根据类型执行不同的函数得出不同的Html
         for (var time in g_chats[name].msgs) {
-            h += g_chat.getHTML_msgs(time, g_chats[name].msgs[time])
+            h += g_chat.getHTML_msgs(time, g_chats[name].msgs[time], false)
         }
+        
         $('#content_chat .mainContent').html(h);
 
+        /*
+    <button class="btn btn-primary col float-right" type="button" data-action="chat_sendMsg" style="max-width: 90%;border-radius: 20px;">
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                </button>
+        */
         $('.navbar-fixed-bottom').html(`
             <div id="bottom_chat" class="row w-full flex-center toolbar">
-                <div class="col-9 flex-center" style="">
+                <div class="col-9 flex-center mx-auto" >
                     <i class="fa fa-smile-o font-size-18" aria-hidden="true" style="position: absolute;left: 15px;"></i>
                     <input type="text" id='msg' class="form-control" placeholder="ここで入力する..." onkeydown="if(event.keyCode == 13){doAction(null, 'chat_sendMsg')}" style="padding-left: 40px;padding-right: 40px;">
                     <i class="fa fa-picture-o font-size-18" aria-hidden="true" style="position: absolute;right: 15px;"></i>
                 </div>
                 <div class='col-1'></div>
-                <button class="btn btn-primary col float-right" type="button" data-action="chat_sendMsg" style="max-width: 90%;border-radius: 20px;">
-                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                </button>
+                
             </div>`);
         showContent('chat');
         $('.navbar-brand').html(`<i data-action="habbit_dots" class="fa ` + g_chats[name].icon + ` mr-10" aria-hidden="true"></i>` + name);
         $('.navbar-nav').html(`
+            <a class="badge-group hide">
+              <span class="badge bg-dark text-white">1/1</span>
+              <span class="badge badge-primary">5</span>
+            </a>
+
             <li class="nav-item dropdown with-arrow">
           <a class="nav-link" data-toggle="dropdown" id="nav-link-dropdown-toggle">
             <i class="fa fa-ellipsis-v mr-15 " aria-hidden="true"></i> 
@@ -557,13 +630,29 @@ var g_chat = {
           </div>
         </li>
         `);
+        g_cache.date_scroll = '';
+        if(time){
+            g_chat.nav_check(time, name);
+        }
         toBottom($('#content_chat'));
+    },
+
+    // 消息界面右上角显示的一日统计
+    nav_check: (time, channel) => {
+        var date = new Date(parseInt(time));
+        var s_date = getFormatedTime(4, date);
+        if(s_date != g_cache.date_scroll){
+            g_cache.date_scroll = s_date;
+             var cnt = g_chat.countMsg(s_date, channel);
+            $('.navbar-nav .badge-group').show().find('.badge').html(getFormatedTime(2, date)).next().html(cnt[0]);
+
+        }
     },
 
     getHtml: (data, name) => {
         var keys = Object.keys(data.msgs);
         var len = keys.length;
-        return `<div class="alert filled-lm chat_list" role="alert" data-action="chat_openChat" data-name="` + name + `">
+        return `<div class="alert filled-lm chat_list shadow-sm" role="alert" data-action="chat_openChat" data-name="` + name + `">
                     <div class="_icon">
                         <i data-action="habbit_dots" class="fa ` + data.icon + `" aria-hidden="true"></i>
                     </div>

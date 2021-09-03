@@ -1,6 +1,16 @@
 .text-dark-1 {
     color: black !important;
 }
+
+.w-125 {
+    width: 125px !important;
+}
+.emoji {
+    position: absolute;
+    right: -12px;
+    bottom: -16px;
+    font-size: 25px;
+}
 .alert-white {
         background-color: var(--white-bg-color) !important;
         color: var(--lm-base-text-color) !important;
