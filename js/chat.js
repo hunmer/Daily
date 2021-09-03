@@ -1,6 +1,20 @@
+
+
 var g_chat = {
     lastData: '',
+    preInit: () => {
+        $(`<h5 class="sidebar-title">` + _l('侧栏_聊天_标题') + `</h5>
+            <div class="sidebar-divider"></div>
+            <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,chatList">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                    </span>
+            ` + _l('侧栏_聊天_进入') + `
+            </a>`).appendTo('.sidebar-menu');
+    },
     init: () => {
+        if(g_chat.inited) return;
+        g_chat.inited = true;
         $(`<div id='content_chatList' class="_content p-10 hide animated fadeIn" animated='fadeIn'>
             <div class="mainContent"></div>
             <div class="ftb br">
@@ -21,18 +35,11 @@ var g_chat = {
                 </div>
             </div>
         </div>`).appendTo('.content-wrapper');
-        $(`<h5 class="sidebar-title">` + _l('侧栏_聊天_标题') + `</h5>
-            <div class="sidebar-divider"></div>
-            <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,chatList">
-                    <span class="sidebar-icon">
-                        <i class="fa fa-commenting-o" aria-hidden="true"></i>
-                    </span>
-            ` + _l('侧栏_聊天_进入') + `
-            </a>`).appendTo('.sidebar-menu');
+        
 
         g_chat.registerActions();
         g_chat.initHtml();
-        showContent('chatList');
+        // showContent('chatList');
         // showContent('chat');
         // g_chat.openChat('日常');
         // g_chat.showSearch();
@@ -140,11 +147,9 @@ var g_chat = {
         g_chat.rm.css('display', 'unset');
 
         var div = $('#msg_rm');
-        console.log( div.width());
         var i = div.width() / 2;
         var x = event.pageX;
         var mw = $(window).width();
-        console.log(x, i, mw);
         if(x + i > mw){
             x = mw - div.width() - 10;
         }else{
@@ -195,6 +200,55 @@ var g_chat = {
     },
     registerActions: () => {
         
+         registerAction('ranking', (dom, action, params) => {
+            toastPAlert('loading...', 'alert-secondary');
+            queryMsg({type: 'ranking', date: getFormatedTime(2)});
+         });
+         registerRevice('ranking', (data) => {
+            var h = `<table class="table" id='table_ranking'>
+              <thead>
+                <tr>
+                  <th width="50px">`+_l('排行_名次')+`</th>
+                  <th>`+_l('排行_头像')+`</th>
+                  <th>`+_l('排行_用户')+`</th>
+                  <th class="text-right">`+_l('排行_消息数')+`</th>
+                </tr>
+              </thead>
+              <tbody>`;
+            var i = 1;
+            var d = data.data;
+            for(var name of Object.keys(d).sort(function(a,b){return d[b]-d[a]})){
+                var s;
+                switch(i){
+                    case 1:
+                        s = '🥇';
+                        break;
+
+                     case 2:
+                        s = '🥈';
+                        break;
+
+                    case 3:
+                        s = '🥉';
+                        break;
+
+                    default:
+                        s = i;
+                }
+                 h += `
+                <tr>
+                  <th>` + s + `</th>
+                  <td><img src="` + _vars['img'] +'icons/'+ name+ `.jpg" class="user-icon"></td>
+                  <td>` + name + `</td>
+                  <td class="text-right">` + d[name] + `</td>
+                </tr>`;
+                i++;
+            }
+            h += '</tbody></table>';
+            $('#modal-custom').find('.modal-title').html(_l('弹出_排行榜_标题', data.date));
+            $('#modal-custom').attr('data-type', 'ranking').find('.modal-html').html(h);
+            halfmoon.toggleModal('modal-custom');
+         });
         registerAction('chat_msg_copy', (dom, action, params) => {
             copyText($('.msg[data-time="'+ g_chat.rm_showing+'"]').find('.alert-text').text());
          });
@@ -206,7 +260,7 @@ var g_chat = {
             if(text != undefined && text != '' && text != old){
                 g_chats[g_chat.name].msgs[time].text = text; 
                 local_saveJson('chats', g_chats);
-                par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time]));
+                par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
             }
          });
 
@@ -215,7 +269,7 @@ var g_chat = {
             var time = par.attr('data-time');
             g_chats[g_chat.name].msgs[time][action[1]] = $(dom).toggleClass('btn-primary').hasClass('btn-primary');
             local_saveJson('chats', g_chats);
-            par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time]));
+            par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
          });
          registerAction('chat_msg_color', (dom, action, params) => {
             var par = $('.msg[data-time="'+ g_chat.rm_showing+'"]');
@@ -226,7 +280,7 @@ var g_chat = {
                  g_chats[g_chat.name].msgs[time]['color'] = action[1];
             }
             local_saveJson('chats', g_chats);
-            par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time]));
+            par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
          });
         registerAction('chat_msg_delete', (dom, action, params) => {
             if(confirm(_l('是否删除消息'))){
@@ -258,7 +312,7 @@ var g_chat = {
             $('#modal-custom').attr('data-type', 'chatList_add').find('.modal-html').html(`
                 <div class="mb-10">
                     <div class="position-relative mx-auto w-fit" onclick="g_choose.icon.init();">
-                        <i class="fa fa-edit icon mx-auto" id='chatList_add_icon' aria-hidden="true" data-icon="fa-edit"></i>
+                        <i class="fa fa-edit _icon mx-auto" id='chatList_add_icon' aria-hidden="true" data-icon="fa-edit"></i>
                         <i class="fa fa-edit text-primary" style="position: absolute; bottom: 0px;right: -5px;" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -338,19 +392,36 @@ var g_chat = {
         });
 
     },
+    countMsg: (s_data) => {
+        var cnt = 0;
+          for(var name in g_chats){
+            for(var time in g_chats[name].msgs){
+              if(getFormatedTime(2, new Date(parseInt(time))) == s_data){
+                cnt++;
+              }
+            }
+          }
+          console.log(cnt);
+          return cnt;
+    },
     initHtml: () => {
         var h = '';
         for (var name in g_chats) {
             h += g_chat.getHtml(g_chats[name], name);
         }
+        
         $('#content_chatList .mainContent').html(h);
-
+        $('.navbar-nav').html(`
+            <li class="nav-item" data-action="ranking">
+              <a class="nav-link font-size-20">🏆</a>
+            </li>
+        `);
     },
-    getHTML_msgs: (time, data) => {
+    getHTML_msgs: (time, data, replace = true) => {
         var h = '';
         var date = new Date(Number(time));
         var s_data = getFormatedTime(2, date);
-        if (s_data != g_chat.lastData) {
+        if (!replace && s_data != g_chat.lastData) {
             g_chat.lastData = s_data;
             h += `<h6 class='text-muted text-center d-block mt-10'>` + s_data + `</h6>`;
         }
@@ -416,7 +487,7 @@ var g_chat = {
                 </button>
             </div>`);
         showContent('chat');
-        $('.navbar-brand').html('🔈 '+name);
+        $('.navbar-brand').html(`<i data-action="habbit_dots" class="fa ` + g_chats[name].icon + ` mr-10" aria-hidden="true"></i>`+name);
         $('.navbar-nav').html(`
             <li class="nav-item dropdown with-arrow">
           <a class="nav-link" data-toggle="dropdown" id="nav-link-dropdown-toggle">
@@ -441,7 +512,7 @@ var g_chat = {
         var keys = Object.keys(data.msgs);
         var len = keys.length;
         return `<div class="alert filled-lm chat_list" role="alert" data-action="chat_openChat" data-name="` + name + `">
-                    <div class="icon">
+                    <div class="_icon">
                         <i data-action="habbit_dots" class="fa ` + data.icon + `" aria-hidden="true"></i>
                     </div>
                     <div style="margin-left: 20px;">
@@ -453,4 +524,4 @@ var g_chat = {
                 </div>`;
     }
 }
-g_chat.init();
+g_chat.preInit();

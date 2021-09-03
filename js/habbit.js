@@ -1,10 +1,6 @@
 var g_habbit = {
-    init: () => {
-    	$(`<div id='content_progress' class="_content hide"></div>`).appendTo('.content-wrapper');
-      $(`<div id='content_daily' class="_content hide"></div>`).appendTo('.content-wrapper');
-    	$(`<div id='content_countdown' class="_content hide"></div>`).appendTo('.content-wrapper');
-
-       $(`<h5 class="sidebar-title">`+_l('侧栏_习惯_标题')+`</h5>
+  preInit: () => {
+    $(`<h5 class="sidebar-title">`+_l('侧栏_习惯_标题')+`</h5>
             <div class="sidebar-divider"></div>
             <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,progress">
                     <span class="sidebar-icon">
@@ -26,6 +22,15 @@ var g_habbit = {
             </a>
 
             `).appendTo('.sidebar-menu');
+  },
+    init: () => {
+      if(g_habbit.inited) return;
+        g_habbit.inited = true;
+    	$(`<div id='content_progress' class="_content hide"></div>`).appendTo('.content-wrapper');
+      $(`<div id='content_daily' class="_content hide"></div>`).appendTo('.content-wrapper');
+    	$(`<div id='content_countdown' class="_content hide"></div>`).appendTo('.content-wrapper');
+
+       
 
     	g_habbit.registerActions();
     	g_habbit.initHabbits();
@@ -244,4 +249,4 @@ var g_habbit = {
     }
 }
 
-g_habbit.init();
+g_habbit.preInit();

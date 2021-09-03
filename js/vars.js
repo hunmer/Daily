@@ -1,6 +1,11 @@
 var _GET = getGETArray();
-var socket_url = 'wss:///daily-websock.glitch.me';
-// var socket_url = 'ws:///127.0.0.1:8000';
+// var socket_url = 'wss:///daily-websock.glitch.me';
+// var ip = '127.0.0.1';
+var ip = 'daily-websock.glitch.me';
+var _vars = {
+	img: 'http://'+ip+'/Daily-websocket/',
+	socket: 'ws:///'+ip+':8000'
+}
 var g_localKey = 'lifeRPG';
 var g_config = local_readJson('config', {
       index: -1,

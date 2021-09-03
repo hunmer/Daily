@@ -10,7 +10,20 @@ var g_cd = {
     timer: 0,
     stoped: 0,
     paused: false,
+    preInit: () => {
+        $(`
+            <h5 class="sidebar-title">`+_l('侧栏_计时_标题')+`</h5>
+            <div class="sidebar-divider"></div>
+            <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,time">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                    </span>
+            `+_l('侧栏_计时_进入')+`
+            </a>`).appendTo('.sidebar-menu');
+    },
     init: () => {
+        if(g_cd.inited) return;
+        g_cd.inited = true;
         g_cd.con = $(`<div id='content_time' class="_content p-10 hide">
                 <div class="w-full text-center">
                 <strong data-action="time_clockClick">00:00</strong>
@@ -74,15 +87,7 @@ var g_cd = {
             `).appendTo('.navbar-fixed-bottom');
 
 
-         $(`
-            <h5 class="sidebar-title">`+_l('侧栏_计时_标题')+`</h5>
-            <div class="sidebar-divider"></div>
-            <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,time">
-                    <span class="sidebar-icon">
-                        <i class="fa fa-clock-o" aria-hidden="true"></i>
-                    </span>
-            `+_l('侧栏_计时_进入')+`
-            </a>`).appendTo('.sidebar-menu');
+         
          
         g_cd.registerActions();
         g_cd.initHtml();
@@ -292,4 +297,4 @@ var g_cd = {
     }
 }
 
-g_cd.init();
+g_cd.preInit();

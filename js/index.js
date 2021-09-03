@@ -1,13 +1,3 @@
-window.history.pushState(null, null, "#");
-window.addEventListener("popstate", function(event) {
-    //  if (_viewer && _viewer.isShown) {
-    //     _viewer.hide();
-    // }else
-    back();
-    window.history.pushState(null, null, "#");
-    event.preventDefault(true);
-    event.stopPropagation();
-});
 
 var g_cache = {
     closeCustom: () => {},
@@ -30,9 +20,57 @@ function back() {
     }
 }
 $(function() {
+    window.history.pushState(null, null, "#");
+    window.addEventListener("popstate", function(event) {
+        //  if (_viewer && _viewer.isShown) {
+        //     _viewer.hide();
+        // }else
+        back();
+        window.history.pushState(null, null, "#");
+        event.preventDefault(true);
+        event.stopPropagation();
+    });
+
+
     $(document).on('click', '[data-action]', function(event) {
         doAction($(this), $(this).attr('data-action'));
-    })
+    });
+    if(!IsPC()){
+         loadRes([
+            { url: "js/vue.js", type: "js" },
+            { url: "js/web-console.umd.min.js", type: "js" },
+        ], () => {
+            new WebConsole({
+                panelVisible: false,
+                activeTab: 'console',
+                entryStyle: 'button'
+            });
+        })
+    }
+
+    $('#input_img').on('change', function(event) {
+        var that = this;
+        var config = $(that).attr('data-config');
+        if(config){
+            config = JSON.parse(config);
+        }else{
+            config = {width: 800, quality: 0.5};
+        }
+        lrz(that.files[0], config)
+            .then(function(rst) {
+                //console.log(parseInt(that.files[0].size / 1024), parseInt(rst.fileLen / 1024));
+                switch ($(that).attr('data-type')) {
+                    case 'userIcon':
+                        $('#user_icon').attr('src', rst.base64);
+                        break;
+                }
+            })
+            .catch(function(err) {
+                alert('图片读取错误');
+            });
+    });
+
+    showContent('chatList');
 });
 
 function doAction(dom, action, params) {
@@ -93,33 +131,41 @@ function toBottom(dom) {
 
 
 function showContent(id) {
+    $('.navbar-nav').html('');
+
     g_cache.showing = id;
     var t = '';
     switch (id) {
         case 'time':
             t = _l('标题_计时');
+            g_cd.init();
             break;
 
         case 'chatList':
             t = _l('标题_聊天列表');
+            g_chat.init();
             break;
 
         case 'progress':
             t = _l('标题_进度');
+            g_habbit.init();
+
             break;
 
         case 'daily':
             t = _l('标题_日常');
+            g_habbit.init();
+
             break;
 
         case 'countdown':
             t = _l('标题_倒计时');
+            g_habbit.init();
             break;
     }
     $('.sidebar-menu .active').removeClass('active');
     $('.sidebar-menu [data-action="toTab,' + id + '"]').addClass('active');
     $('.navbar-brand').html(t);
-    $('.navbar-nav').html('');
     for (var con of $('._content')) {
         if (con.id == 'content_' + id) {
             $(con).show();
@@ -141,7 +187,7 @@ function showContent(id) {
 var connection;
 
 function initWebsock() {
-    connection = new WebSocket(socket_url);
+    connection = new WebSocket(_vars.socket);
     connection.onopen = () => {
         console.log('open')
        if(g_cache.query){
@@ -155,11 +201,19 @@ function initWebsock() {
         console.log(e.data);
         reviceMsg(JSON.parse(e.data));
     }
+
+     connection.onclose = (e) => {
+        console.log('close');
+     }
 }
 
-function queryMsg(data) {
+function queryMsg(data, user = false) {
+    if(user){
+        data.user = g_config.user ? g_config.user.name : undefined;
+    }
+    console.log('send', data);
     var msg = JSON.stringify(data);
-    if(!connection || connection.CLOSED == 3){
+    if(!connection || connection.readyState != 1){
         g_cache.query = msg;
         return initWebsock();
     }
@@ -168,7 +222,7 @@ function queryMsg(data) {
 
 
 function reviceMsg(data) {
-    // console.log(data);
+    console.log('revice', data);
     var type = data.type;
     delete data.type;
     if (g_revices[type]) {

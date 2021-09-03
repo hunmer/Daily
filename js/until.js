@@ -1,4 +1,34 @@
+// var _error = console.context().error;
+// console.context().error = () => {
+//     alert(JSON.stringify(arguments));
+//     _error(arguments);
+// }
+String.prototype.replaceAll = function(s1, s2) {
+    return this.replace(new RegExp(s1, "gm"), s2);
+}
 
+ function loadRes(files, callback) {
+    var i = 0;
+    for (var file of files) {
+        if (file.type == "js") {
+            var fileref = document.createElement('script');
+            fileref.setAttribute("type", "text/javascript");
+            fileref.setAttribute("src", file.url)
+        } else if (file.type == "css" || file.type == "cssText") {
+            var fileref = document.createElement("link");
+            fileref.setAttribute("rel", "stylesheet");
+            fileref.setAttribute("type", "text/css");
+            fileref.setAttribute("href", file.url)
+        }
+        document.getElementsByTagName("head")[0].appendChild(fileref).onload = function() {
+            //window.plugin_musicPlayer.res.push(fileref);
+            if (++i == files.length) {
+                if (typeof callback == 'function') callback();
+            }
+        }
+
+    }
+}
 
 function local_saveJson(key, data) {
     if (window.localStorage) {
@@ -265,3 +295,24 @@ function copyText(text) {
     halfmoon.toggleModal('modal-copy');
 }
 
+function closeModal(id, type, fun) {
+    var modal = $('#' + id)
+    if (modal.hasClass('show')) {
+        if (type && modal.attr('data-type') != type) {
+            return;
+        }
+        fun();
+    }
+}
+
+
+function checkInputValue(doms){
+    var values = [];
+    for(var input of doms){
+        if(input.value == ''){
+          return input.focus();
+        }
+        values.push(input.value);
+    }
+    return values;
+}

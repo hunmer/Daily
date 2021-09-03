@@ -1,5 +1,17 @@
 var g_todo = {
+    preInit: () => {
+         $(`<h5 class="sidebar-title">` + _l('侧栏_代办_标题') + `</h5>
+            <div class="sidebar-divider"></div>
+            <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,todo">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                    </span>
+            ` + _l('侧栏_代办_进入') + `
+            </a>`).appendTo('.sidebar-menu');
+    },
     init: () => {
+        if(g_todo.inited) return;
+        g_todo.inited = true;
         $(`<div id='content_todo' class="_content p-10 hide animated fadeIn" animated='fadeIn'>
             <div class="mainContent"></div>
             <div class="ftb br">
@@ -12,15 +24,6 @@ var g_todo = {
                 </div>
             </div>
             </div>`).appendTo('.content-wrapper');
-        $(`<h5 class="sidebar-title">` + _l('侧栏_代办_标题') + `</h5>
-            <div class="sidebar-divider"></div>
-            <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,todo">
-                    <span class="sidebar-icon">
-                        <i class="fa fa-commenting-o" aria-hidden="true"></i>
-                    </span>
-            ` + _l('侧栏_代办_进入') + `
-            </a>`).appendTo('.sidebar-menu');
-
         g_todo.registerActions();
         g_todo.initHtml();
         // showContent('todo');
@@ -166,4 +169,4 @@ var g_todo = {
     }
 }
 
-g_todo.init();
+g_todo.preInit();
