@@ -3,10 +3,9 @@ var _GET = getGETArray();
 // var ip = '';
 var _vars
 if(0){
-	var ip = !IsPC() ? '192.168.23.1' : '127.0.0.1';
 	_vars = {
-		img: 'http://'+ip+'/Daily-websocket/',
-		socket: 'ws:///'+ip+':8000'
+		img: 'http://'+location.host+'/Daily-websocket/',
+		socket: 'ws:///'+location.host+':8000'
 	}
 }else{
 	_vars = {
@@ -34,6 +33,7 @@ var g_stricker = local_readJson('stricker', { "id_1202706": { "id": 1202706, "na
 var g_stricker_options = local_readJson('stricker_options', {
     likes: [],
     tags: {},
+    hisoty_emoji: [],
     history: [],
     last: {
         id: undefined,

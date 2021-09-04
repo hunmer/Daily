@@ -1,5 +1,6 @@
 var g_chat = {
     lastData: '',
+    fullscreen: false,
     preInit: () => {
         $(`<h5 class="sidebar-title">` + _l('侧栏_聊天_标题') + `</h5>
             <div class="sidebar-divider"></div>
@@ -62,13 +63,6 @@ var g_chat = {
 
                 <div class="overflow-y-hidden overflow-x-scroll w-full h-50 w-full">
                       <div class="w-full font-size-20 d-inline-flex" onmousewheel="this.parentElement.scrollBy(event.deltaY, 0)" id="emoji_recent">
-                          <span data-action="emoji_select">😀</span>
-                          <span data-action="emoji_select">😂</span>
-                          <span data-action="emoji_select">🤣</span>
-                          <span data-action="emoji_select">😅</span>
-                          <span data-action="emoji_select">😭</span>
-                          <span data-action="emoji_select">😵</span>
-                          <span data-action="emoji_select">🤩</span>
                       </div>
                 </div>
 
@@ -154,7 +148,11 @@ var g_chat = {
                 </div>
             </div>
         `).appendTo('body');
+            g_emoji.initHistoryEmoji();
 
+        registerContextMenu('.chat_list', (dom, event) => {
+            doAction(null, 'chatList_add,'+dom.attr('data-name'));
+        });
         registerContextMenu('.msg .main', (dom, event) => {
             g_chat.rm_showing = dom.parent('[data-time]').attr('data-time');
             g_chat.rm.css('display', 'unset');
@@ -291,16 +289,38 @@ var g_chat = {
             par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
         },
 
+        
     registerActions: () => {
+        registerAction('editor_fullscreen', (dom, action, params, event) => {
+            g_chat.fullscreen = !g_chat.fullscreen;
+            if(g_chat.fullscreen){
+                var div = $('.navbar-fixed-bottom').css({top: 0, height: '100%'}).find('#bottom_chat').css('height', '100%').find('.flex-center').css('height', '100%');
+                div.find('#msg').css('height', '100%').addClass('col-12');
+                $('button[data-action="chat_sendMsg"]').css({
+                        position: 'fixed',
+                         height: 'unset', 
+                        bottom: 0,
+                        right: 0
+                });
+            }else{
+                var div = $('.navbar-fixed-bottom').css({top: 'unset', height: '100px'}).find('#bottom_chat').css('height', 'unset').find('.flex-center').css('height', 'unset');
+                div.find('#msg').css('height', 'unset').removeClass('col-12');
+                $('button[data-action="chat_sendMsg"]').css({
+                        position: 'unset',
+                         height: 'unset', 
+                });
+            }
+            
+        });
         registerAction('emoji_select', (dom, action, params) => {
             var time = action.length > 1 ? action[1] : g_chat.rm_showing
             var par = $('.msg[data-time="' +time+ '"]');
              if(action.length > 1){
                 delete g_chats[g_chat.name].msgs[time].emoji;
             }else{
-                g_chats[g_chat.name].msgs[time].emoji = $(dom).html();
+                console.log(dom.nodeName == 'IMG' ? dom.src : $(dom).html());
+                g_chats[g_chat.name].msgs[time].emoji = dom.nodeName == 'IMG' ? dom.src : $(dom).html();
             }
-            console.log(g_chats[g_chat.name].msgs[time].emoji);
             local_saveJson('chats', g_chats);
             par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
         });
@@ -465,16 +485,24 @@ var g_chat = {
             var m = g_chat.editor.txt.html();
             if (m != '') {
                 g_emoji.hide();
-
+                if(g_chat.fullScreen){
+                    $('[data-action="editor_fullscreen"]').click();
+                }
                 var c = $(m).clone();
                 for(var d of c.find('.emoji_')){
                     d.style.backgroundColor = '';
                 }
+                if(c.length == 1 && c[0].nodeName == 'P'){
+                    s = c[0].innerText;
+                } else{
+                    s = c[0].outerHTML // jq html() 无法获取h1等等
+                }
+                console.log(s);
+
                 g_chat.editor.txt.clear();
                 var data = {
-                    text: c[0].outerHTML // jq html() 无法获取h1等等
+                    text: s
                 }
-                console.log(data);
                 var time = new Date().getTime();
                 g_chats[g_chat.name].msgs[time] = data;
                 local_saveJson('chats', g_chats);
@@ -532,7 +560,9 @@ var g_chat = {
                       <span class="badge badge-primary">`+cnt[0]+`</span>
                     </a>
                 </div>
+
             </div>`);
+
     },
     getHTML_msgs: (time, data, replace = true) => {
         var h = '';
@@ -551,10 +581,10 @@ var g_chat = {
                         <span class='time text-muted text-right'>` + getFormatedTime(0, date) + `</span>
                     </div>
                 <div class="alert` + (data.color ? ' alert-' + data.color : '') + ` main filled-dm mb-5 mr-5 col-auto shadow-sm" role="alert">
-                `+(data.emoji ? '<span class="emoji" data-action="emoji_select,'+time+'">'+data.emoji+'</span>' : '')+`
+                `+(data.emoji ? (data.emoji.indexOf('http') != -1 ? '<img class="emoji-pin" style="width: 23px;margin: 5px;height:23px;" src="'+data.emoji+'" data-action="emoji_select,'+time+'">' : '<span class="emoji-pin" data-action="emoji_select,'+time+'">'+data.emoji+'</span>') : '')+`
                 
                   <h4 class="alert-heading"></h4>
-                  <span class="alert-text">` + g_chat.getStyle(data) + `</span>
+                  <span class="alert-text text-break ">` + g_chat.getStyle(data) + `</span>
                 </div>
             </div>`;
         //  <img src="img/maki.jpg" class="user-icon">
@@ -594,8 +624,6 @@ var g_chat = {
             h += g_chat.getHTML_msgs(time, g_chats[name].msgs[time], false)
         }
         
-        ;
-
         for(var img of $('#content_chat .mainContent').html(h)){
             reloadImage(img);
         }
@@ -606,18 +634,21 @@ var g_chat = {
                     <div id="toolbar-container" class="w-full"></div>
                 </div>
 
-                <div class="col-12 flex-center">
-                    <div id="msg" class="w-full text-center form-control col-9 p-0 m-0" style="height: 50px"></div>
-                    <div class="col-3 p-10 text-center" style="height: -webkit-fill-available;">
-                        <button class="btn btn-primary shadow w-80" style="height: 100%;" data-action="chat_sendMsg">
-                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                        </button>
+                <div class="col-12 d-flex">
+                    <div class="col-1">
+                        <i data-action="editor_fullscreen" class="fa fa-arrows-alt" aria-hidden="true" style="position: absolute;top: 5px; left: 12px;z-index: 9999;"></i>
+                     </div>
+               
+
+                    <div id="msg" class="w-full text-center form-control col-10 mx-auto  " style="height: 50px;padding-right: 35px;padding-left: 5px;border-bottom-right-radius: 50px !important;">
+                    </div>
+                    <div class="col-1">
+
+                     <a data-action="chat_sendMsg" class="btn btn-square btn-primary rounded-circle btn-lg shadow" style="position: absolute;bottom: 2px; right: 18px;font-size: 2rem;"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>`);
-         $('.navbar-fixed-bottom').css('height', $('#bottom_chat').height());
           g_chat.editor = new wangEditor("#toolbar-container", "#msg");
-          g_chat.editor.config.placeholder = 'ここで入力する...';
           g_chat.editor.config.menus = [
                 // 'emoticon',
                 'bold',
@@ -628,6 +659,7 @@ var g_chat = {
                 'list',
                 'image',
             ];
+            g_chat.randomPlaceHolder();
             g_chat.editor.config.uploadImgShowBase64 = true;
 
             g_chat.editor.config.customUploadImg = function (resultFiles, insertImgFn) {
@@ -643,6 +675,7 @@ var g_chat = {
             // TODO 对网络图片进行大小限制
 
             g_chat.editor.config.onchange = function(newHtml) {
+                if(g_chat.fullscreen) return;
                 var h;
                 if(newHtml.trim() == ''){
                     h = 50;
@@ -676,6 +709,7 @@ var g_chat = {
             </div>`);
 
         showContent('chat');
+         g_chat.randomPlaceHolder();
         $('.navbar-brand').html(`<i data-action="habbit_dots" class="fa ` + g_chats[name].icon + ` mr-10" aria-hidden="true"></i>` + name);
         $('.navbar-nav').html(`
             <a class="badge-group hide">
@@ -704,6 +738,20 @@ var g_chat = {
             g_chat.nav_check(time, name);
         }
         toBottom($('#content_chat'));
+        $('.content-wrapper').scroll();
+    },
+
+    randomPlaceHolder: () => {
+        var a = [
+            '今日いい事あった～？',
+            '今何してるの～？',
+            '今日は何したい？',
+            'なんでもいいよ～',
+            'ほんの少しだけ運命は変えるよ',
+            // '今天写了{}条消息了哦..',
+            // '已经{}没有发过消息了哦..',
+        ];
+        $('.placeholder').html(a[randNum(0, a.length - 1)]);
     },
 
     // 消息界面右上角显示的一日统计
@@ -729,8 +777,8 @@ var g_chat = {
                       <h4 class="alert-heading text-truncate" style="calc(100% - 100px);">` + name + `</h4><span>
                       ` + (len > 0 ? data.msgs[keys[keys.length - 1]].text : _l('什么都没写')) + `</span>
                   </div>
-                    <span class="text-muted rt">` + getFormatedTime(0, new Date(parseInt(len > 0 ? keys[0] : data.createAt))) + `</span>
-                    <span class="badge badge-primary rb">` + len + `</span>
+                    <span class="text-muted rt">` + time_getRent(parseInt(len > 0 ? keys[0] : data.createAt)) + `</span>
+                    ` + (len > 0 ? '<span class="badge badge-primary rb">' + len +'</span>' : '') + `
                 </div>`;
     }
 }

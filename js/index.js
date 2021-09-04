@@ -100,7 +100,7 @@ function enableDebug(){
 function doAction(dom, action, params) {
     var action = action.split(',');
     if (g_actions[action[0]]) {
-        return g_actions[action[0]](dom, action, params)
+        return g_actions[action[0]](dom, action, params);
     }
     switch (action[0]) {
         case 'up':
@@ -188,7 +188,7 @@ function toBottom(dom) {
 
 function showContent(id) {
     $('.navbar-nav').html('');
-
+    $('.navbar-fixed-bottom').css('height', '');
     g_cache.showing = id;
     var t = '';
     switch (id) {
@@ -198,7 +198,6 @@ function showContent(id) {
             break;
 
         case 'chatList':
-
             t = _l('标题_聊天列表');
             g_chat.init();
             g_chat.initNav();
@@ -241,6 +240,9 @@ function showContent(id) {
             $(con).hide();
         }
     }
+
+    $('.navbar-fixed-bottom').css('height', $('.navbar-fixed-bottom').children().height()+'px');
+
 }
 
 var connection;
@@ -314,7 +316,7 @@ function reviceMsg(data) {
 
 function test(){
     // doAction(null, 'ranking');
-        // g_chat.openChat('日常');
+        g_chat.openChat('日常');
 }
 
 function onToggleSidebar(){

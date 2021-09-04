@@ -29,6 +29,7 @@
     font-size: unset !important;
 }
 .w-e-text-container {
+     padding-right: 10px !important;
      padding-top: 7px !important;
     text-align: left;
     background-color: unset !important;
@@ -62,7 +63,7 @@ span[data-action="stricker_toTab"] img {
 ._emoji {
     margin-left: 10px;
     margin-right: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-size: 20px;
 }
 
@@ -98,7 +99,7 @@ span[data-action="stricker_toTab"] img {
 .w-125 {
     width: 125px !important;
 }
-.emoji {
+.emoji-pin {
     position: absolute;
     right: -12px;
     bottom: -16px;
@@ -151,6 +152,8 @@ span[data-action="stricker_toTab"] img {
 }
 
 body {
+     user-select: none;
+    -webkit-user-drag: none;
     color: var(--lm-base-text-color);
     overflow-x: hidden;
     background-position: center top;

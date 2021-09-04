@@ -5,7 +5,6 @@ var g_emoji = {
         g_emoji.registerAction();
         _audio_stricker = $('<audio>').appendTo('body')[0];
         g_emoji.prompt();
-
     },
     hide: () => {
       $('#modal-stricker').hide();
@@ -77,7 +76,24 @@ var g_emoji = {
     	
     	registerAction('emoji_send', (dom, action, params) => {
 	    		var d = $(dom).find('img');
-	    		g_chat.editor.cmd.do('insertHTML', d.length ? '<img class="emoji_ align-middle" width="16px" style="position: relative;top: -1px;margin: 3px;" src="'+d.attr('src')+'">' : '<span class="emoji_">'+dom.innerText+'</span>');
+	    		if(d.length){
+	    			key = d.attr('src');
+	    			s = '<img class="emoji_ align-middle" width="16px" style="position: relative;top: -1px;margin: 3px;" src="'+key+'">' ;
+	    		}else{
+	    			key = dom.innerText;
+	    			s = '<span class="emoji_">'+key+'</span>';
+	    		}
+
+    		var a = g_stricker_options.hisoty_emoji || [];
+	    		var i = a.indexOf(key);
+		    if(i != -1) a.splice(i, 1);
+		    a.splice(0, 0, key);
+		    if (a.length > 20) a.pop();
+		    g_stricker_options.hisoty_emoji = a;
+    local_saveJson('stricker_options', g_stricker_options);
+
+    g_emoji.initHistoryEmoji();
+	    		g_chat.editor.cmd.do('insertHTML', s);
 	    		g_chat.editor.txt.eventHooks.imgClickEvents = [];
        });
         registerAction('stricker_toEmoji', (dom, action, params) => {
@@ -106,6 +122,7 @@ var g_emoji = {
         		}
         	}
         	$('.emoji_active').removeClass('emoji_active');
+        	$(dom).addClass('emoji_active');
         	for(var div of $('.emoji_content')){
         		if(div.id == 'emoji_content_'+action[1]){
         			$(div).show();
@@ -230,7 +247,10 @@ var g_emoji = {
             }
         });
         registerAction('show_stricker', (dom, action, params) => {
-        	if(!g_emoji.isShowing()){
+        	if(g_emoji.isShowing()){
+
+        	}else{
+        				g_emoji.hide();
         			$('#stricker_footer').css('display', 'none');
 	            g_emoji.show();
 	            if(!g_emoji.lastEmojiTab){
@@ -238,14 +258,21 @@ var g_emoji = {
 		          		$('[data-action="stricker_toType,emoji"]').click();
 		            }, 200);
 	            }
-        	}else{
-            				g_emoji.hide();
         	}
         });
 
     },
+    initHistoryEmoji: () => {
+    	var a = g_stricker_options.hisoty_emoji || ['😀', '😂', '🤣', '😅', '😭', '😵','🤩'];
+
+    	    var h = '';
+            for(var s of a){
+                h += s.indexOf('.') != -1 ? '<img data-action="emoji_select" style="width: 23px;margin: 5px;height:23px;" src="'+s+'">': '<span data-action="emoji_select">'+s+'</span>';
+            }
+            $('#emoji_recent').html(h);
+    },
     prompt: () => {
-        $(`<div id="modal-stricker" style="border-top: 1px solid #bbbbbb;position: fixed;bottom: 70px;left:0;width: 100%;z-index: 20;">
+        $(`<div id="modal-stricker" style="border-top: 1px solid #bbbbbb;position: fixed;bottom: 70px;left:0;width: 100%;z-index: 20; display: none;">
         <div>
             <div class="p-20 theme">
                 <div class="w-full mx-auto h-50">
@@ -357,7 +384,7 @@ var g_emoji = {
     </div>`).appendTo('.content-wrapper');
 
 // <i class="fa fa-close" onclick="g_emoji.hide();" aria-hidden="true"></i>
-        doAction(null, 'show_stricker');
+        // doAction(null, 'show_stricker');
     }
 }
 

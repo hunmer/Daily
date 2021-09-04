@@ -60,6 +60,7 @@ function getGETArray() {
 }
 
 function getFormatedTime(i = 0, date = new Date()) {
+    if(typeof(date) != 'object') date = new Date(parseInt(date));
     switch (i) {
         case 0:
             return _s(date.getHours()) + ':' + _s(date.getMinutes());
@@ -119,6 +120,23 @@ function _s(i, j = '') {
 function _s2(s, j = '') {
     s = parseInt(s);
     return (s == 0 ? '' : s + j);
+}
+
+
+
+function time_getRent(time){
+    var s = (parseInt(new Date().getTime()) - time) / 1000;
+    if(s >= 84000){
+        if(s >= 84000 * 30){
+            if(s >= 84000 * 365){
+                return getFormatedTime(4, time);
+            }
+            return getFormatedTime(2, time);
+        }
+        return parseInt(s / 86400) + '天前';
+    }
+    // console.log(getTime(s, '时', '分', '秒前'));
+    return getFormatedTime(0, time);
 }
 
 function getTime(s, sh = '时', sm = '分', ss = '秒') {
