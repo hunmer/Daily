@@ -1,14 +1,19 @@
 
 
 function back() {
+    if(g_emoji.isShowing()){
+      g_emoji.hide();
+    } else
     if ($('.modal.show').length) {
         halfmoon.toggleModal($('.modal.show')[0].id);
     } else
-    if (hideSidebar()) {} else
+    if (hideSidebar()) {
+
+    } else
     if (g_cache.showing != undefined) {
         g_cache.showing = undefined;
         $('[data-action="toTab,chatList"]')[0].click();
-    } else {
+    } else{
         if (confirm(_l('是否结束'))) {
             toastPAlert(_l('是否结束1'), 'alert-danger');
             return;
@@ -31,7 +36,7 @@ $(function() {
 
 
     $(document).on('click', '[data-action]', function(event) {
-        doAction($(this), $(this).attr('data-action'));
+        doAction(this, $(this).attr('data-action'));
     }).on('dblclick', '.msg .main', function(event) {
         g_chat.setTextStyle($(this).parent('[data-time]').attr('data-time'), 'del');
     })
@@ -309,4 +314,14 @@ function reviceMsg(data) {
 
 function test(){
     // doAction(null, 'ranking');
+        // g_chat.openChat('日常');
+}
+
+function onToggleSidebar(){
+    halfmoon.toggleSidebar();
+    if($('#page-wrapper').attr('data-sidebar-hidden') == 'hidden'){
+
+    }else{
+        g_emoji.hide();
+    }
 }

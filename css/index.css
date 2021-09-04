@@ -1,6 +1,99 @@
+.w-e-toolbar {
+    justify-content: space-between;
+}
+
+.msg .thumb {
+   width: 200px !important;
+}
+.thumb {
+    width: 50px;
+}
+.w-e-toolbar {
+    padding: 0;
+    background-color: unset !important;
+}
+.w-e-droplist {
+    transform: translateY(-100%);
+}
+.w-e-panel-container {
+    transform: translateY(-100%);
+}
+
+.w-e-text-container p {
+    margin: 0 !important;
+}
+
+.w-e-text-container span, img {
+    background-color: unset !important;
+    color: unset !important;
+    font-size: unset !important;
+}
+.w-e-text-container {
+     padding-top: 7px !important;
+    text-align: left;
+    background-color: unset !important;
+}
+
+.placeholder {
+    color: rgba(255, 255, 255, .4) !important;
+}
+
+
 .text-dark-1 {
     color: black !important;
 }
+
+.h-fit {
+    height: fit-content;
+}
+
+
+span[data-action="stricker_toTab"] {
+    padding: 10px;
+   
+}
+
+span[data-action="stricker_toTab"] img {
+     width: 20px;
+    height: 20px;
+}
+
+
+._emoji {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+ #stricker_types span {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+
+.stricker_active {
+   border-bottom: 4px solid var(--primary-color) !important;
+}
+.emoji_tab_active {
+   border-bottom: 4px solid var(--primary-color) !important;
+}
+
+.emoji_active {
+   border-bottom: 4px solid var(--primary-color) !important;
+}
+#modal-stricker .col-4 img,
+#bottom_stricker img {
+    width: inherit;
+    padding: 10px;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.selected {
+    border: 1px solid var(--dm-button-primary-border-color-hover);
+}
+
 
 .w-125 {
     width: 125px !important;
@@ -28,6 +121,16 @@
 .dark-mode {
     color: var(--dm-base-text-color);
 }
+
+.theme {
+    background-color: var(--dm-base-text-color);
+}
+
+.dark-mode .theme {
+    background-color: var(--dm-base-body-bg-color) !important;
+
+}
+
 
 @font-face {
     font-family: janFont;
@@ -69,7 +172,7 @@ body {
 
 ::-webkit-scrollbar {
     width: 5px;
-    height: 10px;
+    height: 5px;
 }
 
 ::-webkit-scrollbar-track {

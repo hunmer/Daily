@@ -10,7 +10,7 @@ var g_user = {
 		if(!g_config.user){
 			g_user.modal();
 		}else{
-      $('#sidebar_icons_float img').attr('src', g_config.user.icon);
+      $('#sidebar_icons_float img').attr('src', _vars.img+g_config.user.icon);
        g_user.upload();
     }
     registerAction('user_uploadIcon', (dom, action, params) => {
@@ -30,7 +30,7 @@ var g_user = {
           // password: v[2],
           // desc: $('#user_input_desc').val(),
       }
-      dom.html(_l('弹出_用户_按钮_上传中'));
+      $(dom).html(_l('弹出_用户_按钮_上传中'));
       queryMsg({type: 'setProfile', data: data});
     });
 

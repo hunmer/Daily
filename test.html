@@ -1,0 +1,20 @@
+<body>
+</body>
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$.getJSON('twitter.json', function(json, textStatus) {
+			console.log(json);
+			if(textStatus == 'success'){
+				for(var detail of json['categories']){
+					console.log(detail['name']);
+					for(var emoji of detail['emojis']){
+						$('body').append(String.fromCodePoint(parseInt(json.emojis[emoji].b, 16)));
+					}
+				}
+			}
+
+		});
+	});
+
+</script>

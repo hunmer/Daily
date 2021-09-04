@@ -25,7 +25,7 @@ var g_chat = {
             </div>`).appendTo('.content-wrapper');
         $(`<div id='content_chat' class="_content p-10 hide animated fadeIn" animated='fadeIn'>
             <div class="mainContent"></div>
-            <div class="ftb br">
+            <div class="ftb br" style="bottom: 100px;">
                 <div class="row mx-auto" style="width: 20%;">
                     <div class="col">
                         <a data-action="up" class="btn btn-square btn-primary rounded-circle btn-lg shadow" style="display: none;" role="button"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
@@ -41,7 +41,6 @@ var g_chat = {
         g_chat.initHtml();
         // showContent('chatList');
         // showContent('chat');
-        // g_chat.openChat('日常');
         // g_chat.showSearch();
                       //😀😁😂🤣😃😄😅😆😆😉😊😋😎😍😘🥰😗
         //
@@ -190,6 +189,7 @@ var g_chat = {
                 top: y + 'px',
             }), 'flipInX', () => {});
         });
+
     },
     showSearch: () => {
         g_cache.closeCustom = () => {}
@@ -214,8 +214,8 @@ var g_chat = {
     showRanking: (date, table = true) => {
             g_cache.rankingDate = date;
             var d = g_cache.ranking;
-            if (d[date]) {
                 var h = '';
+            if (d[date]) {
                 var i = 1;
 
                 for (var name of Object.keys(d[date]).sort(function(a, b) {
@@ -248,7 +248,9 @@ var g_chat = {
                 </tr>`;
                     i++;
                 }
-                if(table){
+            }
+
+            if(table){
                     $('#modal-custom').find('.modal-title').html(_l('弹出_排行榜_标题', date));
                     $('#modal-custom').attr('data-type', 'ranking').find('.modal-html').html(`
                 
@@ -276,8 +278,6 @@ var g_chat = {
                          $('#modal-custom tbody').html(h);
                     })
                 }
-                
-            }
 
     },
      setTextStyle: (time, style, enable) => {
@@ -306,7 +306,7 @@ var g_chat = {
         });
          registerAction('ranking_sort', (dom, action, params) => {
             $('#table_ranking').find('.fa-arrow-up').hide().parent().removeClass('text-primary');
-            dom.find('.fa-arrow-up').show().parent().addClass('text-primary');
+            $(dom).find('.fa-arrow-up').show().parent().addClass('text-primary');
             g_cache.ranking_sort = action[1];
             g_chat.showRanking( g_cache.rankingDate, false);
         });
@@ -326,9 +326,6 @@ var g_chat = {
             }
             $('.timepicker').pickadate({
                  disable: enable,
-                 onOpen: () => {
-                    $('.timepicker').pickadate('picker').set('view', g_cache.rankingDate);
-                 },
                  onSet: function(thingSet) {
                     g_chat.showRanking(getFormatedTime(4, new Date(thingSet.select)));
                  }
@@ -374,13 +371,12 @@ var g_chat = {
         });
         registerAction('chat_msg_delete', (dom, action, params) => {
             if (confirm(_l('是否删除消息'))) {
+                g_chat.rm.css('display', 'none');
                 var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
-                halfmoon.toggleModal('modal-custom');
                 delete g_chats[g_chat.name].msgs[par.attr('data-time')];
                 par.remove();
                 local_saveJson('chats', g_chats);
             }
-            g_chat.openChat($(dom).attr('data-name'));
         });
         registerAction('chatList_remove', (dom, action, params) => {
             if (confirm(_l('是否删除频道'))) {
@@ -444,7 +440,7 @@ var g_chat = {
             }
             if (edit) {
                 data = Object.assign(g_chats[action[1]], data);
-                g_chats[name] = data;
+               
                 if (name != action[1]) {
                     delete g_chats[action[1]];
                     var to = name;
@@ -454,6 +450,7 @@ var g_chat = {
                 data.msgs = {};
                 data.createAt = new Date().getTime();
             }
+             g_chats[name] = data;
 
             local_saveJson('chats', g_chats);
             halfmoon.toggleModal('modal-custom');
@@ -465,12 +462,19 @@ var g_chat = {
         });
         registerAction('chat_searchTag', (dom, action, params) => {});
         registerAction('chat_sendMsg', (dom, action, params) => {
-            var m = $('#msg').val();
+            var m = g_chat.editor.txt.html();
             if (m != '') {
-                $('#msg').val('');
-                var data = {
-                    text: m
+                g_emoji.hide();
+
+                var c = $(m).clone();
+                for(var d of c.find('.emoji_')){
+                    d.style.backgroundColor = '';
                 }
+                g_chat.editor.txt.clear();
+                var data = {
+                    text: c[0].outerHTML // jq html() 无法获取h1等等
+                }
+                console.log(data);
                 var time = new Date().getTime();
                 g_chats[g_chat.name].msgs[time] = data;
                 local_saveJson('chats', g_chats);
@@ -575,6 +579,7 @@ var g_chat = {
     },
 
     openChat: (name) => {
+        if(name == undefined) return
         g_chat.lastData = '';
         g_chat.name = name;
         /*
@@ -589,23 +594,87 @@ var g_chat = {
             h += g_chat.getHTML_msgs(time, g_chats[name].msgs[time], false)
         }
         
-        $('#content_chat .mainContent').html(h);
+        ;
 
-        /*
-    <button class="btn btn-primary col float-right" type="button" data-action="chat_sendMsg" style="max-width: 90%;border-radius: 20px;">
-                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                </button>
-        */
+        for(var img of $('#content_chat .mainContent').html(h)){
+            reloadImage(img);
+        }
         $('.navbar-fixed-bottom').html(`
-            <div id="bottom_chat" class="row w-full flex-center toolbar">
-                <div class="col-9 flex-center mx-auto" >
-                    <i class="fa fa-smile-o font-size-18" aria-hidden="true" style="position: absolute;left: 15px;"></i>
-                    <input type="text" id='msg' class="form-control" placeholder="ここで入力する..." onkeydown="if(event.keyCode == 13){doAction(null, 'chat_sendMsg')}" style="padding-left: 40px;padding-right: 40px;">
-                    <i class="fa fa-picture-o font-size-18" aria-hidden="true" style="position: absolute;right: 15px;"></i>
+            <div id="bottom_chat" class="row w-full toolbar" style="position: absolute;
+    top: 0;height: 100px;display: flex;text-align: center;align-content: flex-start;justify-content: space-evenly;">
+                <div class='col-12'>
+                    <div id="toolbar-container" class="w-full"></div>
                 </div>
-                <div class='col-1'></div>
-                
+
+                <div class="col-12 flex-center">
+                    <div id="msg" class="w-full text-center form-control col-9 p-0 m-0" style="height: 50px"></div>
+                    <div class="col-3 p-10 text-center" style="height: -webkit-fill-available;">
+                        <button class="btn btn-primary shadow w-80" style="height: 100%;" data-action="chat_sendMsg">
+                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
             </div>`);
+         $('.navbar-fixed-bottom').css('height', $('#bottom_chat').height());
+          g_chat.editor = new wangEditor("#toolbar-container", "#msg");
+          g_chat.editor.config.placeholder = 'ここで入力する...';
+          g_chat.editor.config.menus = [
+                // 'emoticon',
+                'bold',
+                'head',
+                'italic',
+                'underline',
+                'strikeThrough',
+                'list',
+                'image',
+            ];
+            g_chat.editor.config.uploadImgShowBase64 = true;
+
+            g_chat.editor.config.customUploadImg = function (resultFiles, insertImgFn) {
+                lrz(resultFiles[0],  {width: 800, quality: 0.5})
+                    .then(function(rst) {
+                        console.log(parseInt(resultFiles[0].size / 1024), parseInt(rst.fileLen / 1024));
+                        insertImgFn(rst.base64)
+                })
+                .catch(function(err) {
+                    alert('图片读取错误');
+                });
+            }
+            // TODO 对网络图片进行大小限制
+
+            g_chat.editor.config.onchange = function(newHtml) {
+                var h;
+                if(newHtml.trim() == ''){
+                    h = 50;
+                }else{
+                    h =$('.w-e-text')[0].scrollHeight;
+                }
+                if(h > 400) h = 400;
+                if(h < 50) h = 50;
+                 $('#msg').css('height', h);
+                 $('.navbar-fixed-bottom').css('height', h+50);
+                 // if(!$('#msg').hasClass('width_img')){
+                 //     $('#msg').addClass('width_img');
+                 //  }
+            }
+
+            g_chat.editor.txt.eventHooks.enterUpEvents.splice(0, 0, (event) => {
+                if(event.ctrlKey){
+                    $('[data-action="chat_sendMsg"]').click();
+                }
+            });
+            
+            g_chat.editor.config.focus = false
+
+            g_chat.editor.config.onfocus = function () {
+                 setTimeout(() => {toBottom($('#content_chat'))}, 500);
+            }
+             g_chat.editor.create();
+
+        $('.w-e-toolbar').prepend(`<div data-action="show_stricker" class="w-e-menu" data-title="">
+                <i class="w-e-icon-happy"></i>
+            </div>`);
+
         showContent('chat');
         $('.navbar-brand').html(`<i data-action="habbit_dots" class="fa ` + g_chats[name].icon + ` mr-10" aria-hidden="true"></i>` + name);
         $('.navbar-nav').html(`
