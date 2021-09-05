@@ -131,7 +131,7 @@ var g_cd = {
         });
         
         registerAction('time_start', (dom, action, params) => {
-            if (dom.hasClass('btn-primary')) {
+            if ($(dom).hasClass('btn-primary')) {
                 var d = g_cd.con.find('#input_time_title');
                 if (d.val() == '') return d.focus();
 
@@ -155,7 +155,7 @@ var g_cd = {
                     }
                 }
                 g_cd.startTimer();
-                dom.removeClass('btn-primary').addClass('btn-danger').html('Stop');
+                $(dom).removeClass('btn-primary').addClass('btn-danger').html('Stop');
             } else {
                 var save = false;
                 if (confirm(_l('是否中止'))) {

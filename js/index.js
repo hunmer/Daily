@@ -316,7 +316,7 @@ function reviceMsg(data) {
 
 function test(){
     // doAction(null, 'ranking');
-        g_chat.openChat('日常');
+        // g_chat.openChat('日常');
 }
 
 function onToggleSidebar(){
