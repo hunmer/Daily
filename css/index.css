@@ -8,12 +8,15 @@
 .thumb {
     width: 50px;
 }
+
+
 .w-e-toolbar {
     padding: 0;
+     flex-wrap: unset !important;
     background-color: unset !important;
 }
 .w-e-droplist {
-    transform: translateY(-100%);
+    transform: translateY(-100%) translateX(-100%);
 }
 .w-e-panel-container {
     transform: translateY(-100%);
@@ -138,7 +141,7 @@ span[data-action="stricker_toTab"] img {
     src: url(../fonts/KosugiMaru-Regular.ttf);
 }
 :root {
-    /*--dm-navbar-bg-color: unset;*/
+    /*--dm-navbar-bg-color: unset;
     /*--lm-base-body-bg-image: linear-gradient(rgb(35 35 35 / 50%), rgb(111 111 111)),url(../res/bg.jpg),url(../res/bg.jpg);*/
     --lm-base-body-bg-color: transparent;
     --lm-navbar-bg-color: unset;

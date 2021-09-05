@@ -40,10 +40,18 @@ $(function() {
     }).on('dblclick', '.msg .main', function(event) {
         g_chat.setTextStyle($(this).parent('[data-time]').attr('data-time'), 'del');
     })
+    .on('change', '.msg .w-e-todo input[type="checkbox"]', function(event){
+        var dom = $(event.target);
+        dom.attr('checked', event.target.checked); // 把checked加入属性
+        var time = dom.parents('[data-time]').attr('data-time');
+        var html = dom.parents('.msg_text').html();
+        g_chats[g_chat.name].msgs[time].text = html;
+        local_saveJson('chats', g_chats);
+    })
 
     $('.content-wrapper').scroll(function(event){
         var div = $('#content_'+g_cache.showing);
-        div.find('[data-action="up"]').css('display', this.scrollTop == 0 ? 'none' : 'block');
+        //div.find('[data-action="up"]').css('display', this.scrollTop == 0 ? 'none' : 'block');
         if(g_cache.showing == 'chat'){
             var d = $(document.elementFromPoint($(this).width() / 2, $(this).height() / 2));
             if(d != null){
@@ -241,8 +249,13 @@ function showContent(id) {
         }
     }
 
-    $('.navbar-fixed-bottom').css('height', $('.navbar-fixed-bottom').children().height()+'px');
+    initNavHeight();
 
+}
+
+function initNavHeight(){
+    g_cache.lastNavMinH =  $('.navbar-fixed-bottom').children().height();
+    $('.navbar-fixed-bottom').css('height',g_cache.lastNavMinH );
 }
 
 var connection;

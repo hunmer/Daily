@@ -1,150 +1,159 @@
 var _audio_stricker;
 var g_emoji = {
-	list: {},
+    list: {},
     init: () => {
         g_emoji.registerAction();
-        _audio_stricker = $('<audio>').appendTo('body')[0];
+        _audio_stricker = $('<audio autoplay></audio>').appendTo('body')[0];
         g_emoji.prompt();
     },
     hide: () => {
-      $('#modal-stricker').hide();
+        $('#modal-stricker').hide();
         $('[data-action="show_stricker"]').removeClass('text-primary');
     },
     show: () => {
-      $('#modal-stricker').show();
-      $('[data-action="show_stricker"]').addClass('text-primary');
+        $('#modal-stricker').show();
+        $('[data-action="show_stricker"]').addClass('text-primary');
     },
     isShowing: () => {
-    	return $('#modal-stricker').css('display') != 'none';
+        return $('#modal-stricker').css('display') != 'none';
+    },
+    playAudio: (src) => {
+    	 _audio_stricker.src = src;
     },
     loadEmojis: (type) => {
-    	g_emoji.lastEmojiType = type;
-    	$.getJSON('emojis/'+type+'.json', function(json, textStatus) {
-				if(textStatus == 'success'){
-					g_emoji.data = json;
-					var l = {
-						people: '😀',
-						nature: '🐱',
-						foods: '🍎',
-						activity: '⚾',
-						places: '🚖',
-						objects: '👝',
-						symbols: '💠',
-						flags: '🏁',
-					}
+        g_emoji.lastEmojiType = type;
+        $.getJSON('emojis/' + type + '.json', function(json, textStatus) {
+            if (textStatus == 'success') {
+                g_emoji.data = json;
+                var l = {
+                    people: '😀',
+                    nature: '🐱',
+                    foods: '🍎',
+                    activity: '⚾',
+                    places: '🚖',
+                    objects: '👝',
+                    symbols: '💠',
+                    flags: '🏁',
+                }
 
-					var tab = '<span class="_emoji" data-action="stricker_toEmoji" data-id="history">🕓</span>';
-					var h = '';
-					for(var detail of json['categories']){
-						tab += '<span class="_emoji" data-action="stricker_toEmoji,'+detail.id+'">'+l[detail.id]+'</span>';
-						h += `<div id='emoji_type_`+detail.id+`' class="row w-full h-200 emoji_type text-center" style="font-size: 20px;align-items: center;display: `+(detail.id=='people' ? 'flex' : 'none')+`;"></div>`;
-					}
-					$('#emoji_content_emoji').html(h);
-					$('#emoji_tab_emoji').html(tab);
-					setTimeout(() => {
-						g_emoji.loadEmojiCate('people');
+                var tab = '<span class="_emoji" data-action="stricker_toEmoji" data-id="history">🕓</span>';
+                var h = '';
+                for (var detail of json['categories']) {
+                    tab += '<span class="_emoji" data-action="stricker_toEmoji,' + detail.id + '">' + l[detail.id] + '</span>';
+                    h += `<div id='emoji_type_` + detail.id + `' class="row w-full h-200 emoji_type text-center" style="font-size: 20px;align-items: center;display: ` + (detail.id == 'people' ? 'flex' : 'none') + `;"></div>`;
+                }
+                $('#emoji_content_emoji').html(h);
+                $('#emoji_tab_emoji').html(tab);
+                setTimeout(() => {
+                    g_emoji.loadEmojiCate('people');
 
-					}, 500);
-				}
-			});
-		},
-		loadEmojiCate: (cate) => {
-					var h = '';
-					var type = g_emoji.lastEmojiType;
-					for(var detail of g_emoji.data['categories']){
-						if(detail.id == cate){
-							for(var emoji of detail['emojis']){
-							var d = g_emoji.data['emojis'][emoji];
-							h+= '<span class="col-2" data-action="emoji_send">'+(type == 'all' ? String.fromCodePoint(parseInt(d.b, 16)) : '<img width="20px" class="mb-10 mx-auto" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-'+type+'-64/'+d.b.toLowerCase()+'.png">')+'</span>';
-						}
-					}
-				}
-						$('#emoji_type_'+cate).html(h);
+                }, 500);
+            }
+        });
+    },
+    loadEmojiCate: (cate) => {
+        var h = '';
+        var type = g_emoji.lastEmojiType;
+        for (var detail of g_emoji.data['categories']) {
+            if (detail.id == cate) {
+                for (var emoji of detail['emojis']) {
+                    var d = g_emoji.data['emojis'][emoji];
+                    h += '<span class="col-2" data-action="emoji_send">' + (type == 'all' ? String.fromCodePoint(parseInt(d.b, 16)) : '<img width="20px" class="mb-10 mx-auto" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-' + type + '-64/' + d.b.toLowerCase() + '.png">') + '</span>';
+                }
+            }
+        }
+        $('#emoji_type_' + cate).html(h);
 
-						$('.emoji_tab_active').removeClass('emoji_tab_active');
-			var dom = $('[data-action="stricker_toEmoji,'+cate+'"]');
-      $(dom).addClass('emoji_tab_active');
-        	
-        	if(g_emoji.lastEmojiTab){
-        		$('#emoji_type_'+g_emoji.lastEmojiTab).css('display', 'none');
-        	}
-        	g_emoji.lastEmojiTab = cate;
-        	$('#stricker_content')[0].scrollTo(0, 0);
-        	$('#emoji_type_'+cate).css('display', 'flex');
-		},
+        $('.emoji_tab_active').removeClass('emoji_tab_active');
+        var dom = $('[data-action="stricker_toEmoji,' + cate + '"]');
+        $(dom).addClass('emoji_tab_active');
+
+        if (g_emoji.lastEmojiTab) {
+            $('#emoji_type_' + g_emoji.lastEmojiTab).css('display', 'none');
+        }
+        g_emoji.lastEmojiTab = cate;
+        $('#stricker_content')[0].scrollTo(0, 0);
+        $('#emoji_type_' + cate).css('display', 'flex');
+    },
     registerAction: () => {
-    	
-    	registerAction('emoji_send', (dom, action, params) => {
-	    		var d = $(dom).find('img');
-	    		if(d.length){
-	    			key = d.attr('src');
-	    			s = '<img class="emoji_ align-middle" width="16px" style="position: relative;top: -1px;margin: 3px;" src="'+key+'">' ;
-	    		}else{
-	    			key = dom.innerText;
-	    			s = '<span class="emoji_">'+key+'</span>';
-	    		}
 
-    		var a = g_stricker_options.hisoty_emoji || [];
-	    		var i = a.indexOf(key);
-		    if(i != -1) a.splice(i, 1);
-		    a.splice(0, 0, key);
-		    if (a.length > 20) a.pop();
-		    g_stricker_options.hisoty_emoji = a;
-    local_saveJson('stricker_options', g_stricker_options);
+        registerAction('emoji_send', (dom, action, params) => {
+            var d = $(dom).find('img');
+            if (d.length) {
+                key = d.attr('src');
+                s = '<img class="emoji_ align-middle" width="16px" style="position: relative;top: -1px;margin: 3px;" src="' + key + '">';
+            } else {
+                key = dom.innerText;
+                s = '<span class="emoji_">' + key + '</span>';
+            }
 
-    g_emoji.initHistoryEmoji();
-	    		g_chat.editor.cmd.do('insertHTML', s);
-	    		g_chat.editor.txt.eventHooks.imgClickEvents = [];
-       });
+            var a = g_stricker_options.hisoty_emoji || [];
+            var i = a.indexOf(key);
+            if (i != -1) a.splice(i, 1);
+            a.splice(0, 0, key);
+            if (a.length > 20) a.pop();
+            g_stricker_options.hisoty_emoji = a;
+            local_saveJson('stricker_options', g_stricker_options);
+
+            g_emoji.initHistoryEmoji();
+            if (g_emoji.toPin) { // pin到消息
+                g_chat.pin_to_msg(g_chat.rm_showing, s);
+                g_emoji.hide();
+            } else {
+                g_chat.editor.cmd.do('insertHTML', s);
+                g_chat.editor.txt.eventHooks.imgClickEvents = []; // 清除点击输入框图片会显示选项
+            }
+
+        });
         registerAction('stricker_toEmoji', (dom, action, params) => {
-					g_emoji.loadEmojiCate(action[1]);
+            g_emoji.loadEmojiCate(action[1]);
         });
         registerAction('stricker_toType', (dom, action, params) => {
-        	if(!g_emoji.list[action[1]]){
-        		switch(action[1]){
-        			case 'stricker':
-        				initStrickers();
-		            if (g_stricker_options.last.id != '') {
-		                var btn = $('[data-action="stricker_toTab"][data-id="' + g_stricker_options.last.id + '"]')[0];
-		                if (btn) {
-		                    btn.click();
-		                    btn.scrollIntoView();
-		                }
-		            }
-		            for (var img of $('#stricker_tabs .loading')) {
-		                reloadImage(img);
-		            }
-        				break;
+            if (!g_emoji.list[action[1]]) {
+                switch (action[1]) {
+                    case 'stricker':
+                        initStrickers();
+                        if (g_stricker_options.last.id != '') {
+                            var btn = $('[data-action="stricker_toTab"][data-id="' + g_stricker_options.last.id + '"]')[0];
+                            if (btn) {
+                                btn.click();
+                                btn.scrollIntoView();
+                            }
+                        }
+                        for (var img of $('#stricker_tabs .loading')) {
+                            reloadImage(img);
+                        }
+                        break;
 
-        			case 'emoji':
-        				g_emoji.loadEmojis('all');
-        				break;
-        		}
-        	}
-        	$('.emoji_active').removeClass('emoji_active');
-        	$(dom).addClass('emoji_active');
-        	for(var div of $('.emoji_content')){
-        		if(div.id == 'emoji_content_'+action[1]){
-        			$(div).show();
-        		}else{
-        			$(div).hide();
-        		}
-        	}
-        	for(var div of $('.emoji_tab')){
-        		if(div.id == 'emoji_tab_'+action[1]){
-        			$(div).css('display', 'flex');
-        		}else{
-        			$(div).css('display', 'none');
-        		}
-        	}
-        	for(var div of $('.emoji_nav')){
-        		if(div.id == 'emoji_nav_'+action[1]){
-        			$(div).show();
-        		}else{
-        			$(div).hide();
-        		}
-        	}
-        	
+                    case 'emoji':
+                        g_emoji.loadEmojis('all');
+                        break;
+                }
+            }
+            $('.emoji_active').removeClass('emoji_active');
+            $(dom).addClass('emoji_active');
+            for (var div of $('.emoji_content')) {
+                if (div.id == 'emoji_content_' + action[1]) {
+                    $(div).show();
+                } else {
+                    $(div).hide();
+                }
+            }
+            for (var div of $('.emoji_tab')) {
+                if (div.id == 'emoji_tab_' + action[1]) {
+                    $(div).css('display', 'flex');
+                } else {
+                    $(div).css('display', 'none');
+                }
+            }
+            for (var div of $('.emoji_nav')) {
+                if (div.id == 'emoji_nav_' + action[1]) {
+                    $(div).show();
+                } else {
+                    $(div).hide();
+                }
+            }
+
         });
         registerAction('sendStricker', (dom, action, params) => {
             var img = $('.selected').attr('src');
@@ -178,8 +187,8 @@ var g_emoji = {
             } else {
                 if ($(dom).hasClass('selected')) {
                     sendStricker();
-            				g_emoji.hide();
-                   
+                    g_emoji.hide();
+
                     return;
                 }
                 $('.selected').removeClass('selected');
@@ -247,29 +256,33 @@ var g_emoji = {
             }
         });
         registerAction('show_stricker', (dom, action, params) => {
-        	if(g_emoji.isShowing()){
-
-        	}else{
-        				g_emoji.hide();
-        			$('#stricker_footer').css('display', 'none');
-	            g_emoji.show();
-	            if(!g_emoji.lastEmojiTab){
-	            	setTimeout(() => {
-		          		$('[data-action="stricker_toType,emoji"]').click();
-		            }, 200);
-	            }
-        	}
+            if (g_emoji.isShowing()) {
+                g_emoji.hide();
+            } else {
+                g_emoji.toPin = action.length > 1;
+                if (g_emoji.toPin) {
+                    g_chat.rm.css('display', 'none');
+                }
+                $('#stricker_footer').css('display', 'none');
+                g_emoji.show();
+                if (!g_emoji.lastEmojiTab) {
+                    setTimeout(() => {
+                        $('[data-action="stricker_toType,emoji"]').click();
+                    }, 500);
+                }
+            }
         });
 
     },
     initHistoryEmoji: () => {
-    	var a = g_stricker_options.hisoty_emoji || ['😀', '😂', '🤣', '😅', '😭', '😵','🤩'];
+        var a = g_stricker_options.hisoty_emoji || ['😀', '😂', '🤣', '😅', '😭', '😵', '🤩'];
 
-    	    var h = '';
-            for(var s of a){
-                h += s.indexOf('.') != -1 ? '<img data-action="emoji_select" style="width: 23px;margin: 5px;height:23px;" src="'+s+'">': '<span data-action="emoji_select">'+s+'</span>';
-            }
-            $('#emoji_recent').html(h);
+        var h = '<i data-action="show_stricker,pin" class="fa fa-ellipsis-v text-dark font-size-20 m-5" aria-hidden="true" style="padding: 3px"></i>';
+
+        for (var s of a) {
+            h += s.indexOf('.') != -1 ? '<img data-action="emoji_select" style="width: 23px;margin: 5px;height:23px;" src="' + s + '">' : '<span data-action="emoji_select">' + s + '</span>';
+        }
+        $('#emoji_recent').html(h);
     },
     prompt: () => {
         $(`<div id="modal-stricker" style="border-top: 1px solid #bbbbbb;position: fixed;bottom: 70px;left:0;width: 100%;z-index: 20; display: none;">
@@ -289,14 +302,14 @@ var g_emoji = {
                 		<div id="emoji_nav_emoji" class="emoji_nav row mb-10">
                 				<div class="input-group">
 											  <select class="form-control flex-reset w-auto" onchange="g_emoji.loadEmojis(this.value)"> 
-											    <option value="" disabled>`+_l('表情类别')+`</option>
+											    <option value="" disabled>` + _l('表情类别') + `</option>
 											    <option value="twitter">Twitter</option>
 											    <option value="google">Google</option>
 											    <option value="facebook">Facebook</option>
 											    <option value="apple">Apple</option>
 											    <option value="all" selected>All</option>
 											  </select>
-											  <input type="text" class="form-control" placeholder="`+_l('表情搜索')+`">
+											  <input type="text" class="form-control" placeholder="` + _l('表情搜索') + `">
 											   <div class="input-group-append">
 											    <button class="btn btn-primary" type="button"><i class="fa fa-search" aria-hidden="true" data-action="show_stricker_search"></i></button>
 											  </div>
@@ -383,7 +396,7 @@ var g_emoji = {
         </div>
     </div>`).appendTo('.content-wrapper');
 
-// <i class="fa fa-close" onclick="g_emoji.hide();" aria-hidden="true"></i>
+        // <i class="fa fa-close" onclick="g_emoji.hide();" aria-hidden="true"></i>
         // doAction(null, 'show_stricker');
     }
 }
@@ -396,8 +409,8 @@ function checkStrickerMeta(id, sid, img) {
         sid: sid,
         img: $(img).attr('data-src'),
     };
-    if(g_stricker['id_' + id]){
-         if (g_stricker['id_' + id]['hasAnimation']) {
+    if (g_stricker['id_' + id]) {
+        if (g_stricker['id_' + id]['hasAnimation']) {
             pic = 'http://dl.stickershop.line.naver.jp/products/0/0/1/' + id + '/android/animation/' + sid + '.png';
             data.animation = pic;
             reloadImage($(img).attr('data-src', pic)[0]);
@@ -408,17 +421,18 @@ function checkStrickerMeta(id, sid, img) {
             _audio_stricker.img = pic || $(img).attr('data-src');
         }
     }
-   
+
     g_cache.strick_last = data;
 }
 
 function sendStricker() {
-    var animation = g_cache.strick_last.animation;
-    var key = g_cache.strick_last.id+','+g_cache.strick_last.sid;
+	var d = g_cache.strick_last;
+    var img = d.animation || d.img;
+    var key = d.id + ',' + d.sid;
 
     // 保存历史记录
     var i = g_stricker_options.history.indexOf(key);
-    if(i != -1) g_stricker_options.history.splice(i, 1);
+    if (i != -1) g_stricker_options.history.splice(i, 1);
     g_stricker_options.history.splice(0, 0, key);
     if (g_stricker_options.history.length > 100) {
         g_stricker_options.history.pop();
@@ -426,17 +440,27 @@ function sendStricker() {
     local_saveJson('stricker_options', g_stricker_options);
     stricker_initHistory();
 
-    var id = 'emoji_thumb_'+new Date().getTime();
-    var img = `<img class="emoji_ thumb" id="`+id+`" src="`+(animation || g_cache.strick_last.img)+`"`
-	   if (g_cache.strick_last.audio) {
-	   	img += ' data-audio="'+g_cache.strick_last.audio+'"'
-	  }
-	  img+='>';
+    
 
-	  g_chat.editor.cmd.do('insertHTML', img);
-	  // setTimeout(() => {
-	  // 	reloadImage($('#'+id)[0]);
-	  // }, 1000);
+    if (g_emoji.toPin) { // pin到消息
+    	var c = {img: img};
+    	if (d.audio) c.audio = d.audio;
+        g_chat.pin_to_msg(g_chat.rm_showing, JSON.stringify(c));
+        g_emoji.hide();
+    } else {
+    	var id = 'emoji_thumb_' + new Date().getTime();
+	    var img = `<img class="emoji_ thumb" id="` + id + `" src="` +img+ `"`
+	    if (d.audio) {
+	        img += ' data-audio="' + d.audio + '"'
+	    }
+	    img += '>';
+        g_chat.editor.cmd.do('insertHTML', img);
+
+    }
+
+    // setTimeout(() => {
+    // 	reloadImage($('#'+id)[0]);
+    // }, 1000);
 
     $('#bottom_stricker').hide();
 }
@@ -604,7 +628,7 @@ function stricker_saveTags(textarea) {
 
 function checkStrickerTags(textarea) {
     // setTyping(g_config.user.name);
-    queryMsg({type: 'typing'}, true);
+    queryMsg({ type: 'typing' }, true);
     var h = '';
     var text = textarea.value;
     if (text != '') {
@@ -641,9 +665,9 @@ function initStrickers() {
     }
 }
 
-function stricker_initHistory(){
+function stricker_initHistory() {
     var h = '';
-    if(g_stricker_options.history == undefined) g_stricker_options.history = [];
+    if (g_stricker_options.history == undefined) g_stricker_options.history = [];
     for (var key of g_stricker_options.history) {
         var args = key.split(',');
         h += getStrickerHTML(args[0], args[1], true);
@@ -653,4 +677,3 @@ function stricker_initHistory(){
 
 
 g_emoji.init();
-
