@@ -187,10 +187,12 @@ function doAction(dom, action, params) {
         case 'darkMode':
             halfmoon.toggleDarkMode();
             var i = $(dom).find('i');
-            if (!$('body').hasClass('dark-mode')) {
-                i.attr('class', 'fa fa-moon-o');
-            } else {
+            g_config.darkMode = $('body').hasClass('dark-mode');
+            local_saveJson('config', g_config);
+            if (g_config.darkMode) {
                 i.attr('class', 'fa fa-sun-o');
+            } else {
+                i.attr('class', 'fa fa-moon-o');
             }
             break;
     }
@@ -335,6 +337,9 @@ function reviceMsg(data) {
 }
 
 function test(){
+    if(g_config.darkMode){
+        $('body').addClass('dark-mode');
+    }
     // doAction(null, 'ranking');
         // g_chat.openChat('アイディア');
 }
