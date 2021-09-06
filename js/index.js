@@ -150,15 +150,16 @@ function doAction(dom, action, params) {
             halfmoon.toggleModal('modal-custom');
             break;
         case 'sync':
-            var code = prompt('code');
-            if(code){
-                hideSidebar();
-                toastPAlert('checking...', 'alert-secondary');
-                queryMsg({
-                    type: 'sync',
-                    code: code
-                });
-            }
+            prompt('code').then((d) => {
+                if(d.text !=''){
+                     hideSidebar();
+                    toastPAlert('checking...', 'alert-secondary');
+                    queryMsg({
+                        type: 'sync',
+                        code: d.text
+                    });
+                }
+            })
             break;
         case 'uploadData':
             hideSidebar();
@@ -335,7 +336,7 @@ function reviceMsg(data) {
 
 function test(){
     // doAction(null, 'ranking');
-        g_chat.openChat('アイディア');
+        // g_chat.openChat('アイディア');
 }
 
 function onToggleSidebar(){
