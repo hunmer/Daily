@@ -139,31 +139,47 @@ var g_cd = {
                 if (g_cd.type == 'add') {
                     g_cd.time = 0;
                 } else {
-                    var min = parseInt(prompt(_l('几分钟后结束'), 1));
-                    if (isNaN(min) && min <= 0) return;
-                    g_cd.min = min;
-                    g_cd.time = min * 60;
-                    if (g_cd.type == 'tomato') {
-                        min = parseInt(prompt(_l('休息几分钟'), 1));
-                        if (isNaN(min) && min <= 0) return;
-                        g_cd.reset = min * 60;
-                        min = parseInt(prompt(_l('要重复做几次'), 3));
-                        if (isNaN(min) && min <= 0) return;
-                        g_cd.loop = min;
-                        g_cd.looped = 0;
-                        g_cd.con.find('.cnt').html('0/' + min).show();
-                    }
+                    prompt(_l('几分钟后结束'), 1, {numberOnly: 1}).then((d) => {
+                        var min = parseInt(d.text);
+                        if(min > 0){
+                            g_cd.min = min;
+                            g_cd.time = min * 60;
+                            if (g_cd.type == 'tomato') {
+                                prompt(_l('休息几分钟'), 1, {numberOnly: 1}).then((d) => {
+                                    var min = parseInt(d.text);
+                                    if(min > 0){
+                                        g_cd.reset = min * 60;
+                                        prompt(_l('要重复做几次'), 3, {numberOnly: 1}).then((d) => {
+                                        var min = parseInt(d.text);
+                                        if(min > 0){
+                                            g_cd.loop = min;
+                                            g_cd.looped = 0;
+                                            g_cd.con.find('.cnt').html('0/' + min).show();
+                                        }})
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
                 g_cd.startTimer();
                 $(dom).removeClass('btn-primary').addClass('btn-danger').html('Stop');
             } else {
-                var save = false;
-                if (confirm(_l('是否中止'))) {
-                    if (g_cd.type == 'add') {
-                        save = confirm(_l('是否保存记录'));
+                confirm(_l('是否中止')).then((d) => {
+                    if(d.button == 'ok'){
+                        if (g_cd.type == 'add') {
+                            confirm(_l('是否保存记录')).then((d) => {
+                                if(d.button == 'ok'){
+                                    g_cd.save(true);
+
+                                }
+                            });
+                        }else{
+                            g_cd.save(false);
+
+                        }
                     }
-                    g_cd.save(save);
-                }
+                });
             }
         });
     },
@@ -183,9 +199,9 @@ var g_cd = {
                 var t2 = parseInt((data.end - g_cd.start) / 1000);
                 console.log(t1, t2);
                 if(t2 - t1 > 30 && g_cd.stoped == 0){
-                    if(confirm(_l('是否更正时间',getTime(t2 - t1)))){
+                    //if(confirm(_l('是否更正时间',getTime(t2 - t1)))){
                         t1 = t2;
-                    }
+                    //}
 
                 }
                 data.spend = t1;

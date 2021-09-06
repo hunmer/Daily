@@ -14,10 +14,12 @@ function back() {
         g_cache.showing = undefined;
         $('[data-action="toTab,chatList"]')[0].click();
     } else{
-        if (confirm(_l('是否结束'))) {
-            toastPAlert(_l('是否结束1'), 'alert-danger');
-            return;
-        }
+        confirm(_l('是否结束')).then((d) => {
+            if(d.button == 'ok'){
+                 toastPAlert(_l('是否结束1'), 'alert-danger');
+                return;
+            }
+        });
     }
 }
 
@@ -52,7 +54,12 @@ $(function() {
     $('.content-wrapper').scroll(function(event){
         var div = $('#content_'+g_cache.showing);
         //div.find('[data-action="up"]').css('display', this.scrollTop == 0 ? 'none' : 'block');
+
+       
         if(g_cache.showing == 'chat'){
+             var min = g_cache.lastNavMinH || 50;
+             $('#div_inpuit').css('position', this.scrollTop < min ? 'unset' : 'fixed');
+
             var d = $(document.elementFromPoint($(this).width() / 2, $(this).height() / 2));
             if(d != null){
                 d = d.parent('[data-time]');
@@ -81,7 +88,6 @@ $(function() {
                 }
             })
             .catch(function(err) {
-                alert('图片读取错误');
             });
     });
 
@@ -329,7 +335,7 @@ function reviceMsg(data) {
 
 function test(){
     // doAction(null, 'ranking');
-        // g_chat.openChat('日常');
+        g_chat.openChat('アイディア');
 }
 
 function onToggleSidebar(){

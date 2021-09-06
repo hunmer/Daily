@@ -25,9 +25,10 @@ var g_chat = {
             </div>
             </div>`).appendTo('.content-wrapper');
         // <a data-action="up" class="btn btn-square btn-primary rounded-circle btn-lg shadow" style="display: none;" role="button"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
-        $(`<div id='content_chat' class="_content p-10 hide animated fadeIn" animated='fadeIn'>
+        $(`<div id='content_chat' class="_content hide animated fadeIn" animated='fadeIn'>
+            <div id="div_inpuit" class="theme w-full p-5 mb-10" style="z-index: 9999"></div>
             <div class="mainContent"></div>
-            <div class="ftb br" style="bottom: 100px;">
+            <div class="ftb br">
 
                 <div class="row mx-auto" style="width: 20%;">
                     <div class="col">
@@ -377,12 +378,11 @@ var g_chat = {
             var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
             var time = par.attr('data-time');
             var old = par.find('.alert-text').text();
-            var text = prompt(_l('输入文本'), old);
-            if (text != undefined && text != '' && text != old) {
-                g_chats[g_chat.name].msgs[time].text = text;
-                local_saveJson('chats', g_chats);
-                par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
-            }
+            g_chat.editId = time;
+            g_chat.editText = old;
+            g_chat.editor.txt.html(old);
+            g_chat.rm.css('display', 'none');
+             g_chat.editor.cmd.do('insertHTML', ''); // 聚焦
         });
 
        
@@ -402,26 +402,31 @@ var g_chat = {
             par.replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
         });
         registerAction('chat_msg_delete', (dom, action, params) => {
-            if (confirm(_l('是否删除消息'))) {
+            confirm(_l('是否删除消息')).then((d) => {
+                if(d.button == 'ok'){
                 g_chat.rm.css('display', 'none');
                 var par = $('.msg[data-time="' + g_chat.rm_showing + '"]');
-                delete g_chats[g_chat.name].msgs[par.attr('data-time')];
-                var h6 = $(par.previousSibling);
-                if(h6.hasClass('date')){
+                var h6 = par.next();
+                if(h6.hasClass('date') && !par.prev().hasClass('msg')){ // 删除的是最后一个
                     h6.remove();
+                    g_chat.lastData = '';
                 }
+                delete g_chats[g_chat.name].msgs[par.attr('data-time')];
                 par.remove();
 
                 local_saveJson('chats', g_chats);
             }
+            })
         });
         registerAction('chatList_remove', (dom, action, params) => {
-            if (confirm(_l('是否删除频道'))) {
+            confirm(_l('是否删除频道')).then((d) => {
+                if(d.button == 'ok'){
                 delete g_chats[g_chat.name];
                 local_saveJson('chats', g_chats);
                 $('[data-action="toTab,chatList"]')[0].click();
                 g_chat.initHtml();
             }
+        });
         });
         registerAction('chat_openChat', (dom, action, params) => {
             g_chat.openChat($(dom).attr('data-name'));
@@ -518,17 +523,26 @@ var g_chat = {
                 s = s.replace('<p>', '').replace('</p>', '').replace('<div>', '').replace('</div>', ''); // 替换一个div与p
 
                 g_chat.editor.txt.clear();
-                var data = {
-                    text: s
-                }
-                var time = new Date().getTime();
-                g_chats[g_chat.name].msgs[time] = data;
-                local_saveJson('chats', g_chats);
-                $('#content_chat .mainContent').append($(g_chat.getHTML_msgs(time, data, false)).addClass('animated lightSpeedInRight').attr('animated', 'lightSpeedInRight'));
-                toBottom($('#content_chat'));
-                $('.chat_list[data-name="' + g_chat.name + '"]').find('.badge').html(Object.keys(g_chats[g_chat.name].msgs).length);
 
-                $('.chat_list[data-name="'+g_chat.name+'"] .last-text').html(s);
+                 if(g_chat.editId && s != g_chat.editText){
+                    var time = g_chat.editId;
+                     g_chats[g_chat.name].msgs[time].text = s;
+                    $('.msg[data-time="' + time + '"]').replaceWith(g_chat.getHTML_msgs(time, g_chats[g_chat.name].msgs[time], true));
+                }else{
+                     var data = {
+                        text: s
+                    }
+                    var time = new Date().getTime();
+                    g_chats[g_chat.name].msgs[time] = data;
+                    $('#content_chat .mainContent').prepend($(g_chat.getHTML_msgs(time, data, false)).addClass('animated lightSpeedInRight').attr('animated', 'lightSpeedInRight'));
+                    $('.chat_list[data-name="' + g_chat.name + '"]').find('.badge').html(Object.keys(g_chats[g_chat.name].msgs).length);
+                }
+                local_saveJson('chats', g_chats);
+                g_chat.editId = '';
+                g_chat.editText = '';
+
+                $('.chat_list[data-name="'+g_chat.name+'"]').replaceWith(g_chat.getHtml(g_chats[g_chat.name], g_chat.name));
+
             }
         });
 
@@ -586,12 +600,7 @@ var g_chat = {
     },
     getHTML_msgs: (time, data, replace = true) => {
         var h = '';
-        var date = new Date(Number(time));
-        var s_data = getFormatedTime(4, date);
-        if (!replace && s_data != g_chat.lastData) {
-            g_chat.lastData = s_data;
-            h += `<h6 class='text-muted text-center d-block mt-20 date'>` + s_data + `</h6>`;
-        }
+      
         // <font color="#c24f4a">wwwwwwwwwwwww</font>
         var s = data.text;
         if(s.indexOf('color="') != -1){
@@ -616,6 +625,13 @@ var g_chat = {
                   <span class="alert-text text-break msg_text">` + g_chat.getStyle(data, s) + `</span>
                 </div>
             </div>`;
+
+        var date = new Date(Number(time));
+        var s_data = getFormatedTime(4, date);
+        if (!replace && s_data != g_chat.lastData) {
+            g_chat.lastData = s_data;
+            h += `<h6 class='text-muted text-center d-block mt-20 date'>` + s_data + `</h6>`;
+        }
                  
             // <h4 class="alert-heading"></h4>
         //  <img src="img/maki.jpg" class="user-icon">
@@ -663,22 +679,22 @@ var g_chat = {
         var h = '';
         // todo 多种消息支持，根据类型执行不同的函数得出不同的Html
         for (var time in g_chats[name].msgs) {
-            h += g_chat.getHTML_msgs(time, g_chats[name].msgs[time], false)
+            h = g_chat.getHTML_msgs(time, g_chats[name].msgs[time], false) + h;
         }
         
         for(var img of $('#content_chat .mainContent').html(h)){
             reloadImage(img);
         }
-        $('.navbar-fixed-bottom').html(`
-            <div id="bottom_chat" class="row w-full toolbar" style="position: absolute;
-    top: 0;display: flex;text-align: center;align-content: flex-start;justify-content: space-evenly;">
+        // .navbar-fixed-bottom
+        //  <i data-action="editor_fullscreen" class="fa fa-arrows-alt" aria-hidden="true" style="position: absolute;top: 5px; left: 12px;z-index: 9999;"></i>
+        $('#div_inpuit').html(`
                 <div class='col-12'>
                     <div id="toolbar-container" class="w-full"></div>
                 </div>
 
                 <div class="col-12 d-flex">
                     <div class="col-1">
-                        <i data-action="editor_fullscreen" class="fa fa-arrows-alt" aria-hidden="true" style="position: absolute;top: 5px; left: 12px;z-index: 9999;"></i>
+                       
                      </div>
                
 
@@ -688,7 +704,6 @@ var g_chat = {
 
                      <a data-action="chat_sendMsg" class="btn btn-square btn-primary rounded-circle btn-lg shadow" style="position: absolute;bottom: 2px; right: 18px;font-size: 2rem;"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
                     </div>
-                </div>
             </div>`);
           g_chat.editor = new wangEditor("#toolbar-container", "#msg");
           g_chat.editor.config.menus = [
@@ -720,20 +735,9 @@ var g_chat = {
 
             g_chat.editor.config.onchange = function(newHtml) {
                 if(g_chat.fullscreen) return;
-                var min = g_cache.lastNavMinH ? g_cache.lastNavMinH - 50 : 50; // 取最小高度( 50 = 输入框高度)
-                var h;
-                if(newHtml.trim() == ''){
-                    h = min;
-                }else{
-                    h =$('.w-e-text')[0].scrollHeight;
-                }
-                if(h > 400) h = 400;
-                if(h < min) h = min;
+                var h = newHtml.trim() == '' ? 0 : $('.w-e-text')[0].scrollHeight;
+                if(h < 50) h = 50;
                  $('#msg').css('height', h);
-                 $('.navbar-fixed-bottom').css('height', h+50);
-                 // if(!$('#msg').hasClass('width_img')){
-                 //     $('#msg').addClass('width_img');
-                 //  }
             }
 
             g_chat.editor.txt.eventHooks.enterUpEvents.splice(0, 0, (event) => {
@@ -744,9 +748,7 @@ var g_chat = {
             
             g_chat.editor.config.focus = false
 
-            g_chat.editor.config.onfocus = function () {
-                 setTimeout(() => {toBottom($('#content_chat'))}, 500);
-            }
+          
              g_chat.editor.create();
 
         $('.w-e-toolbar').prepend(`<div data-action="show_stricker" class="w-e-menu" data-title="">
@@ -782,7 +784,6 @@ var g_chat = {
         if(time){
             g_chat.nav_check(time, name);
         }
-        toBottom($('#content_chat'));
         $('.content-wrapper').scroll();
     },
 

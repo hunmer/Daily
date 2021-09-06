@@ -100,7 +100,7 @@ var g_emoji = {
                 g_chat.pin_to_msg(g_chat.rm_showing, s);
                 g_emoji.hide();
             } else {
-                g_chat.editor.cmd.do('insertHTML', s);
+                g_chat.editor.txt.append(s);
                 g_chat.editor.txt.eventHooks.imgClickEvents = []; // 清除点击输入框图片会显示选项
             }
 
@@ -244,16 +244,27 @@ var g_emoji = {
 
         });
         registerAction('addStrick', (dom, action, params) => {
-            if (confirm('[' + $(dom).attr('data-title') + '] を追加しますか?')) {
+            confirm('[' + $(dom).attr('data-title') + '] を追加しますか?').then((d) => {
+            if(d.button == 'ok'){
                 queryStricker($(dom).attr('data-id'));
-            }
+            }});
         });
 
         registerAction('show_stricker_search', (dom, action, params) => {
-            var search = prompt('キーワード&URL', 'kizuna');
-            if (search != null && search.length) {
+           prompt('キーワード&URL', 'kizuna').then((d) => {
+            	if(d.text != ''){
                 searchStrick(search);
-            }
+            	}
+            });
+        });
+        
+        registerAction('pin_to_msg_confirm', (dom, action, params) => {
+        	prompt(_l('pin到消息')).then((d) => {
+        		if(d.text != ''){
+        			g_emoji.hide();
+   				     g_chat.pin_to_msg(g_chat.rm_showing, d.text);
+        		}
+        	})
         });
         registerAction('show_stricker', (dom, action, params) => {
             if (g_emoji.isShowing()) {
@@ -277,7 +288,7 @@ var g_emoji = {
     initHistoryEmoji: () => {
         var a = g_stricker_options.hisoty_emoji || ['😀', '😂', '🤣', '😅', '😭', '😵', '🤩'];
 
-        var h = '<i data-action="show_stricker,pin" class="fa fa-ellipsis-v text-dark font-size-20 m-5" aria-hidden="true" style="padding: 3px"></i>';
+        var h = '<i data-action="show_stricker,pin" class="fa fa-ellipsis-v text-dark font-size-20 m-5" aria-hidden="true" style="padding: 3px"></i><i data-action="pin_to_msg_confirm" class="fa fa-edit text-dark font-size-20 m-5" aria-hidden="true" style="padding: 3px"></i>';
 
         for (var s of a) {
             h += s.indexOf('.') != -1 ? '<img data-action="emoji_select" style="width: 23px;margin: 5px;height:23px;" src="' + s + '">' : '<span data-action="emoji_select">' + s + '</span>';
@@ -285,9 +296,9 @@ var g_emoji = {
         $('#emoji_recent').html(h);
     },
     prompt: () => {
-        $(`<div id="modal-stricker" style="border-top: 1px solid #bbbbbb;position: fixed;bottom: 70px;left:0;width: 100%;z-index: 20; display: none;">
+        $(`<div id="modal-stricker" style="border-top: 1px solid #bbbbbb;position: fixed;bottom: 0;left:0;width: 100%;z-index: 99999; display: none;">
         <div>
-            <div class="p-20 theme">
+            <div class="p-10 theme">
                 <div class="w-full mx-auto h-50">
                 		<div id="emoji_nav_stricker" class="emoji_nav row" style="display: none;">
 	                    <h5 class="modal-title text-center col-7">
@@ -454,7 +465,7 @@ function sendStricker() {
 	        img += ' data-audio="' + d.audio + '"'
 	    }
 	    img += '>';
-        g_chat.editor.cmd.do('insertHTML', img);
+        g_chat.editor.txt.append(img);
 
     }
 

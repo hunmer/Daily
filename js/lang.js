@@ -6,6 +6,8 @@ var g_lang = {
         无任务: '没有任何任务',
     },
     jp: {
+    	pin到消息: '',
+
         表情类别: '種類',
         表情搜索: '検索',
         是否结束: '終了しますか？',
@@ -152,4 +154,68 @@ function _l(k) {
         }
     }
     return k;
+}
+
+window.alert = (msg) => {
+    return x0p('Message', msg);
+}
+
+
+window.confirm = (msg, opt) => {
+    opt = Object.assign({
+        title: msg,
+        text: '',
+        animationType: 'slideUp',
+        buttons: [
+            {
+                type: 'cancel',
+                key: 49,
+                text: _l('取消'),
+                default: true
+            },
+            {
+                type: 'ok',
+                key: 50,
+                text: _l('确定')
+            }
+        ]
+    }, opt);
+    return x0p(opt);
+}
+
+window.prompt = (msg, def = '', opt = {}) => {
+	if(opt.numberOnly){
+		opt.inputPromise = typeof(opt.numberOnly) == 'function' ? opt.numberOnly : function(button, value) {
+        var p = new Promise(function(resolve, reject) {
+            if(value == '' || isNaN(value))
+                resolve('Not a number!');
+            resolve(null);
+        });
+        return p;
+    }
+		delete opt.numberOnly;
+	}
+    opt = Object.assign({
+        title: '',
+        text: msg,
+        inputType: 'text',
+		    inputPlaceholder: 'input text',
+		    inputColor: '#000',
+		    inputValue: def,
+        animationType: 'slideUp',
+        buttons: [
+            {
+                type: 'cancel',
+                key: 49,
+                text: _l('取消'),
+                default: true
+            },
+            {
+                type: 'ok',
+                key: 50,
+                text: _l('确定')
+            }
+        ]
+    }, opt);
+    return x0p(opt);
 }

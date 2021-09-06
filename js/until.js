@@ -304,7 +304,7 @@ function copyText(text) {
                 </a>
                 <h5 class="modal-title text-center">`+_l('弹出_复制_标题')+`</h5>
                 <div class="modal-html"><div class="input-group">
-          <textarea class="form-control" id="input_copy">`+text+`</textarea>
+          <textarea class="form-control" id="input_copy" disbaled>`+text+`</textarea>
         </div>
         <button class="form-control bg-primary btn-block" onclick="$('#input_copy').select();document.execCommand('copy');halfmoon.toggleModal('modal-copy');">`+_l('复制')+`</button>
                 </div>
@@ -338,3 +338,4 @@ function checkInputValue(doms){
     }
     return values;
 }
+
