@@ -1,0 +1,36 @@
+<meta charset="utf-8">
+<input type='text' id='datepicker-start' class="datepicker-here" />
+<input type='text' id='datepicker-end' class="datepicker-here" />
+
+<link href="css/datepicker.min.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/datepicker.min.js"></script>
+<script type="text/javascript" src="js/datepicker.zh.js"></script>
+<script type="text/javascript" src="js/datepicker.en.js"></script>
+<script type="text/javascript" src="js/datepicker.ja.js"></script>
+<script type="text/javascript">
+	//range: true,
+	$('#datepicker-start').datepicker({
+		minDate: new Date(),
+		timepicker: true,
+		language: 'ja',
+		startDate: new Date(),
+		altField: 'ss',
+		onSelect: (formattedDate, date, inst) => {
+			g_picker.end.update('minDate', date);
+		}
+	});
+
+	$('#datepicker-end').datepicker({
+		minDate: new Date(),
+		timepicker: true,
+		language: 'ja',
+	});
+
+	var g_picker = {
+		start: $('#datepicker-start').datepicker().data('datepicker'),
+		end: $('#datepicker-end').datepicker().data('datepicker'),
+	}
+
+	//
+</script>

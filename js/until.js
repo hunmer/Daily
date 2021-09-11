@@ -7,6 +7,27 @@ String.prototype.replaceAll = function(s1, s2) {
     return this.replace(new RegExp(s1, "gm"), s2);
 }
 
+Date.prototype.format = function(fmt) { 
+     var o = { 
+        "M+" : this.getMonth()+1,                 //月份 
+        "d+" : this.getDate(),                    //日 
+        "h+" : this.getHours(),                   //小时 
+        "m+" : this.getMinutes(),                 //分 
+        "s+" : this.getSeconds(),                 //秒 
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+        "S"  : this.getMilliseconds()             //毫秒 
+    }; 
+    if(/(y+)/.test(fmt)) {
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+    }
+     for(var k in o) {
+        if(new RegExp("("+ k +")").test(fmt)){
+             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+         }
+     }
+    return fmt; 
+}
+
  function loadRes(files, callback) {
     var i = 0;
     for (var file of files) {
@@ -30,6 +51,13 @@ String.prototype.replaceAll = function(s1, s2) {
     }
 }
 
+function local_remove(key) {
+    if (window.localStorage) {
+        key = g_localKey + key;
+        localStorage.removeItem(key);
+    }
+}
+
 function local_saveJson(key, data) {
     if (window.localStorage) {
         key = g_localKey + key;
@@ -45,6 +73,16 @@ function local_readJson(key, defaul = '') {
     key = g_localKey + key;
     var r = JSON.parse(localStorage.getItem(key));
     return r === null ? defaul : r;
+}
+
+function local_getList(){
+    var res = [];
+    for(k of Object.keys(localStorage)){
+        if(k.indexOf(g_localKey) == 0){
+            res.push(k);
+        }
+    }
+    return res;
 }
 
 function getGETArray() {
@@ -72,6 +110,9 @@ function getFormatedTime(i = 0, date = new Date()) {
             return date.getFullYear()+'_'+(Number(date.getMonth())+1)+'_'+date.getDate();
         case 4: 
             return date.getFullYear() + '/' + (Number(date.getMonth())+1) + '/' + date.getDate();
+
+         case 5: 
+            return date.getFullYear() + '/' + (Number(date.getMonth())+1) + '/' + date.getDate() + ' ' + _s(date.getHours()) + ':' + _s(date.getMinutes());
     }
 }
 
@@ -339,3 +380,59 @@ function checkInputValue(doms){
     return values;
 }
 
+// console.log(loadJs('emojis/all.json'));
+
+
+function loadJs(file, success = function(){}, fail = function(){}){
+    var D = document;
+    var scriptNode = D.createElement('script');
+    scriptNode.type = "text/javascript";
+    scriptNode.src = file;
+    var targ = D.getElementsByTagName('head')[0] || D.body || D.documentElement;
+    targ.appendChild(scriptNode);
+    scriptNode.onload = function() {
+        success();
+    }    
+    scriptNode.onerror = function() {
+        fail();
+    }   
+    return scriptNode;         
+}
+
+function insertStyle(cssText) {
+    var head = document.getElementsByTagName("head")[0];
+    var style = document.createElement("style");
+    var rules = document.createTextNode(cssText);
+    style.type = "text/css";
+    if (style.styleSheet) {
+        style.styleSheet.cssText = rules.nodeValue;
+    } else {
+        style.appendChild(rules);
+    }
+    head.appendChild(style);
+    return style;
+}
+
+    
+// }
+
+// function quickPose_preload() {
+//     setLoading(true);
+//         loadLocalData(function(){
+//             if(g_dirs.length === 0){
+
+    function getEditorHtml(m){
+         var c = $('<div>' + m + '</div>').clone(); // 用div把所有元素包成1个，以便取得所有html
+                for (var d of c.find('.emoji_')) {
+                    // 去除蜜汁插入图片的背景颜色
+                    d.style.backgroundColor = '';
+                }
+                if (c.length == 1 && c[0].nodeName == 'P') {
+                    s = c[0].innerText;
+                } else {
+                    s = c[0].outerHTML // jq html() 无法获取h1等等
+                }
+                s = s.replace('<p>', '').replace('</p>', '').replace('<div>', '').replace('</div>', ''); // 替换一个div与p
+
+return s;
+    }

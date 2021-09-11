@@ -1,5 +1,53 @@
+.datepickers-container {
+    z-index: 99999;
+    position: fixed;
+}
+#x0popup {
+    /*max-height: unset !important;*/
+}
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.disable-ime {
+    ime-mode:disabled;
+}
+.content-fit {
+    width: inherit;
+    height: inherit;
+}
+.color-dot {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 0.5px solid #6d6d6d;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+     width: 20px;
+    height: 20px;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+}
+
+
 .w-e-toolbar {
     justify-content: space-between;
+}
+.emoji_ thumb {
+    display: block;
+}
+
+.msg_selected {
+    border: 3px solid var(--primary-color);
 }
 
 #x0p-input {
@@ -23,12 +71,6 @@
      flex-wrap: unset !important;
     background-color: unset !important;
 }
-.w-e-droplist {
-    transform: translateY(-100%) translateX(-100%);
-}
-.w-e-panel-container {
-    transform: translateY(-100%);
-}
 
 .w-e-text-container p {
     margin: 0 !important;
@@ -47,8 +89,10 @@
 }
 
 .placeholder {
-    color: rgba(255, 255, 255, .4) !important;
+    color: rgba(0, 0, 0, .4) !important;
 }
+
+
 
 
 .text-dark-1 {
@@ -141,6 +185,11 @@ span[data-action="stricker_toTab"] img {
 .dark-mode .theme {
     background-color: var(--dm-base-body-bg-color) !important;
 
+}
+
+
+.dark-mode .placeholder {
+    color: rgba(255, 255, 255, .4) !important;
 }
 
 

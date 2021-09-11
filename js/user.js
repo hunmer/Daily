@@ -8,7 +8,7 @@ var g_user = {
     if(g_user.inited) return;
         g_user.inited = true;
 		if(!g_config.user){
-			g_user.modal();
+			//g_user.modal();
 		}else{
       $('#sidebar_icons_float img').attr('src', _vars.img+g_config.user.icon);
        g_user.upload();
@@ -33,7 +33,11 @@ var g_user = {
       $(dom).html(_l('弹出_用户_按钮_上传中'));
       queryMsg({type: 'setProfile', data: data});
     });
-
+     
+    registerRevice('countMsg', (data) => {
+      g_config.lastUpload = data.data;
+      local_saveJson('config', g_config);
+    });
     registerRevice('setProfile', (data) => {
       $('[data-action="user_setProfile]').html(_l('弹出_用户_修改_按钮_确定'));
       g_config.user = data.data;
@@ -52,11 +56,9 @@ var g_user = {
   upload: () => {
     var s_data = getFormatedTime(4);
     if(g_config.lastUpload != s_data){
-      g_config.lastUpload = s_data;
-      local_saveJson('config', g_config);
       var cnt = g_chat.countMsg(s_data);
-      if(cnt[0] > 0){
-        queryMsg({type: 'countMsg', msgs: cnt[0], chars: cnt[1]}, true);
+      if(cnt > 0){
+        queryMsg({type: 'countMsg', msgs: cnt}, true);
       }
     }
   },

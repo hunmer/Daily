@@ -18,38 +18,46 @@ var g_emoji = {
         return $('#modal-stricker').css('display') != 'none';
     },
     playAudio: (src) => {
-    	 _audio_stricker.src = src;
+        _audio_stricker.src = src;
     },
     loadEmojis: (type) => {
+        var file = 'emojis/' + type + '.json';
         g_emoji.lastEmojiType = type;
-        $.getJSON('emojis/' + type + '.json', function(json, textStatus) {
-            if (textStatus == 'success') {
-                g_emoji.data = json;
-                var l = {
-                    people: '😀',
-                    nature: '🐱',
-                    foods: '🍎',
-                    activity: '⚾',
-                    places: '🚖',
-                    objects: '👝',
-                    symbols: '💠',
-                    flags: '🏁',
-                }
+        if (window.location.protocol == 'file:') {
+            loadJs(file);
+        } else {
+            $.ajax({
+                url: file,
+                type: "GET",
+                dataType: "jsonp"
+            });
+        }
 
-                var tab = '<span class="_emoji" data-action="stricker_toEmoji" data-id="history">🕓</span>';
-                var h = '';
-                for (var detail of json['categories']) {
-                    tab += '<span class="_emoji" data-action="stricker_toEmoji,' + detail.id + '">' + l[detail.id] + '</span>';
-                    h += `<div id='emoji_type_` + detail.id + `' class="row w-full h-200 emoji_type text-center" style="font-size: 20px;align-items: center;display: ` + (detail.id == 'people' ? 'flex' : 'none') + `;"></div>`;
-                }
-                $('#emoji_content_emoji').html(h);
-                $('#emoji_tab_emoji').html(tab);
-                setTimeout(() => {
-                    g_emoji.loadEmojiCate('people');
+    },
+    loadJSON: (json) => {
+        g_emoji.data = json;
+        var l = {
+            people: '😀',
+            nature: '🐱',
+            foods: '🍎',
+            activity: '⚾',
+            places: '🚖',
+            objects: '👝',
+            symbols: '💠',
+            flags: '🏁',
+        }
 
-                }, 500);
-            }
-        });
+        var tab = '<span class="_emoji" data-action="stricker_toEmoji" data-id="history">🕓</span>';
+        var h = '';
+        for (var detail of json['categories']) {
+            tab += '<span class="_emoji" data-action="stricker_toEmoji,' + detail.id + '">' + l[detail.id] + '</span>';
+            h += `<div id='emoji_type_` + detail.id + `' class="row w-full h-200 emoji_type text-center" style="font-size: 20px;align-items: center;display: ` + (detail.id == 'people' ? 'flex' : 'none') + `;"></div>`;
+        }
+        $('#emoji_content_emoji').html(h);
+        $('#emoji_tab_emoji').html(tab);
+        setTimeout(() => {
+            g_emoji.loadEmojiCate('people');
+        }, 500);
     },
     loadEmojiCate: (cate) => {
         var h = '';
@@ -75,6 +83,23 @@ var g_emoji = {
         $('#stricker_content')[0].scrollTo(0, 0);
         $('#emoji_type_' + cate).css('display', 'flex');
     },
+
+    addToHistory_emoji: (s) => {
+        var a = g_stricker_options.hisoty_emoji || [];
+        var i = a.indexOf(s);
+        if (i != -1) a.splice(i, 1);
+        a.splice(0, 0, s);
+        if (a.length > 20) a.pop();
+        g_stricker_options.hisoty_emoji = a;
+        local_saveJson('stricker_options', g_stricker_options);
+    },
+    getEditor: () => {
+    	if(g_emoji.targetId == '#msg'){
+        	return g_chat.editor;
+        }else{
+        	return g_question.editor.txt;
+        }
+    },
     registerAction: () => {
 
         registerAction('emoji_send', (dom, action, params) => {
@@ -87,23 +112,18 @@ var g_emoji = {
                 s = '<span class="emoji_">' + key + '</span>';
             }
 
-            var a = g_stricker_options.hisoty_emoji || [];
-            var i = a.indexOf(key);
-            if (i != -1) a.splice(i, 1);
-            a.splice(0, 0, key);
-            if (a.length > 20) a.pop();
-            g_stricker_options.hisoty_emoji = a;
-            local_saveJson('stricker_options', g_stricker_options);
-
-            g_emoji.initHistoryEmoji();
-            if (g_emoji.toPin) { // pin到消息
-                g_chat.pin_to_msg(g_chat.rm_showing, s);
-                g_emoji.hide();
-            } else {
-                g_chat.editor.txt.append(s);
-                g_chat.editor.txt.eventHooks.imgClickEvents = []; // 清除点击输入框图片会显示选项
+            var editor = g_emoji.getEditor();
+            if(g_emoji.targetId == '#msg'){
+            	g_emoji.addToHistory_emoji(key);
+	            g_emoji.initHistoryEmoji();
+	            if (g_emoji.toPin) { // pin到消息
+	                g_chat.pin_to_msg(g_chat.rm_showing, s);
+	                g_emoji.hide();
+	                return;
+	            }
             }
-
+               editor.editor.txt.append(s);
+                editor.editor.txt.eventHooks.imgClickEvents = []; // 清除点击输入框图片会显示选项
         });
         registerAction('stricker_toEmoji', (dom, action, params) => {
             g_emoji.loadEmojiCate(action[1]);
@@ -245,32 +265,43 @@ var g_emoji = {
         });
         registerAction('addStrick', (dom, action, params) => {
             confirm('[' + $(dom).attr('data-title') + '] を追加しますか?').then((d) => {
-            if(d.button == 'ok'){
-                queryStricker($(dom).attr('data-id'));
-            }});
+                if (d.button == 'ok') {
+                    queryStricker($(dom).attr('data-id'));
+                }
+            });
         });
 
         registerAction('show_stricker_search', (dom, action, params) => {
-           prompt('キーワード&URL', 'kizuna').then((d) => {
-            	if(d.text != ''){
-                searchStrick(search);
-            	}
+            prompt('キーワード&URL', 'kizuna').then((d) => {
+                if (d.text != '') {
+                    searchStrick(search);
+                }
             });
         });
-        
+
         registerAction('pin_to_msg_confirm', (dom, action, params) => {
-        	prompt(_l('pin到消息')).then((d) => {
-        		if(d.text != ''){
-        			g_emoji.hide();
-   				     g_chat.pin_to_msg(g_chat.rm_showing, d.text);
-        		}
-        	})
+            prompt(_l('pin到消息')).then((d) => {
+                if (d.text != '') {
+                    g_emoji.hide();
+                    if (d.text.length == 2 && /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi.test(d.text)) {
+                        g_emoji.addToHistory_emoji(d.text);
+                    }
+                    g_chat.rm.css('display', 'none');
+
+                    for (var id of g_chat.rm_showing) {
+                        g_chat.pin_to_msg(id, d.text);
+
+                    }
+
+                }
+            })
         });
         registerAction('show_stricker', (dom, action, params) => {
             if (g_emoji.isShowing()) {
                 g_emoji.hide();
             } else {
-                g_emoji.toPin = action.length > 1;
+            		g_emoji.targetId = action[1];
+                g_emoji.toPin = action.length > 2;
                 if (g_emoji.toPin) {
                     g_chat.rm.css('display', 'none');
                 }
@@ -288,10 +319,11 @@ var g_emoji = {
     initHistoryEmoji: () => {
         var a = g_stricker_options.hisoty_emoji || ['😀', '😂', '🤣', '😅', '😭', '😵', '🤩'];
 
-        var h = '<i data-action="show_stricker,pin" class="fa fa-ellipsis-v text-dark font-size-20 m-5" aria-hidden="true" style="padding: 3px"></i><i data-action="pin_to_msg_confirm" class="fa fa-edit text-dark font-size-20 m-5" aria-hidden="true" style="padding: 3px"></i>';
+        var h = '<i data-action="show_stricker,#msg,pin" class="fa fa-ellipsis-v text-dark font-size-20 m-5" aria-hidden="true" style="padding: 3px"></i><i data-action="pin_to_msg_confirm" class="fa fa-edit text-dark font-size-20 m-5" aria-hidden="true" style="padding: 3px"></i>';
 
+        var action = 'data-action="emoji_select"';
         for (var s of a) {
-            h += s.indexOf('.') != -1 ? '<img data-action="emoji_select" style="width: 23px;margin: 5px;height:23px;" src="' + s + '">' : '<span data-action="emoji_select">' + s + '</span>';
+            h += s.indexOf('.') != -1 ? '<img '+action+' style="width: 23px;margin: 5px;height:23px;" src="' + s + '">' : '<span '+action+'>' + s + '</span>';
         }
         $('#emoji_recent').html(h);
     },
@@ -387,18 +419,19 @@ var g_emoji = {
                         <div class="col-1">
                            <i class="fa fa-cog" aria-hidden="true"></i>
                     		</div>
-                    		<div class="col-10">
+                    		<div class="col-9">
                     			<div id='stricker_types' class="overflow-x-scroll overflow-y-hidden w-full h-50">
-	                        <div class="w-auto h-50 pb-10" style="display: flex;justify-content: center;font-size:20px" onmousewheel="this.parentElement.scrollBy(event.deltaY, 0)" >
-	                            <span class="emoji_active" data-action="stricker_toType,emoji">😀</span>
-	                            <span data-action="stricker_toType,stricker">🖼</span>
-	                        </div>
-
-	                       
-                    </div>
+		                        <div class="w-auto h-50 pb-10" style="display: flex;justify-content: center;font-size:20px" onmousewheel="this.parentElement.scrollBy(event.deltaY, 0)" >
+		                            <span class="emoji_active" data-action="stricker_toType,emoji">😀</span>
+		                            <span data-action="stricker_toType,stricker">🖼</span>
+		                        </div>
+                    			</div>
                     		</div>
                     		<div class="col-1 text-right">
-                           
+                           <i class="fa fa-arrow-left" aria-hidden="true" onclick="$('[data-title=撤销]').click()"></i>
+                    		</div>
+                    		<div class="col-1 text-right">
+                           <i class="fa fa-close" aria-hidden="true" onclick="g_emoji.hide()"></i>
                     		</div>
                     </div>
 
@@ -437,7 +470,7 @@ function checkStrickerMeta(id, sid, img) {
 }
 
 function sendStricker() {
-	var d = g_cache.strick_last;
+    var d = g_cache.strick_last;
     var img = d.animation || d.img;
     var key = d.id + ',' + d.sid;
 
@@ -451,22 +484,22 @@ function sendStricker() {
     local_saveJson('stricker_options', g_stricker_options);
     stricker_initHistory();
 
-    
+
 
     if (g_emoji.toPin) { // pin到消息
-    	var c = {img: img};
-    	if (d.audio) c.audio = d.audio;
+        var c = { img: img };
+        if (d.audio) c.audio = d.audio;
         g_chat.pin_to_msg(g_chat.rm_showing, JSON.stringify(c));
         g_emoji.hide();
     } else {
-    	var id = 'emoji_thumb_' + new Date().getTime();
-	    var img = `<img class="emoji_ thumb" id="` + id + `" src="` +img+ `"`
-	    if (d.audio) {
-	        img += ' data-audio="' + d.audio + '"'
-	    }
-	    img += '>';
-        g_chat.editor.txt.append(img);
-
+        var id = 'emoji_thumb_' + new Date().getTime();
+        var img = `<img class="emoji_ thumb" id="` + id + `" src="` + img + `"`
+        if (d.audio) {
+            img += ' data-audio="' + d.audio + '"'
+        }
+        img += '>';
+        g_emoji.getEditor().editor.txt.append(img);
+        
     }
 
     // setTimeout(() => {
