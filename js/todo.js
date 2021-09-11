@@ -283,7 +283,6 @@ var g_todo = {
             $('#modal-top').attr('data-type', 'chatList_add').find('.modal-html').html(g_todo.getHtml_task('todo_create', _l('弹出_代办_新建_按钮_确定')));
             g_todo.initDatepick();
             halfmoon.toggleModal('modal-top');
-
         });
         registerAction('todo_list_item_detail', (dom, action, params) => {
             var time;

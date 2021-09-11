@@ -683,14 +683,14 @@ var g_chat = {
                     <div class="position-relative mx-auto w-fit">
                         <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                           <div class="btn-group dropdown with-arrow" role="group">
-                                <div id='chatList_add_icon' class="_icon" data-toggle="dropdown">
+                                <div id='chatList_add_icon' class="_icon icon_selecter" data-toggle="dropdown">
                                     <i class="fa fa-edit mx-auto font-size-20" aria-hidden="true" style="line-height: 55px;" data-icon="fa-edit"></i>
-                                    <img class="rounded-circle content-fit hide" src="./img/maki.jpg">
+                                    <img class="rounded-circle content-fit" style="display: none;" src="./img/maki.jpg">
                                 </div>
                             <div class="dropdown-menu dropdown-menu-center" aria-labelledby="dropdown-toggle-btn-icon">
-                              <a onclick="g_choose.icon.init();" class="dropdown-item">图标</a>
-                              <a data-action="channle_setIcon_text" class="dropdown-item">文字</a>
-                              <a data-action="channle_setIcon_img" class="dropdown-item">图片</a>
+                              <a onclick="g_choose.icon.init();" class="dropdown-item">`+_l('图标')+`</a>
+                              <a data-action="channle_setIcon_text" class="dropdown-item">`+_l('文字')+`</a>
+                              <a data-action="channle_setIcon_img" class="dropdown-item">`+_l('图片')+`</a>
                             </div>
                           </div>
                         </div>
@@ -720,7 +720,7 @@ var g_chat = {
                     $('[data-action="channle_pin"]').addClass('btn-danger').html(_l('pin'));
                 }
                 var i = $('#chatList_add_icon i');
-                if(data.icon.substr(0, 5) == 'data:'){
+                if(data.icon.substr(0, 5) == 'data:' || ['.jpg', '.png'].indexOf(data.icon.substr(-4).toLowerCase()) != -1 ){
                     $('#chatList_add_icon img').attr('src', data.icon).show();
                     i.hide();
                 }else
@@ -742,10 +742,8 @@ var g_chat = {
             if (g_chat.getChannel(name) && !edit) {
                 return alert(_l('弹出_频道_新建_已存在'));
             }
-            var i = $('#chatList_add_icon i');
-            var t = i.attr('data-text');
             var data = {
-                icon: i.css('display') != 'none' ? (i.html() != '' ? t.length ? t.substr(0, 2) : '' : i.attr('data-icon')) : $('#chatList_add_icon img').attr('src'),
+                icon: getIconValue($('#chatList_add_icon')),
                 desc: $('#modal-custom textarea').val(),
                 pin: $('[data-action="channle_pin"]').hasClass('btn-danger') ? new Date().getTime() : 0
             }
@@ -1152,15 +1150,8 @@ var g_chat = {
 
     getHtml: (data, name) => {
         var len = data.times.length;
-        var icon = '';
-         if(data.icon.substr(0, 5) == 'data:'){
-            icon = `<img class="rounded-circle content-fit" src="`+data.icon+`">`;
-        }else
-        if(data.icon.substr(0, 3) == 'fa-'){
-            icon = `<i data-action="habbit_dots" class="fa ` + data.icon + `" aria-hidden="true"></i>`;
-        }else{
-            icon = `<i data-action="habbit_dots" class="fa" aria-hidden="true">`+(data.icon == '' ? name.substr(0, 2) : data.icon)+`</i>`;
-        }
+        var icon = getIconStr(data.icon, name);
+        
         return `<div class="alert filled-lm chat_list shadow-sm" role="alert" data-action="chat_openChat" data-name="` + name + `">
                     <div class="_icon position-relative">
                         `+(data.pin ? `<span class="badge badge-pill badge-primary badge-danger" style="padding: 1px 5px;position: absolute;bottom: 0;right: 0;"><i class="fa fa-thumb-tack" aria-hidden="true" ></i></span>` : '')+`

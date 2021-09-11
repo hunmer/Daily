@@ -62,11 +62,13 @@ $(function() {
             g_cache.select = $(this);
             var h = '';
             for(var option of  g_cache.select.find('option')){
-                var v = option.value;
-                h += `<div class="custom-radio mb-20">
-                  <input type="radio" name="radio-set-1" id="radio-`+v+`" value="`+v+`" onchange="g_cache.selectValue = this.value;"`+(option.selected ? ' checked':'')+`>
-                  <label for="radio-`+v+`">`+option.innerText+`</label>
-                </div>`;
+                if(!option.disabled){
+                      var v = option.value;
+                    h += `<div class="custom-radio mb-20">
+                      <input type="radio" name="radio-set-1" id="radio-`+v+`" value="`+v+`" onchange="g_cache.selectValue = this.value;"`+(option.selected ? ' checked':'')+`>
+                      <label for="radio-`+v+`">`+option.innerText+`</label>
+                    </div>`;
+                }
             }
             confirm('选择一项', {
                 html: true,
@@ -76,6 +78,7 @@ $(function() {
             }).then((d) => {
                 if (d.button == 'ok') {
                     g_cache.select.find('option[value="'+g_cache.selectValue+'"]').prop('selected', true);
+                    g_cache.select[0].onchange();
                 }
             })
         });
@@ -119,8 +122,9 @@ $(function() {
                         break;
 
                     case 'icon':
-                        $('#chatList_add_icon i').hide();
-                        $('#chatList_add_icon img').attr('src', rst.base64).show();
+                        var d= $('.modal.show .icon_selecter')
+                        d.find('i').hide();
+                        d.find('img').attr('src', rst.base64).show();
                         break;
 
                     case 'timeLog':
@@ -230,6 +234,21 @@ function doAction(dom, action, params) {
         return g_actions[action[0]](dom, action, params);
     }
     switch (action[0]) {
+
+         
+
+        case 'daily_card_switch':
+            var d = $(dom);
+            if(!d.hasClass('card')){
+                d = d.parents('.card');
+            }
+            var showed = d.find('.cardContent.show').removeClass('show').addClass('hide');
+            var next = showed.next();
+            if(!next.length) next = showed.prev();
+            if(!next.length) next = showed;
+            next.removeClass('hide').addClass('show');
+            break;
+
         case 'setting_audio':
             if (dom.value == 'custom') {
                 prompt('input url', '').then((d) => {
@@ -470,19 +489,12 @@ function showContent(id) {
 
         case 'progress':
             t = _l('标题_进度');
-            g_habbit.init();
-
+            g_progress.init();
             break;
 
         case 'daily':
             t = _l('标题_日常');
-            g_habbit.init();
-
-            break;
-
-        case 'countdown':
-            t = _l('标题_倒计时');
-            g_habbit.init();
+            g_daily.init();
             break;
 
         case 'question':
@@ -494,6 +506,11 @@ function showContent(id) {
         case 'todo':
             t = _l('标题_任务');
             g_todo.init();
+            break;
+
+        case 'day':
+            t = _l('标题_纪念日');
+            g_day.init();
             break;
     }
     $('.sidebar-menu .active').removeClass('active');
@@ -597,6 +614,8 @@ function reviceMsg(data) {
 function test() {
             initSetting();
             // showContent('todo');
+            // showContent('daily');
+            // showContent('progress');
     // doAction(null, 'openSetting');
     // g_chat.openChat('アイディア');
 }

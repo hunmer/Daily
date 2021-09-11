@@ -7,28 +7,28 @@ String.prototype.replaceAll = function(s1, s2) {
     return this.replace(new RegExp(s1, "gm"), s2);
 }
 
-Date.prototype.format = function(fmt) { 
-     var o = { 
-        "M+" : this.getMonth()+1,                 //月份 
-        "d+" : this.getDate(),                    //日 
-        "h+" : this.getHours(),                   //小时 
-        "m+" : this.getMinutes(),                 //分 
-        "s+" : this.getSeconds(),                 //秒 
-        "q+" : Math.floor((this.getMonth()+3)/3), //季度 
-        "S"  : this.getMilliseconds()             //毫秒 
-    }; 
-    if(/(y+)/.test(fmt)) {
-            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+Date.prototype.format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份 
+        "d+": this.getDate(), //日 
+        "h+": this.getHours(), //小时 
+        "m+": this.getMinutes(), //分 
+        "s+": this.getSeconds(), //秒 
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+        "S": this.getMilliseconds() //毫秒 
+    };
+    if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
     }
-     for(var k in o) {
-        if(new RegExp("("+ k +")").test(fmt)){
-             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-         }
-     }
-    return fmt; 
+    for (var k in o) {
+        if (new RegExp("(" + k + ")").test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        }
+    }
+    return fmt;
 }
 
- function loadRes(files, callback) {
+function loadRes(files, callback) {
     var i = 0;
     for (var file of files) {
         if (file.type == "js") {
@@ -75,10 +75,10 @@ function local_readJson(key, defaul = '') {
     return r === null ? defaul : r;
 }
 
-function local_getList(){
+function local_getList() {
     var res = [];
-    for(k of Object.keys(localStorage)){
-        if(k.indexOf(g_localKey) == 0){
+    for (k of Object.keys(localStorage)) {
+        if (k.indexOf(g_localKey) == 0) {
             res.push(k);
         }
     }
@@ -86,7 +86,8 @@ function local_getList(){
 }
 
 function getGETArray() {
-    var a_result = [], a_exp;
+    var a_result = [],
+        a_exp;
     var a_params = window.location.search.slice(1).split('&');
     for (var k in a_params) {
         a_exp = a_params[k].split('=');
@@ -98,7 +99,7 @@ function getGETArray() {
 }
 
 function getFormatedTime(i = 0, date = new Date()) {
-    if(typeof(date) != 'object') date = new Date(parseInt(date));
+    if (typeof(date) != 'object') date = new Date(parseInt(date));
     switch (i) {
         case 0:
             return _s(date.getHours()) + ':' + _s(date.getMinutes());
@@ -107,19 +108,19 @@ function getFormatedTime(i = 0, date = new Date()) {
         case 2:
             return date.getMonth() + 1 + '/' + date.getDate();
         case 3:
-            return date.getFullYear()+'_'+(Number(date.getMonth())+1)+'_'+date.getDate();
-        case 4: 
-            return date.getFullYear() + '/' + (Number(date.getMonth())+1) + '/' + date.getDate();
+            return date.getFullYear() + '_' + (Number(date.getMonth()) + 1) + '_' + date.getDate();
+        case 4:
+            return date.getFullYear() + '/' + (Number(date.getMonth()) + 1) + '/' + date.getDate();
 
-         case 5: 
-            return date.getFullYear() + '/' + (Number(date.getMonth())+1) + '/' + date.getDate() + ' ' + _s(date.getHours()) + ':' + _s(date.getMinutes());
+        case 5:
+            return date.getFullYear() + '/' + (Number(date.getMonth()) + 1) + '/' + date.getDate() + ' ' + _s(date.getHours()) + ':' + _s(date.getMinutes());
     }
 }
 
-function getLastTime(t1, t2){
-    if(t1 instanceof Date) t1 = t1.getTime() / 1000;
-    if(!t2) t2 = new Date().getTime() / 1000;
-    return getTime(t2-t1);
+function getLastTime(t1, t2) {
+    if (t1 instanceof Date) t1 = t1.getTime() / 1000;
+    if (!t2) t2 = new Date().getTime() / 1000;
+    return getTime(t2 - t1);
 }
 
 function toastPAlert(msg, type, time, title) {
@@ -132,21 +133,21 @@ function toastPAlert(msg, type, time, title) {
     });
 }
 
- function addAnimation(d, x, callback) {
+function addAnimation(d, x, callback) {
     var c = d.attr('Class');
     if (d.attr('animated') != undefined) {
         d.removeClass(d.attr('animated'))
     }
     d.attr('animated', x).addClass('animated ' + x).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
-    
-    function() {
-        if ($(this).attr('animated') != undefined) {
-            $(this).removeClass('animated ' + $(this).attr('animated')).attr('animated', '');
-            if (callback != undefined) {
-                callback();
+
+        function() {
+            if ($(this).attr('animated') != undefined) {
+                $(this).removeClass('animated ' + $(this).attr('animated')).attr('animated', '');
+                if (callback != undefined) {
+                    callback();
+                }
             }
-        }
-    })
+        })
 }
 
 function _s1(s, j = '') {
@@ -165,11 +166,11 @@ function _s2(s, j = '') {
 
 
 
-function time_getRent(time){
+function time_getRent(time) {
     var s = (parseInt(new Date().getTime()) - time) / 1000;
-    if(s >= 84000){
-        if(s >= 84000 * 30){
-            if(s >= 84000 * 365){
+    if (s >= 84000) {
+        if (s >= 84000 * 30) {
+            if (s >= 84000 * 365) {
                 return getFormatedTime(4, time);
             }
             return getFormatedTime(2, time);
@@ -182,7 +183,7 @@ function time_getRent(time){
 
 function getTime(s, sh = '时', sm = '分', ss = '秒') {
     s = Number(s);
-    if(s >= 86400){
+    if (s >= 86400) {
         return parseInt(s / 86400) + '天';
     }
     var h = 0,
@@ -197,6 +198,26 @@ function getTime(s, sh = '时', sm = '分', ss = '秒') {
     }
     return _s1(h, sh) + _s(m, sm) + _s(parseInt(s), ss);
 }
+
+function getTime1(s, sh = '时', sm = '分') {
+    s = Number(s);
+    if (s >= 86400) {
+        return parseInt(s / 86400) + '天';
+    }
+    var h = 0,
+        m = 0;
+    if (s >= 3600) {
+        h = parseInt(s / 3600);
+        s %= 3600;
+    }
+    if (s >= 60) {
+        m = parseInt(s / 60);
+        s %= 60;
+    }
+    return _s1(h, sh) + _s(m, sm);
+}
+
+
 
 function randNum(min, max) {
     return parseInt(Math.random() * (max - min + 1) + min, 10);
@@ -246,108 +267,111 @@ function hideSidebar() {
 
 
 var g_actions = {};
-function registerAction(name, callback){
+
+function registerAction(name, callback) {
     g_actions[name] = callback;
 }
 
 var g_revices = {};
-function registerRevice(name, callback){
+
+function registerRevice(name, callback) {
     g_revices[name] = callback;
 }
 
 
-function cutString(s_text, s_start, s_end, i_start = 0){
+function cutString(s_text, s_start, s_end, i_start = 0) {
     i_start = s_text.indexOf(s_start, i_start);
-    if(i_start === -1) return '';
+    if (i_start === -1) return '';
     i_start += s_start.length;
     i_end = s_text.indexOf(s_end, i_start);
-    if(i_end === -1) return '';
-    return s_text.substr(i_start, i_end-i_start);
+    if (i_end === -1) return '';
+    return s_text.substr(i_start, i_end - i_start);
 }
 
-function cutStrings(s_text, s_start, s_end, i_start = 0){
+function cutStrings(s_text, s_start, s_end, i_start = 0) {
     var res = [];
-    while(1){
+    while (1) {
         i_start = s_text.indexOf(s_start, i_start);
-        if(i_start === -1) break;
+        if (i_start === -1) break;
         i_start += s_start.length;
         i_end = s_text.indexOf(s_end, i_start + s_start.length);
-        if(i_end === -1) break;
-        res.push(s_text.substr(i_start, i_end-i_start));
+        if (i_end === -1) break;
+        res.push(s_text.substr(i_start, i_end - i_start));
         i_start = i_end;
     }
     return res;
 }
 
-function cutStrings1(s_text, s_start, filter = false){
+function cutStrings1(s_text, s_start, filter = false) {
     var res = [];
     var i_start = 0;
-    while(1){
+    while (1) {
         i_start = s_text.indexOf(s_start, i_start);
-        if(i_start === -1) break;
+        if (i_start === -1) break;
         i_start += s_start.length;
         i_end = s_text.indexOf(s_start, i_start + s_start.length);
-        if(i_end === -1) i_end = s_text.length;
-        res.push(s_text.substr(i_start, i_end-i_start));
+        if (i_end === -1) i_end = s_text.length;
+        res.push(s_text.substr(i_start, i_end - i_start));
         i_start = i_end;
     }
-    if(filter){
+    if (filter) {
         res = Array.from(new Set(res));
     }
     return res;
 }
-function registerContextMenu(selector, callback){
-  $('body')
-    .on('touchstart', selector, function(event) {
-        
-        var dom = $(this);
-        g_down.start = getNow();
-        g_down.element = dom;
-        g_down.task = setTimeout(function() {
-            if (g_down.start > 0) {
-                g_down.holding = true;
-                event.originalEvent.preventDefault(true);
-                event.originalEvent.stopPropagation();
-                callback(g_down.element, event);
+
+function registerContextMenu(selector, callback) {
+    $('body')
+        .on('touchstart', selector, function(event) {
+
+            var dom = $(this);
+            g_down.start = getNow();
+            g_down.element = dom;
+            g_down.task = setTimeout(function() {
+                if (g_down.start > 0) {
+                    g_down.holding = true;
+                    event.originalEvent.preventDefault(true);
+                    event.originalEvent.stopPropagation();
+                    callback(g_down.element, event);
+                }
+                g_down.start = 0;
+                g_down.task = -1;
+
+            }, 1500);
+        })
+        .on('touchend', selector, function(event) {
+            if (g_down.task != -1) {
+                clearTimeout(g_down.task);
             }
             g_down.start = 0;
-            g_down.task = -1;
-            
-        }, 1500);
-    })
-    .on('touchend', selector, function(event) {
-        if (g_down.task != -1) {
-            clearTimeout(g_down.task);
-        }
-        g_down.start = 0;
-        if (g_down.holding) {
+            if (g_down.holding) {
+                event.originalEvent.preventDefault(true);
+                event.originalEvent.stopPropagation();
+            }
+            g_down.holding = false;
+        })
+        .on('contextmenu', selector, function(event) {
+            var dom = $(this);
             event.originalEvent.preventDefault(true);
             event.originalEvent.stopPropagation();
-        }
-        g_down.holding = false;
-    })
-    .on('contextmenu', selector, function(event) {
-        var dom = $(this);
-        event.originalEvent.preventDefault(true);
-        event.originalEvent.stopPropagation();
-        g_down.element = dom;
-       callback(g_down.element, event);
-    });
+            g_down.element = dom;
+            callback(g_down.element, event);
+        });
 }
 
 function copyText(text) {
-    if(!$('#modal-copy').length){
+    if (!$('#modal-copy').length) {
         $(`<div class="modal" id="modal-copy" tabindex="-1" role="dialog" style="z-index: 99999;">
         <div class="modal-dialog" role="document">
             <div class="modal-content modal-content-media w-500">
                 <a class="close" role="button" aria-label="Close" onclick="halfmoon.toggleModal('modal-copy');">
                     <span aria-hidden="true">&times;</span>
                 </a>
-                <h5 class="modal-title text-center">`+_l('弹出_复制_标题')+`</h5>
+                <h5 class="modal-title text-center">` + _l('弹出_复制_标题') + `</h5>
                 <div class="modal-html"><div class="input-group">
-          <textarea class="form-control" id="input_copy" disbaled>`+text+`</textarea>
+          <textarea class="form-control" id="input_copy" disbaled>` + text + `</textarea>
         </div>
-        <button class="form-control bg-primary btn-block" onclick="$('#input_copy').select();document.execCommand('copy');halfmoon.toggleModal('modal-copy');">`+_l('复制')+`</button>
+        <button class="form-control bg-primary btn-block" onclick="$('#input_copy').select();document.execCommand('copy');halfmoon.toggleModal('modal-copy');">` + _l('复制') + `</button>
                 </div>
             </div>
         </div>
@@ -362,20 +386,24 @@ function closeModal(id, type, fun) {
         if (type && modal.attr('data-type') != type) {
             return false;
         }
-        if(typeof(fun) == 'function') fun();
+        if (typeof(fun) == 'function') fun();
         return true;
     }
     return false;
 }
 
 
-function checkInputValue(doms){
+function checkInputValue(doms) {
     var values = [];
-    for(var input of doms){
-        if(input.value == ''){
-          return input.focus();
+    for (var input of doms) {
+        input = $(input);
+        var val = input.val();
+        if (val == '') {
+            input.addClass('is-invalid')[0].focus();
+            return false;
         }
-        values.push(input.value);
+        input.removeClass('is-invalid');
+        values.push(val);
     }
     return values;
 }
@@ -383,7 +411,7 @@ function checkInputValue(doms){
 // console.log(loadJs('emojis/all.json'));
 
 
-function loadJs(file, success = function(){}, fail = function(){}){
+function loadJs(file, success = function() {}, fail = function() {}) {
     var D = document;
     var scriptNode = D.createElement('script');
     scriptNode.type = "text/javascript";
@@ -392,11 +420,11 @@ function loadJs(file, success = function(){}, fail = function(){}){
     targ.appendChild(scriptNode);
     scriptNode.onload = function() {
         success();
-    }    
+    }
     scriptNode.onerror = function() {
         fail();
-    }   
-    return scriptNode;         
+    }
+    return scriptNode;
 }
 
 function insertStyle(cssText) {
@@ -413,7 +441,7 @@ function insertStyle(cssText) {
     return style;
 }
 
-    
+
 // }
 
 // function quickPose_preload() {
@@ -421,18 +449,39 @@ function insertStyle(cssText) {
 //         loadLocalData(function(){
 //             if(g_dirs.length === 0){
 
-    function getEditorHtml(m){
-         var c = $('<div>' + m + '</div>').clone(); // 用div把所有元素包成1个，以便取得所有html
-                for (var d of c.find('.emoji_')) {
-                    // 去除蜜汁插入图片的背景颜色
-                    d.style.backgroundColor = '';
-                }
-                if (c.length == 1 && c[0].nodeName == 'P') {
-                    s = c[0].innerText;
-                } else {
-                    s = c[0].outerHTML // jq html() 无法获取h1等等
-                }
-                s = s.replace('<p>', '').replace('</p>', '').replace('<div>', '').replace('</div>', ''); // 替换一个div与p
-
-return s;
+function getEditorHtml(m) {
+    var c = $('<div>' + m + '</div>').clone(); // 用div把所有元素包成1个，以便取得所有html
+    for (var d of c.find('.emoji_')) {
+        // 去除蜜汁插入图片的背景颜色
+        d.style.backgroundColor = '';
     }
+    if (c.length == 1 && c[0].nodeName == 'P') {
+        s = c[0].innerText;
+    } else {
+        s = c[0].outerHTML // jq html() 无法获取h1等等
+    }
+    s = s.replace('<p>', '').replace('</p>', '').replace('<div>', '').replace('</div>', ''); // 替换一个div与p
+
+    return s;
+}
+
+function getIconValue(d) {
+    var i = d.find('i');
+    var t = i.attr('data-text');
+    return i.css('display') != 'none' ? (i.html() != '' ? t.length ? t.substr(0, 2) : '' : i.attr('data-icon')) : d.find('img').attr('src');
+}
+
+function getIconStr(icon, name) {
+
+    if (icon.substr(0, 5) == 'data:' || ['.jpg', '.png'].indexOf(icon.substr(-4).toLowerCase()) != -1) {
+        return `<img class="rounded-circle w-50 h-50" src="` + icon + `">`;
+    }
+    var h = '<div class="_icon position-relative mx-auto">';
+    if (icon.substr(0, 3) == 'fa-') {
+        h += `<i data-action="habbit_dots" class="fa ` + icon + `" aria-hidden="true"></i>`;
+    } else {
+        h += `<i data-action="habbit_dots" class="fa" aria-hidden="true">` + (icon == '' ? name.substr(0, 2) : icon) + `</i>`;
+    }
+    h += '</div>';
+    return h;
+}

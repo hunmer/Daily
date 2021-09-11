@@ -14,10 +14,10 @@ var g_choose = {
 
         registerAction('select_icon', (dom, action, params) => {
         	if($(dom).hasClass('bg-primary')){
-        		var d = $('#chatList_add_icon');
+        		var d = $('.modal.show .icon_selecter');
         		var icon = $(dom).attr('data-icon');
-        		d.find('i').removeClass(d.attr('data-icon')).attr('data-icon', icon).addClass(icon).show();
-                        $('#chatList_add_icon img').hide();
+        		d.find('i').html('').removeClass(d.attr('data-icon')).attr('data-icon', icon).addClass(icon).show();
+                        d.find('img').hide();
         		$('#modal-custom-1').attr('data-type', null).find('.modal-html').html('');
         		halfmoon.toggleModal('modal-custom-1');
 
