@@ -1,17 +1,34 @@
 var g_todo = {
     preInit: () => {
-        $(`<h5 class="sidebar-title">` + _l('侧栏_代办_标题') + `</h5>
-            <div class="sidebar-divider"></div>
+        $(`
             <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,todo">
                     <span class="sidebar-icon">
                         <i class="fa fa-list-alt" aria-hidden="true"></i>
                     </span>
-            ` + _l('侧栏_代办_进入') + `
+            ` + _l('侧栏_代办_标题') + `
             </a>`).appendTo('.sidebar-menu');
     },
     init: () => {
         if (g_todo.inited) return;
         g_todo.inited = true;
+        g_todos = local_readJson('todos', {
+    // 1629984468064: {
+    //  name: '做作业2',
+    //  desc: "完成数学作业2",
+    //  end: 1629986668064,
+    //  priority: 'primary',
+    //  notes: {
+    //      1629984469064: {
+    //          text: "完成第一题",
+    //          type: "sub"
+    //      },
+    //      1629984469084: {
+    //          text: "加油",
+    //          type: "text"
+    //      }
+    //  },
+    // }
+});
         $(`<div id='content_todo' class="_content p-10 hide animated fadeIn" animated='fadeIn'>
             <div class="mainContent"></div>
             <div class="ftb br">

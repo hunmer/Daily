@@ -1,3 +1,31 @@
+.color_active {
+    border: 3px solid black !important;
+}
+.active_selected .alert {
+    border: 3px solid red !important;
+
+}
+
+.badge_tag {
+    text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
+
+    -webkit-text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
+
+    -moz-text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
+
+    *filter: Glow(color=#000, strength=1);
+}
+.tag_selected {
+    border: 3px solid var(--primary-color) !important;
+    color: white !important;
+}
+s {
+    opacity: .4;
+}
+s > * {
+    opacity: .4;
+}
+
 .datepickers-container {
     z-index: 99999;
     position: fixed;

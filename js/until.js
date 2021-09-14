@@ -28,28 +28,7 @@ Date.prototype.format = function(fmt) {
     return fmt;
 }
 
-function loadRes(files, callback) {
-    var i = 0;
-    for (var file of files) {
-        if (file.type == "js") {
-            var fileref = document.createElement('script');
-            fileref.setAttribute("type", "text/javascript");
-            fileref.setAttribute("src", file.url)
-        } else if (file.type == "css" || file.type == "cssText") {
-            var fileref = document.createElement("link");
-            fileref.setAttribute("rel", "stylesheet");
-            fileref.setAttribute("type", "text/css");
-            fileref.setAttribute("href", file.url)
-        }
-        document.getElementsByTagName("head")[0].appendChild(fileref).onload = function() {
-            //window.plugin_musicPlayer.res.push(fileref);
-            if (++i == files.length) {
-                if (typeof callback == 'function') callback();
-            }
-        }
 
-    }
-}
 
 function local_remove(key) {
     if (window.localStorage) {
@@ -167,7 +146,8 @@ function _s2(s, j = '') {
 
 
 function time_getRent(time) {
-    var s = (parseInt(new Date().getTime()) - time) / 1000;
+    var today = new Date();
+    var s = (parseInt(today.getTime()) - time) / 1000;
     if (s >= 84000) {
         if (s >= 84000 * 30) {
             if (s >= 84000 * 365) {
@@ -178,7 +158,11 @@ function time_getRent(time) {
         return parseInt(s / 86400) + '天前';
     }
     // console.log(getTime(s, '时', '分', '秒前'));
-    return getFormatedTime(0, time);
+    var s = '';
+    if(today.getDate() != new Date(time).getDate()){
+        s = _l('昨天');
+    }
+    return s+ getFormatedTime(0, time);
 }
 
 function getTime(s, sh = '时', sm = '分', ss = '秒') {
@@ -484,4 +468,25 @@ function getIconStr(icon, name) {
     }
     h += '</div>';
     return h;
+}
+
+var vibrateInterval;
+// 开始震动
+function startVibrate(duration) {
+    navigator.vibrate(duration);
+}
+
+// 停止震动
+function stopVibrate() {
+    // 清除间隔和停止持续振动
+    if(vibrateInterval) clearInterval(vibrateInterval);
+    navigator.vibrate(0);
+}
+
+//在给定的持续时间和间隔时开始持续的振动
+//假定一个数字值
+function startPeristentVibrate(duration, interval) {
+    vibrateInterval = setInterval(function() {
+        startVibrate(duration);
+    }, interval);
 }

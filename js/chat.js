@@ -3,23 +3,45 @@ var g_chat = {
     fullscreen: false,
     lastMsg: [],
     dates: [],
+    edit: {},
     preInit: () => {
-        $(`<h5 class="sidebar-title">` + _l('侧栏_聊天_标题') + `</h5>
-            <div class="sidebar-divider"></div>
+        $(`
             <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,chatList">
                     <span class="sidebar-icon">
                         <i class="fa fa-commenting-o" aria-hidden="true"></i>
                     </span>
-            ` + _l('侧栏_聊天_进入') + `
+            ` + _l('侧栏_聊天_标题') + `
             </a>`).appendTo('.sidebar-menu');
     },
     showMenu: (show = true) => {
         g_chat.rm.css('display', show ? 'unset' : 'none');
         halfmoon.deactivateAllDropdownToggles();
+                startVibrate(100);
+
     },
     init: () => {
         if (g_chat.inited) return;
         g_chat.inited = true;
+        g_chats = local_readJson('chats', {
+    // 日常: {
+    //      createAt: 1628611200000,
+    //      icon: 'fa-plus',
+    //      desc: "早上八点前起床",
+    //      enable: true,
+    //      msgs: {
+    //          1628611300000: {
+    //              text: '你好啊'
+    //          }
+    //      }
+    // }
+});
+for(var name in g_chats){
+    local_saveJson('chat_'+name, g_chats[name]);
+}
+g_chats = {};
+local_saveJson('chats', {});
+
+
         $(`<div id='content_chatList' class="_content p-10 hide animated fadeIn" animated='fadeIn'>
             <div class="mainContent"></div>
             <div class="ftb br">
@@ -32,7 +54,7 @@ var g_chat = {
             </div>`).appendTo('.content-wrapper');
         // <a data-action="up" class="btn btn-square btn-primary rounded-circle btn-lg shadow" style="display: none;" role="button"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
         $(`<div id='content_chat' class="_content hide animated fadeIn" animated='fadeIn'>
-            <div id="div_inpuit" class="theme w-full pb-10 mb-10" style="z-index: 9999"></div>
+            <div id="div_inpuit" class="theme w-full pb-10 mb-10 border-bottom" style="z-index: 9999"></div>
             <div class="mainContent" style="margin-top: 50px;"></div>
             <div class="ftb br">
 
@@ -398,7 +420,7 @@ var g_chat = {
     // pin 文字/图片 到消息
     pin_to_msg: (time, value) => {
         var dom = $('.msg[data-time="' + time + '"]');
-        var name = par.attr('data-name');
+        var name = dom.attr('data-name');
 
         var data = g_chat.getValue(time, name);
 
@@ -469,7 +491,6 @@ var g_chat = {
             var time = new Date(date).getTime();
             var d = $('.picker__day[data-pick="'+time+'"]');
             if(d.length){
-                d
                 var badge = d.css('position', 'relative').find('.badge');
                 if(badge.length){
                     badge.html(days[date]);
@@ -478,6 +499,7 @@ var g_chat = {
                 }
             }
         }
+       
     },
 
 
@@ -588,7 +610,7 @@ var g_chat = {
             $('#div_inpuit').show();
             var par = $('.msg[data-time="' + g_chat.rm_showing[0] + '"]');
             var time = par.attr('data-time');
-            var old = par.find('.alert-text').text();
+            var old = par.find('.alert-text').html();
             g_chat.edit = {
                 time: time,
                 channle: par.attr('data-name'),
@@ -679,7 +701,7 @@ var g_chat = {
             $('#modal-custom').find('.modal-title').html(_l('弹出_频道_' + (edit ? '修改' : '新建')));
             $('#modal-custom').attr('data-type', 'chatList_add').find('.modal-html').html(`
                 <div class="mb-10 position-relative">
-                    <button class="btn btn-rounded btn-sm" data-action="channle_pin" style="position: absolute;right: 0;top: 0;">`+_l('unpin')+`</button>
+                    <button class="btn btn-rounded btn-sm btn-danger" data-action="channle_pin" style="position: absolute;right: 0;top: 0;">`+_l('pin')+`</button>
                     <div class="position-relative mx-auto w-fit">
                         <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                           <div class="btn-group dropdown with-arrow" role="group">
@@ -717,7 +739,7 @@ var g_chat = {
                 $('#chatList_input_name').val(action[1]);
                 $('#chatList_input_desc').val(data.desc);
                 if(data.pin){
-                    $('[data-action="channle_pin"]').addClass('btn-danger').html(_l('pin'));
+                    $('[data-action="channle_pin"]').removeClass('btn-danger').html(_l('unpin'));
                 }
                 var i = $('#chatList_add_icon i');
                 if(data.icon.substr(0, 5) == 'data:' || ['.jpg', '.png'].indexOf(data.icon.substr(-4).toLowerCase()) != -1 ){
@@ -777,8 +799,8 @@ var g_chat = {
                var s = getEditorHtml(m);
                 g_chat.editor.txt.clear();
 
-                var name = g_chat.edit ? g_chat.edit.channle : g_chat.name;
-                if (g_chat.edit) { // 编辑消息
+                if (g_chat.edit.time) { // 编辑消息
+                    name = g_chat.edit.channle;
                     if(s == g_chat.edit.text){
                         return;
                     }
@@ -789,9 +811,13 @@ var g_chat = {
                     g_chat.setValue(time, data, name);
                     g_chat.replaceWith($('.msg[data-time="' + time + '"]'), g_chat.getHTML_msgs(time, data, true));
 
-                    $('#div_inpuit').hide();
+                    if( g_chat.name == undefined){
+                        $('#div_inpuit').hide();
+
+                    }
 
                 } else {
+                    name = g_chat.name;
                     var data = {
                         text: s
                     }
@@ -808,8 +834,11 @@ var g_chat = {
                     g_chat.lastMsg[name].times.push(time);
                 }
                 g_chat.lastMsg[name].lastMsg = data;
+                g_chat.editor.history.content.cache.data.data = []; // 清除历史
+                $('[data-title="撤销"]').removeClass('w-e-active');
                 toTop();
-                delete g_chat.edit;
+                g_chat.edit = {};
+                startVibrate(25);
             }
         });
 
@@ -1073,7 +1102,7 @@ var g_chat = {
         g_chat.name = name;
         g_chat.lastData = '';
          g_chat.dates = [];
-        delete g_chat.edit;
+       g_chat.edit = {};
         var h = '';
         // todo 多种消息支持，根据类型执行不同的函数得出不同的Html
          var b = $('[data-action="msg_sort"]').hasClass('text-primary');
@@ -1154,7 +1183,7 @@ var g_chat = {
         
         return `<div class="alert filled-lm chat_list shadow-sm" role="alert" data-action="chat_openChat" data-name="` + name + `">
                     <div class="_icon position-relative">
-                        `+(data.pin ? `<span class="badge badge-pill badge-primary badge-danger" style="padding: 1px 5px;position: absolute;bottom: 0;right: 0;"><i class="fa fa-thumb-tack" aria-hidden="true" ></i></span>` : '')+`
+                        `+(data.pin ? `<span class="badge badge-pill badge-primary badge-danger" style="padding: 1px 5px;position: absolute;bottom: 0;right: 0;z-index: 2;"><i class="fa fa-thumb-tack" aria-hidden="true" ></i></span>` : '')+`
                         `+icon+`
                     </div>
                     <div style="margin-left: 20px;">

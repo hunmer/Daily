@@ -2,18 +2,28 @@ var g_question = {
     preInit: () => {
         $(`
 
-            <h5 class="sidebar-title">` + _l('侧栏_问题_标题') + `</h5>
-            <div class="sidebar-divider"></div>
             <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,question">
                     <span class="sidebar-icon">
                         <i class="fa fa-question" aria-hidden="true"></i>
                     </span>
-            ` + _l('侧栏_问题_进入') + `
+            ` + _l('侧栏_问题_标题') + `
             </a>`).appendTo('.sidebar-menu');
     },
     init: () => {
         if (g_question.inited) return;
         g_question.inited = true;
+        g_questions =  local_readJson('questions', {
+    1628611200000: {
+        title: 'text',
+        desc: 'desc',
+        datas: {
+            1628611300000: {
+                text: 'data1',
+            }
+        }
+    }
+});
+
         $(`<div id='content_question' class="_content p-10 hide">
             <div class="mainContent animated fadeInDown" animated='fadeInDown'></div>
             <div class="ftb br">

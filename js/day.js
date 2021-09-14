@@ -1,12 +1,12 @@
 var g_day = {
     // todo 不指定年的话 超过的话年数+1
     preInit: () => {
-        $(`<h5 class="sidebar-title">` + _l('侧栏_纪念日_标题') + `</h5>
+        $(`
             <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,day">
                     <span class="sidebar-icon">
                         <i class="fa fa-calendar" aria-hidden="true"></i>
                     </span>
-            ` + _l('侧栏_纪念日_进入') + `
+            ` + _l('侧栏_纪念日_标题') + `
             </a>
 
             `).appendTo('.sidebar-menu');
@@ -14,6 +14,15 @@ var g_day = {
     init: () => {
         if (g_day.inited) return;
         g_day.inited = true;
+        g_days = local_readJson('days', {
+    // 1628611200000: {
+    //     name: '开学',
+    //     notes: {},
+    //         icon: 'img/school.png',
+    //         desc: "开学噩梦",
+    //     }
+});
+
         $(`<div id='content_day' class="_content hide">
             <div class="mainContent row"></div>
             <div class="ftb br">

@@ -1,18 +1,34 @@
 var g_daily = {
     preInit: () => {
-        $(`<h5 class="sidebar-title">` + _l('侧栏_日常_标题') + `</h5>
-            <div class="sidebar-divider"></div>
+        $(`
             <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,daily">
                     <span class="sidebar-icon">
                         <i class="fa fa-inbox" aria-hidden="true"></i>
                     </span>
-            ` + _l('侧栏_日常_进入') + `
+            ` + _l('侧栏_日常_标题') + `
             </a>
             `).appendTo('.sidebar-menu');
     },
     init: () => {
         if (g_daily.inited) return;
         g_daily.inited = true;
+        g_dailys = local_readJson('dailys', {
+    // 1631370956990: {
+    //   name: '喝水',
+    //   icon: 'img/book_reading.png',
+    //   desc: "每日喝水",
+    //   tags: ["日常"],
+    //   progress: {
+    //     1631368203153: {
+    //       text: "a",
+    //       value: 5,
+    //     }
+    //   },
+    //   maxProgress: 3,
+    //   range: 86400,
+    //   resetAt: 1631368203153 + 86400 * 1000,
+    // }
+  });
         $(`<div id='content_daily' class="_content hide h-full">
         <div class="mainContent row"></div>
             <div class="ftb br">
@@ -30,7 +46,9 @@ var g_daily = {
     },
     initHtml: () => {
         var h = '';
-        for (var time in g_dailys) {
+          for (var time of Object.keys(g_dailys).sort(function(a, b) {
+            return g_dailys[b].pin - g_dailys[a].pin || b - a;
+        })) {
             h += g_daily.getHtml(time);
         }
         $('#content_daily .mainContent').html('<div class="row w-full">' + h + '</div>');
@@ -40,16 +58,18 @@ var g_daily = {
         if(isNaN(add)) return;
         if (add == 0) return;
         var div = $('[data-time="' + time + '"]');
-        var max = g_dailys[time]['maxProgress'] - g_daily.getNowProgress(time).value;
-        if (add > max) add = max;
+        // var max = g_dailys[time]['maxProgress'] - g_daily.getNowProgress(time).value;
+        // if (add > max) add = max;
 
         var now = new Date().getTime();
         g_dailys[time]['progress'][now] = {
             text: '',
             value: add,
         }
+
         local_saveJson('dailys', g_dailys);
         div.replaceWith(g_daily.getHtml(time));
+        startVibrate(25);
     },
     getHTML_create: (time) => {
         return `
@@ -99,6 +119,13 @@ var g_daily = {
                 <button class="btn btn-primary btn-block" data-action="daily_create">` + _l('弹出_日常_' + (name != '' ? '修改' : '新建') + '_按钮_确定') + `</button>`;
     },
     registerActions: () => {
+      registerAction('daily_pin', (dom, action, params) => {
+            var b = $(dom).toggleClass('text-secondary').hasClass('text-secondary');
+            g_dailys[action[1]].pin = b ? new Date().getTime() : 0;
+            local_saveJson('dailys', g_dailys);
+            g_daily.initHtml();
+        });
+
         registerAction('daily_addProgress', (dom, action, params) => {
             var time = $(dom).parents('[data-time]').attr('data-time');
             var i;
@@ -197,6 +224,7 @@ var g_daily = {
 
     getNowProgress: (data, time) => {
         if (typeof(data) != 'object') {
+            time = data;
             data = g_dailys[data];
         }
 
@@ -226,12 +254,30 @@ var g_daily = {
 
     getHtml: (time) => {
         var data = g_dailys[time];
-        var progress = g_daily.getNowProgress(data);
-        console.log(progress);
+        var progress = g_daily.getNowProgress(data, time);
         var p = progress.value / data.maxProgress * 100;
+
+        // 获取连续打卡
+        var times = Object.keys(data.progress);
+        var last = new Date().getTime();
+        var signed = [];
+        for(var i=times.length-1;i>=0;i--){
+          if(last - times[i] <= 86400 * 1000){
+            var date = getFormatedTime(4, times[i]);
+            if(signed.indexOf(date) == -1){
+              signed.push(date);
+            }
+            last = times[i];
+          }else{
+            break;
+          }
+        }
+
         return `
         <div class="col-6 h-200" data-time="` + time + `">
             <div class="card position-relative h-full">
+            <h2 data-toggle="tooltip" data-title="`+signed.join(' , ')+`" data-placement="bottom" class="text-muted" style="position: absolute;bottom: -22px;right: 5px;">` + signed.length + `</h2>
+            <i style="position: absolute;left: 10px;top: 10px;" data-action="daily_pin,` + time + `" class="fa fa-star`+(data.pin ? ' text-secondary' : '-o')+`" aria-hidden="true"></i> 
               <div class="dropdown" style="z-index: 2;position: absolute;right: 10px;top: 10px;" >
                   <i data-toggle="dropdown" class="fa fa-ellipsis-h" aria-hidden="true"></i> 
                   <div class="dropdown-menu dropdown-menu-right">
@@ -242,7 +288,8 @@ var g_daily = {
                     </div>
                   </div>
                 </div>
-            <div class="h-full">
+            <div class="h-full ">
+                 
 
                 <div class='cardContent contnet_1 show'>
                     <div class="text-center">
@@ -257,7 +304,7 @@ var g_daily = {
                         <i data-action="daily_addProgress,1" class="fa fa-plus text-muted" aria-hidden="true" style="position: absolute;right: 7px;top: 3px;font-size: 2rem;"></i>
                     </div>
                 </div>
-                <div class='cardContent contnet_2 hide h-full' data-action="daily_card_switch">
+                <div class='cardContent contnet_2 hide h-full mt-10' data-action="daily_card_switch">
                     <h2 class="card-title">
                         ` + data.name + `
                     </h2>

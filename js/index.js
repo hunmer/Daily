@@ -1,6 +1,6 @@
 var _tip = $('#soundTip')[0];
-
 function back() {
+      startVibrate(25);
     if (g_emoji.isShowing()) {
         g_emoji.hide();
     } else
@@ -31,6 +31,7 @@ function isShow($node) {
 
 
 $(function() {
+    FastClick.attach(document.body);
     window.history.pushState(null, null, "#");
     window.addEventListener("popstate", function(event) {
         //  if (_viewer && _viewer.isShown) {
@@ -47,6 +48,7 @@ $(function() {
             doAction(this, $(this).attr('data-action'));
         }).on('dblclick', '.msg .main', function(event) {
             g_chat.setTextStyle($(this).parent('[data-time]').attr('data-time'), 'del');
+             startVibrate(25);
         })
         .on('change', '.msg .w-e-todo input[type="checkbox"]', function(event) {
             var dom = $(event.target);
@@ -87,9 +89,13 @@ $(function() {
         var div = $('#content_' + g_cache.showing);
         //div.find('[data-action="up"]').css('display', this.scrollTop == 0 ? 'none' : 'block');
 
-
         if (g_cache.showing == 'chat' && g_chat.name != undefined) {
-            $('#div_inpuit').css('position', this.scrollTop < $('#div_inpuit').offset().top + $('#div_inpuit').height() ? 'unset' : 'fixed');
+            if(this.scrollTop == 0){
+                $('#div_inpuit').css('position', 'unset');
+            }else
+            if(this.scrollTop >= $('#div_inpuit').offset().top + $('#div_inpuit').height() + 30){
+                $('#div_inpuit').css('position', 'fixed');
+            }
 
             var d = $(document.elementFromPoint($(this).width() / 2, $(this).height() / 2));
             if (d != null) {
@@ -134,9 +140,7 @@ $(function() {
             })
             .catch(function(err) {});
     });
-
-    showContent('chatList');
-    enableDebug();
+     showContent(g_config.lastShow || 'chatList');
     test();
 });
 
@@ -148,17 +152,48 @@ function soundTip(url) {
 
 
 function enableDebug() {
-    if (!IsPC() && g_config.debug) {
-        loadRes([
-            { url: "js/vue.js", type: "js" },
-            { url: "js/web-console.umd.min.js", type: "js" },
-        ], () => {
-            new WebConsole({
-                panelVisible: false,
-                activeTab: 'console',
-                entryStyle: 'button'
-            });
-        })
+    // if (!IsPC() && g_config.debug) {
+        // loadRes([
+        //     { url: "js/vue.js", type: "js" },
+        //     { url: "js/web-console.umd.min.js", type: "js" },
+        // ], () => {
+            if (!IsPC() && g_config.debug) {
+                loadJs('js/web-console.umd.min.js', () => {
+                    new WebConsole({
+                        panelVisible: false,
+                        activeTab: 'console',
+                        entryStyle: 'button'
+                    });
+                });
+            
+        }
+        // })
+    // }
+}
+
+function loadRes(files, callback) {
+    var i = 0;
+    var fileref = [];
+    for (var file of files) {
+        if (file.type == "js") {
+            fileref[i] = document.createElement('script');
+            fileref[i].setAttribute("type", "text/javascript");
+            fileref[i].setAttribute("src", file.url)
+        } else if (file.type == "css" || file.type == "cssText") {
+            fileref[i] = document.createElement("link");
+            fileref[i].setAttribute("rel", "stylesheet");
+            fileref[i].setAttribute("type", "text/css");
+            fileref[i].setAttribute("href", file.url)
+        }
+        var target = document.getElementsByTagName('head')[0] || document.body || document.documentElement;
+
+       target.appendChild(fileref[i]).onload = function() {
+            //window.plugin_musicPlayer.res.push(fileref);
+            if (++i == files.length) {
+                if (typeof callback == 'function') callback();
+            }
+        }
+
     }
 }
 
@@ -174,13 +209,21 @@ function setBg(bg) {
 }
 
 function initSetting() {
-    if (!g_config.darkMode) {
-        $('body').removeClass('dark-mode');
+    var light;
+    if(g_config.autoThmem){
+        var h = new Date().getHours();
+        light = h < 18 && h > 6;
+    }else{
+        light = !g_config.darkMode;
+    }
+    if(light){
+     $('body').removeClass('dark-mode');
     }
     if (g_config.bg) {
         setBg(g_config.bg);
     }
    initCss();
+   enableDebug();
 }
 
 function setFontColor(color){
@@ -302,6 +345,9 @@ function doAction(dom, action, params) {
             g_config.bg = bg;
             g_config.debug = $('#checkbox-debug').prop('checked');
             g_config.blur = $('#bg_blur').val();
+            g_config.passwordEnable = $('#switch-password').prop('checked');
+            g_config.password = $('#input_password').val();
+            g_config.autoTheme = $('#checkbox-autoTheme').prop('checked');
             g_config.fixSelect =  $('#checkbox-fixSelect').prop('checked');
             local_saveJson('config', g_config);
             halfmoon.toggleModal('modal-custom');
@@ -310,7 +356,7 @@ function doAction(dom, action, params) {
         case 'openSetting':
             g_cache.config = g_config;
             g_cache.closeCustom = () => {
-                g_config = g_cahce.config;
+                g_config = g_cache.config;
                 initSetting();
             }
             $('#modal-custom').find('.modal-title').html(_l('弹出_设置_标题'));
@@ -372,6 +418,9 @@ function doAction(dom, action, params) {
                          <div class="custom-checkbox d-inline-block mr-10">
                           <input type="checkbox" id="checkbox-fixSelect" value=""` + (g_config.fixSelect ? ' checked' : '') + `><label for="checkbox-fixSelect">` + _l('弹出_设置_修复select') + `</label>
                         </div>
+                        <div class="custom-checkbox d-inline-block mr-10">
+                          <input type="checkbox" id="checkbox-autoTheme" value=""` + (g_config.autoTheme ? ' checked' : '') + `><label for="checkbox-fixSelect">` + _l('弹出_设置_自动主题') + `</label>
+                        </div>
 
                          <div style="display: flex;margin-top: 10px;justify-content: space-between;">主题色:&nbsp;&nbsp;`;
 
@@ -385,6 +434,19 @@ function doAction(dom, action, params) {
                                 <div class="rounded-circle color-dot bg-white" onclick="setFontColor('#dfe6e9')"></div>
                                 <div class="rounded-circle color-dot bg-dark" onclick="setFontColor('#2d3436')"></div>
                             </div>
+
+                            <div class="input-group mt-10">
+                              <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                  <div class="custom-switch">
+                                    <input type="checkbox" id="switch-password" value="">
+                                    <label for="switch-password" class="blank"></label>
+                                  </div>
+                                </div>
+                              </div>
+                              <input id='input_password' type="password" class="form-control" placeholder="`+_l('弹出_设置_输入密码')+`" value="`+(g_config.password || '')+`">
+                            </div>
+
                      <div class="btn-group w-full mt-10">
                     <button class="btn" data-action="uploadData"><i class="fa fa-upload" aria-hidden="true"></i></button>
                     <button class="btn" data-action="sync"><i class="fa fa-download" aria-hidden="true"></i></button>
@@ -407,6 +469,7 @@ function doAction(dom, action, params) {
             d.prop('selected', true);
 
             $('#checkbox_tts').prop('checked', g_config.tts);
+            $('#switch-password').prop('checked', g_config.passwordEnable);
             $('#checkbox_fixInput').prop('checked', g_config.fixInput);
             break;
         case 'sync':
@@ -471,6 +534,8 @@ function showContent(id) {
     $('.navbar-nav').html('');
     $('.navbar-fixed-bottom').css('height', '');
     g_cache.showing = id;
+    
+    var t;
     switch (id) {
         case 'chat':
             break;
@@ -512,6 +577,15 @@ function showContent(id) {
             t = _l('标题_纪念日');
             g_day.init();
             break;
+
+        case 'active':
+            t = _l('标题_日活动');
+            g_active.init();
+            break;
+    }
+    if(t){
+        g_config.lastShow = id;
+        local_saveJson('config', g_config);
     }
     $('.sidebar-menu .active').removeClass('active');
     $('.sidebar-menu [data-action="toTab,' + id + '"]').addClass('active');
@@ -611,20 +685,131 @@ function reviceMsg(data) {
     }
 }
 
+function prompt_Password(){
+    var n = new Date().getTime();
+    if(false && n - g_config.lastLogin <= 3600 * 6){
+        return $('#page-wrapper').show();
+    }
+    var pin = $('#pin');
+    if(!pin.length) pin = $('<div id="pin"></div>').appendTo('body');
+    mobiscroll.numpad('#pin', {
+        theme: 'mobiscroll',
+        display: 'center',
+        headerText: _l('输入密码_标题'),
+        lang: 'ja',
+        template: 'dddd',
+        allowLeadingZero: true,
+        placeholder: '-',
+        closeOnOverlayTap: false,
+        mask: '*',
+        buttons: ['set'],
+         onSet: function (event, inst) {
+            checkPassword(event.valueText);
+        }
+    });
+     $('#pin').mobiscroll('show');
+
+    // prompt(_l('输入密码_标题'), '', {inputPlaceholder: _l('输入密码_文本')}).then((d) => {
+    //         if(d.text != g_config.password){
+    //             return prompt_Password();
+    //         }
+    //         g_config.lastLogin = n;
+    //         local_saveJson('config', g_config);
+    //     $('#page-wrapper').show();
+    // });
+}
+
+function checkPassword(password){
+     var b = password == g_config.password;
+    if(b){
+        g_config.lastLogin = new Date().getTime() + 6 * 60 * 60 * 1000;
+        local_saveJson('config', g_config);
+        $('#page-wrapper').show();
+    }else{
+        
+        alertDialog(_l('错误'), `
+            <h3 class="md-text-center">`+_l('密码错误')+`</h3>
+            <p class="md-text-center">`+_l('忘记密码了吗')+`?</p>
+            `, {
+            buttons: [{
+                text: _l('确定'),
+                handler: (event, inst) => {
+                    inst.hide();
+                    prompt_Password();
+                }
+            },
+            {
+                text: _l('忘记密码'),
+                handler: (event, inst) => {
+                    // TODO 密保找回
+                }
+            }],
+        })
+    }
+}
+
+function alertDialog(title, html, opt = {}){
+    var alert = $('#alert');
+    if(!alert.length) alert = $(`<div id="alert">
+            <div class="md-dialog">
+                `+html+`
+            </div>
+    </div>`).appendTo('body');
+    opt = Object.assign({
+        theme: 'mobiscroll',
+        display: 'center',
+        closeOnOverlayTap: false,
+        headerText: title,
+        lang: 'ja',
+         anchor: $('#widgetDialog-show'), // More info about anchor: https://docs.mobiscroll.com/3-0-0_beta5/widget#!opt-anchor
+        buttons: [{
+            text: _l('确定'),
+            handler: 'set'
+        }, {
+            text: _l('取消'),
+            handler: 'cancel'
+        }],
+    }, opt);
+     mobiscroll.widget('#alert', opt);
+     $('#alert').mobiscroll('show');
+
+}
+
 function test() {
             initSetting();
             // showContent('todo');
-            // showContent('daily');
-            // showContent('progress');
+            
+            // showContent('active');
     // doAction(null, 'openSetting');
     // g_chat.openChat('アイディア');
+    if(g_config.passwordEnable && g_config.password != ''){
+         prompt_Password();
+    }else{
+        $('#page-wrapper').show();
+    }
 }
 
-function onToggleSidebar() {
-    halfmoon.toggleSidebar();
+halfmoon._toggleSidebar= halfmoon.toggleSidebar;
+halfmoon.toggleSidebar = () => {
+    halfmoon._toggleSidebar();
+    var btn = $('#closeSidebar');
+    
     if ($('#page-wrapper').attr('data-sidebar-hidden') == 'hidden') {
-
+        btn.hide();
     } else {
+        setTimeout(() => {
+             var left = $('.btn-action').offset().left - 10;
+            btn.css({
+            left: left,
+            width: $(window).width() - left
+        }).show();
+        }, 500);
         g_emoji.hide();
     }
+}
+
+halfmoon._toggleModal= halfmoon.toggleModal;
+halfmoon.toggleModal = (id) => {
+    halfmoon._toggleModal(id);
+    startVibrate(50);
 }

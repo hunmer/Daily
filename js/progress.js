@@ -1,18 +1,41 @@
 var g_progress = {
     preInit: () => {
-        $(`<h5 class="sidebar-title">` + _l('侧栏_进度_标题') + `</h5>
-            <div class="sidebar-divider"></div>
+        $(`
             <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,progress">
                     <span class="sidebar-icon">
                         <i class="fa fa-blind" aria-hidden="true"></i>
                     </span>
-            ` + _l('侧栏_进度_进入') + `
+            ` + _l('侧栏_进度_标题') + `
             </a>
             `).appendTo('.sidebar-menu');
     },
     init: () => {
         if (g_progress.inited) return;
         g_progress.inited = true;
+          g_progressData = local_readJson('progress', {
+          //   1631370956980: {
+          //     name: '女の子のカラダの描き方',
+          //     desc: "女の子のカラダの描き方",
+          //     tags: ["语言", "阅读", "翻译"],
+          //     endAt: 1631380956980,
+          //     progress: {
+          //       1631377505125: {
+          //         text: "b",
+          //         value: 10,
+          //       },
+          //       1631377626806: {
+          //         text: "b",
+          //         value: 5,
+          //       },
+          //     },
+          //     maxProgress: 175,
+          //     daily: 30,
+          //     range: 86400,
+          //   },
+            
+          // });
+        });
+                  
         $(`<div id='content_progress' class="_content hide h-full">
         <div class="mainContent row"></div>
             <div class="ftb br">
@@ -38,10 +61,14 @@ var g_progress = {
     addProgress: (time, add) => {
         add = parseInt(add);
         if(isNaN(add)) return;
-        if (add == 0) return;
         var div = $('[data-time="' + time + '"]');
-        var max = g_progressData[time]['maxProgress'] - g_progress.getNowProgress(time).value;
-        if (add > max) add = max;
+        var max = g_progressData[time]['maxProgress'];
+        if(max > 0){
+          max = max - g_progress.getNowProgress(time).value;
+          if (add > max) add = max;
+        }
+        if (add == 0) return;
+
 
         var now = new Date().getTime();
         g_progressData[time]['progress'][now] = {
@@ -50,12 +77,13 @@ var g_progress = {
         }
         local_saveJson('progress', g_progressData);
         div.replaceWith(g_progress.getHtml(time));
+        startVibrate(25);
     },
     getHTML_create: (time) => {
         return `
                 <div class="input-group mb-10">
                   <div class="input-group-prepend">
-                    <span class="input-group-text">` + _l('弹出_进度_' + (name != '' ? '修改' : '新建') + '_名称_标题') + `</span>
+                    <span class="input-group-text">` + _l('弹出_进度_' + (time != '' ? '修改' : '新建') + '_名称_标题') + `</span>
                   </div>
                    <input id="input_day_name" type="text" class="form-control" placeholder="` + _l('弹出_进度_新建_名称_默认') + `">
                 </div>
@@ -97,7 +125,7 @@ var g_progress = {
                     <button class="btn btn-danger" type="button" onclick="$('#datepicker-start').datepicker().data('datepicker').clear();">` + _l('弹出_进度_关闭日期选择') + `</button>
                   </div>
                 </div>
-                <button class="btn btn-primary btn-block" data-action="progress_create">` + _l('弹出_进度_' + (name != '' ? '修改' : '新建') + '_按钮_确定') + `</button>`;
+                <button class="btn btn-primary btn-block" data-action="progress_create">` + _l('弹出_进度_' + (time != '' ? '修改' : '新建') + '_按钮_确定') + `</button>`;
     },
       initDatepick: (start) => {
         $('#datepicker-start').datepicker({
@@ -212,8 +240,8 @@ var g_progress = {
         var times = Object.keys(data.progress);
         var last = times.length > 0 ? times[times.length - 1] : 0;
         var now = new Date().getTime();
-
-        var np = parseInt(progress.value / data['maxProgress'] * 100);
+        var max = data['maxProgress'] ;
+        var np = max > 0 ? parseInt(progress.value / max * 100) : 50;
         var c = (data['endAt'] - now) / 1000;
         var h = `<details class="collapse-panel" data-time="` + time + `" open>
           <summary class="collapse-header">
@@ -246,13 +274,16 @@ var g_progress = {
               <span class="text-muted col-1 mt-10 font-size-20">` + progress.value + `</span>
               <div class="progress h-25 mt-10 col-10">
                 <div class="progress-bar w-three-quarter rounded-0" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: ` + np + `% !important;">` + np + `%</div>`;
-
-        var i = data.daily - g_progress.getNowProgress(data, data.range).value;
+        var v = g_progress.getNowProgress(data, data.range);
+        var i = data.daily - v.value;
+        if(max <= 0){
+          i1 = 50 - parseInt(i / data.daily * 50);
+        }else
         if (i > 0) {
-            var i1 = parseInt(i / data['maxProgress'] * 100);
-            h += `<div class="progress-bar rounded-0 bg-secondary" role="progressbar" style="width: ` + i1 + `% !important;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" title="` + i + `"><span class="text-dark">` + i1 + `%</span></div>`;
+            i1 = parseInt(i / max * 100);
         }
-        h += `</div><span class="text-muted col-1 mt-10 font-size-20">` + data['maxProgress'] + `</span>
+        h += `<div class="progress-bar rounded-0 bg-secondary" role="progressbar" style="width: ` + i1 + `% !important;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" title="` + i + `"><span class="text-dark">` + i1 + `%</span></div>`;
+        h += `</div><span class="text-muted col-1 mt-10 font-size-20">` + (max > 0 ? max : '∞') + `</span>
                 </div>
           </div></details>`;
         return h;
