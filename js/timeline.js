@@ -28,28 +28,28 @@ var g_active = {
 
         g_tags = local_readJson('tags', {
             tags: {
-                画画: {
-                    desc: '画画desc',
-                    color: 'var(--primary-color)',
-                    createAt: 1631543192063,
-                    group: ['学习'],
-                },
-                吃饭: {
-                    desc: '吃饭',
-                    color: 'var(--danger-color)',
-                    createAt: 1631543192063,
-                    group: ['日常'],
-                },
+                // 画画: {
+                //     desc: '画画desc',
+                //     color: 'var(--primary-color)',
+                //     createAt: 1631543192063,
+                //     group: ['学习'],
+                // },
+                // 吃饭: {
+                //     desc: '吃饭',
+                //     color: 'var(--danger-color)',
+                //     createAt: 1631543192063,
+                //     group: ['日常'],
+                // },
             },
             groups: {
-                日常: {
-                    desc: '日常',
-                    createAt: 1631543192063,  
-                },
-                学习: {
-                    desc: '热爱学习',
-                    createAt: 1631543192063,  
-                }
+                // 日常: {
+                //     desc: '日常',
+                //     createAt: 1631543192063,  
+                // },
+                // 学习: {
+                //     desc: '热爱学习',
+                //     createAt: 1631543192063,  
+                // }
             }
         });
 
