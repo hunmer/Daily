@@ -162,7 +162,7 @@ local_saveJson('chats', {});
                         </div>
                     </div>
                      <button class="btn btn-primary mt-10" data-action="chat_msg_share" type="button">
-                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    <i class="fa fa-share" aria-hidden="true"></i>
                     ` + _l('分享') + `</button>
                     <button class="btn btn-danger mt-10" data-action="chat_msg_delete" type="button">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>

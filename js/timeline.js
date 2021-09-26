@@ -272,7 +272,7 @@ var g_active = {
                     }
                 }
                
-                for (var badge of $('.badge_tag')) {
+                for (var badge of $('#tag_list .badge_tag')) {
                     var tag =  badge.innerText;
                     $(badge).parent().css('display', !b || tags.indexOf(tag) != -1 ? 'unset' : 'none');
                 }
@@ -457,14 +457,18 @@ var g_active = {
             });
 
             registerAction('active_share', (dom, action, params) => {
+                if($('#active_share').length) return;
+                var dark = $('.dark-mode').length;
                 var target = $('#content_active .mainContent');
                 var date = $(`
-                    <div>
+                    <div id="active_share" >
                      <h4 class="text-center m-0">`+$('#timepicker_actives').val()+`</h4>
                      <h6 class="text-center text-muted m-0 mb-5">`+$('.active_alert').length+` actives</h6>
                      </div>`);
                 date.prependTo(target);
-                html2canvas(target[0]).then(function(canvas) {
+                html2canvas(target[0], {
+                    backgroundColor: dark ? '#000000d9' : '#fff',
+                }).then(function(canvas) {
                     date.remove();
                      showImage(canvas.toDataURL());
                 });
@@ -558,7 +562,7 @@ var g_active = {
         searchTag: (s) => {
              var py = PinYinTranslate.start(s);
              var sz = PinYinTranslate.sz(s);
-            for (var badge of $('.badge_tag')) {
+            for (var badge of $('#tag_list .badge_tag')) {
                 var tag =  badge.innerText;
                 $(badge).parent().css('display', 
                     tag.indexOf(s) != -1 || PinYinTranslate.start(tag).indexOf(py) != -1 || PinYinTranslate.sz(tag).indexOf(sz) != -1 ? 'unset' : 'none');
@@ -745,7 +749,7 @@ var g_active = {
                   <div class="active_alert_tags">`;
         for (var tag of data.tags) {
             var d = g_tags.tags[tag] || { color: 'darkgrey' }
-            h += `<span class="badge mr-10 text-light" style="background-color: ` + d.color + `">` + tag + `</span>`;
+            h += `<span class="badge mr-10 text-light badge_tag" style="background-color: ` + d.color + `">` + tag + `</span>`;
         }
         h += `</div></div>
         </div>`;
