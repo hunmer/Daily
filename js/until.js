@@ -64,6 +64,12 @@ function local_getList() {
     return res;
 }
 
+function local_clearAll(){
+    for(var key of local_getList()){
+        localStorage.removeItem(key);
+    }
+}
+
 function getGETArray() {
     var a_result = [],
         a_exp;
@@ -304,6 +310,18 @@ function cutStrings1(s_text, s_start, filter = false) {
     return res;
 }
 
+function downloadData(data, fileName){
+    var eleLink = document.createElement('a');
+    eleLink.download = fileName;
+    eleLink.style.display = 'none';
+    var blob = new Blob([data]);
+    eleLink.href = URL.createObjectURL(blob);
+    document.body.appendChild(eleLink);
+    eleLink.click();
+    document.body.removeChild(eleLink); 
+}
+
+
 function registerContextMenu(selector, callback) {
     $('body')
         .on('touchstart', selector, function(event) {
@@ -363,6 +381,36 @@ function copyText(text) {
     }
     halfmoon.toggleModal('modal-copy');
 }
+
+function shareContent(text) {
+    if (!$('#modal-share').length) {
+        $(`
+        <div class="modal" id="modal-share" tabindex="-1" role="dialog" style="z-index: 99999;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content modal-content-media w-500">
+                    <a class="close" role="button" aria-label="Close" onclick="halfmoon.toggleModal('modal-copy');">
+                        <span aria-hidden="true">&times;</span>
+                    </a>
+                    <h5 class="modal-title text-center text-white">` + _l('弹出_分享_标题') + `</h5>
+                    <div class="modal-html">
+                        <div class="input-group">
+                            <textarea class="form-control" id="input_share">` + text + `</textarea>
+                        </div>
+                        <div class="flex-center">
+                            <button data-action="share" class="form-control bg-primary text-white"><i  class="fa fa-twitter" aria-hidden="true"></i></button>
+                             <button data-action="share" class="form-control bg-primary text-white"><i class="fa fa-facebook" aria-hidden="true"></i></button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        `).appendTo('body');
+    }
+    // onclick="$('#input_copy').select();document.execCommand('copy');halfmoon.toggleModal('modal-copy');
+    halfmoon.toggleModal('modal-share');
+}
+
 
 function closeModal(id, type, fun) {
     var modal = $('#' + id)
@@ -448,6 +496,18 @@ function getEditorHtml(m) {
 
     return s;
 }
+
+function showImage(url){
+    g_cache.closeCustom = () => {}
+        $('#modal-custom').find('.modal-title').html('');
+        $('#modal-custom').attr('data-type', 'image').find('.modal-html').html(`
+            <div>
+                <img style="width: 100%;" src="`+url+`">
+            </div>
+        `);
+        halfmoon.toggleModal('modal-custom');
+}
+
 
 function getIconValue(d) {
     var i = d.find('i');

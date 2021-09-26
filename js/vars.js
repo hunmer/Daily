@@ -13,10 +13,6 @@ if (0) {
 }
 
 var g_localKey = 'lifeRPG';
-var g_config = local_readJson('config', {
-    debug: false,
-    countdown_dailyLess: 86400,
-});
 
 var g_cache = {
     closeCustom: () => {},
@@ -30,23 +26,20 @@ var g_cache = {
     strickerInited: false,
     reloadImage_timer: 0,
 }
-var g_stricker;
-var g_stricker_options;
 var g_down = {
 
 }
+var g_stricker;
+var g_stricker_options;
+var g_config = local_readJson('config', {
+    debug: false,
+    countdown_dailyLess: 86400,
+});
 var g_progressData;
 var g_dailys;
-
-
 var g_days;
-
-
 var g_chats;
-
 var g_times;
 var g_todos;
-
 var g_questions;
-
 var g_icons;

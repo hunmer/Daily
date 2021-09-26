@@ -6,7 +6,7 @@
 
 }
 
-.badge_tag {
+.badge {
     text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
 
     -webkit-text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
@@ -16,7 +16,7 @@
     *filter: Glow(color=#000, strength=1);
 }
 .tag_selected {
-    border: 3px solid var(--primary-color) !important;
+    border: 3px solid red !important;
     color: white !important;
 }
 s {

@@ -419,7 +419,7 @@ function doAction(dom, action, params) {
                           <input type="checkbox" id="checkbox-fixSelect" value=""` + (g_config.fixSelect ? ' checked' : '') + `><label for="checkbox-fixSelect">` + _l('弹出_设置_修复select') + `</label>
                         </div>
                         <div class="custom-checkbox d-inline-block mr-10">
-                          <input type="checkbox" id="checkbox-autoTheme" value=""` + (g_config.autoTheme ? ' checked' : '') + `><label for="checkbox-fixSelect">` + _l('弹出_设置_自动主题') + `</label>
+                          <input type="checkbox" id="checkbox-autoTheme" value=""` + (g_config.autoTheme ? ' checked' : '') + `><label for="checkbox-autoTheme">` + _l('弹出_设置_自动主题') + `</label>
                         </div>
 
                          <div style="display: flex;margin-top: 10px;justify-content: space-between;">主题色:&nbsp;&nbsp;`;
@@ -450,6 +450,7 @@ function doAction(dom, action, params) {
                      <div class="btn-group w-full mt-10">
                     <button class="btn" data-action="uploadData"><i class="fa fa-upload" aria-hidden="true"></i></button>
                     <button class="btn" data-action="sync"><i class="fa fa-download" aria-hidden="true"></i></button>
+                    <button class="btn" onclick="$('#upload').click();"><i class="fa fa-file" aria-hidden="true"></i></button>
                     <button class="btn btn-primary" data-action="saveSetting">` + _l('弹出_设置_按钮_确定') + `</button>
                 </div>
                 `;
@@ -487,16 +488,25 @@ function doAction(dom, action, params) {
         case 'uploadData':
             hideSidebar();
             toastPAlert('uploading...', 'alert-secondary');
+
             var data = {
                 type: 'uploadData',
-                data: {
-                    chats: g_chats,
-                    times: g_times,
-                    todos: g_todos
-                }
+                data: {}
             }
-            data.md5 = md5(JSON.stringify(data.data));
-            queryMsg(data);
+            for(var key of local_getList()){
+                data.data[key] = localStorage.getItem(key);
+            }
+            var s = JSON.stringify(data.data);
+            confirm(_l('是否只下载数据')).then((d) => {
+                if(d.button == 'ok'){
+                    downloadData(s, 'daily.json');
+                    return;
+                }else{
+                     data.md5 = md5(s);
+                    queryMsg(data);
+                }
+            });
+           
             break;
         case 'toTab':
             hideSidebar();
@@ -516,6 +526,21 @@ function doAction(dom, action, params) {
                 i.attr('class', 'fa fa-sun-o');
             } else {
                 i.attr('class', 'fa fa-moon-o');
+            }
+            break;
+
+        case 'share':
+            var c = $(dom).find('i')[0].className;
+            console.log(c);
+            var u = '';
+            if(c.indexOf('twitter') != -1){
+                u = 'https://twitter.com/intent/tweet?text={text}';
+            }else
+            if(c.indexOf('facebook') != -1){
+                u = 'https://www.facebook.com/dialog/share?app_id=87741124305&href=http%3A%2F%2Fhunmer.github.io%2FDaily&quote={text}&display=popup';
+            }
+            if(u){
+                window.open(u.replace('{text}', $('#input_share').val().trim()));
             }
             break;
     }
@@ -547,6 +572,14 @@ function showContent(id) {
         case 'chatList':
             t = _l('标题_聊天列表');
             g_chat.init();
+            if(!g_cache.isFirstChatList){
+                g_cache.isFirstChatList = true;
+                if(g_chat.lastMsg[g_config.lastChanel]){
+                    g_chat.openChat(g_config.lastChanel);
+                    return;
+                }
+            }
+
             g_chat.initNav();
             g_chat.initBottom();
             g_chat.initHtml(); // 调整顺序
@@ -628,7 +661,6 @@ function initWebsock() {
     }
 
     connection.onmessage = (e) => {
-        console.log(e.data);
         reviceMsg(JSON.parse(e.data));
     }
 
@@ -639,7 +671,7 @@ function queryMsg(data, user = false) {
     if (user) {
         data.user = g_config.user ? g_config.user.name : undefined;
     }
-    console.log('send', data);
+    // console.log('send', data);
     var msg = JSON.stringify(data);
     if (!connection || connection.readyState != 1) {
         if (g_cache.query.indexOf(msg) == -1) {
@@ -653,7 +685,7 @@ function queryMsg(data, user = false) {
 
 
 function reviceMsg(data) {
-    console.log('revice', data);
+    // console.log('revice', data);
     var type = data.type;
     delete data.type;
     if (g_revices[type]) {
@@ -674,20 +706,50 @@ function reviceMsg(data) {
             if (data.md5 != md5(JSON.stringify(data.data))) {
                 return toastPAlert('error md5...', 'alert-danger');
             }
-            g_chats = data.data.chats;
-            local_saveJson('chats', g_chats);
-            g_times = data.data.times;
-            local_saveJson('times', g_times);
-            g_todos = data.data.todos;
-            local_saveJson('todos', g_todos);
-            alert('OK!');
-            location.reload();
+            importData(data.data);
+            break;
     }
+}
+
+
+function parseFile(input){
+   var reader = new FileReader();
+   reader.readAsText(input.files[0]);
+   reader.onload = function(e){
+    try {
+      json = JSON.parse(this.result);
+      importData(json);
+    }
+    catch(err){
+      alert('Corrupted data!');
+    }
+   }
+}
+
+
+function importData(data){
+    confirm(_l('是否完全覆盖')).then((d) => {
+        var b = d.button == 'ok';
+        if(b){
+            local_clearAll();
+        }
+        for(var key in data){
+            if(b){
+                s = data[key];
+            }else{
+                var old = JSON.parse(localStorage.getItem(key)) || {};
+                s = JSON.stringify(Object.assign(old, JSON.parse(data[key])));
+            }
+            localStorage.setItem(key, s);
+        }
+        alert('OK!');
+        location.reload();
+    })
 }
 
 function prompt_Password(){
     var n = new Date().getTime();
-    if(false && n - g_config.lastLogin <= 3600 * 6){
+    if(n - g_config.lastLogin <= 3600 * 6){
         return $('#page-wrapper').show();
     }
     var pin = $('#pin');

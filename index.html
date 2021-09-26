@@ -39,6 +39,7 @@
     <title>Daily</title>
 </head>
 <input id="input_img" class='inputstyle hide' type="file" accept="image/*" />
+<input id="upload" class='inputstyle hide' type="file" accept=".json" onchange="parseFile(this)"/>
 <audio id='soundTip' autoplay></audio>
 <body class="dark-mode with-custom-webkit-scrollbars with-custom-css-scrollbars animated fadeIn" animated='fadeIn' data-dm-shortcut-enabled="true" data-sidebar-shortcut-enabled="true" data-set-preferred-mode-onload="true">
     <div class="modal modal-full" id="modal-top" tabindex="-1" role="dialog"  style="z-index: 99999;" data-overlay-dismissal-disabled='...' data-esc-dismissal-disabled='...'>
@@ -142,13 +143,15 @@
     </div>
     <script src="js/x0popup.min.js"></script>
     <script src="js/md5.js"></script>
-   
+    <script src="js/pinyin.js"></script>
     <script src="js/until.js"></script>
     <script src="js/lrz.bundle.js"></script>
     <script src="js/vars.js"></script>
     <script src="js/lang.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/fastclick.min.js"></script>
+    <script src="js/html2canvas.min.js"></script>
+
     <script type="text/javascript" src="js/datepicker.min.js"></script>
     <script type="text/javascript" src="js/datepicker.zh.js"></script>
     <script type="text/javascript" src="js/datepicker.en.js"></script>
@@ -171,8 +174,7 @@
     <script src="js/emoji.js"></script>
     <script src="js/question.js"></script>
     <script src="js/day.js"></script>
-    <script src="js/iscroll.js"></script>
-    <script src="js/blockTimePicker.js"></script>
+    <!-- <script src="js/iscroll.js"></script> -->
     <script src="js/timeline.js"></script>
 <script type="text/javascript" src="js/mobiscroll.custom-3.0.0-beta6.min.js"></script>
     <!-- <script src="js/tts.js"></script> -->

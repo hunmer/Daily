@@ -90,7 +90,7 @@ var g_daily = {
                         </div>
                 <div class="input-group mb-10">
                   <div class="input-group-prepend">
-                    <span class="input-group-text">` + _l('弹出_日常_' + (name != '' ? '修改' : '新建') + '_名称_标题') + `</span>
+                    <span class="input-group-text">` + _l('弹出_日常_新建_名称_标题') + `</span>
                   </div>
                    <input id="input_daily_name" type="text" class="form-control" placeholder="` + _l('弹出_日常_新建_名称_默认') + `">
                 </div>
@@ -274,7 +274,7 @@ var g_daily = {
         }
 
         return `
-        <div class="col-6 h-200" data-time="` + time + `">
+        <div class="col-6 h-200 mb-10" data-time="` + time + `">
             <div class="card position-relative h-full">
             <h2 data-toggle="tooltip" data-title="`+signed.join(' , ')+`" data-placement="bottom" class="text-muted" style="position: absolute;bottom: -22px;right: 5px;">` + signed.length + `</h2>
             <i style="position: absolute;left: 10px;top: 10px;" data-action="daily_pin,` + time + `" class="fa fa-star`+(data.pin ? ' text-secondary' : '-o')+`" aria-hidden="true"></i> 

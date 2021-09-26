@@ -70,7 +70,7 @@ var g_day = {
                     
                 <div class="input-group mb-10">
                   <div class="input-group-prepend">
-                    <span class="input-group-text">` + _l('弹出_纪念日_' + (name != '' ? '修改' : '新建') + '_名称_标题') + `</span>
+                    <span class="input-group-text">` + _l('弹出_纪念日_新建_名称_标题') + `</span>
                   </div>
                    <input id="input_day_name" type="text" class="form-control" placeholder="` + _l('弹出_纪念日_新建_名称_默认') + `">
                 </div>
@@ -201,7 +201,7 @@ var g_day = {
         var t = (time - new Date().getTime()) / 1000;
         var icon = getIconStr(data.icon, name);
         return `
-        <div class="col-6">
+        <div class="col-6 mb-10">
             <div class="card position-relative h-200" >
                 <i style="position: absolute;left: 10px;top: 10px;" data-action="day_pin,` + time + `" class="fa fa-star`+(data.pin ? ' text-secondary' : '-o')+`" aria-hidden="true"></i> 
                 <div class="dropdown" style="z-index: 2;position: absolute;right: 10px;top: 10px;" >

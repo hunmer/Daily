@@ -161,6 +161,9 @@ local_saveJson('chats', {});
                             </div>
                         </div>
                     </div>
+                     <button class="btn btn-primary mt-10" data-action="chat_msg_share" type="button">
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    ` + _l('分享') + `</button>
                     <button class="btn btn-danger mt-10" data-action="chat_msg_delete" type="button">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                     ` + _l('删除') + `</button>
@@ -322,6 +325,7 @@ local_saveJson('chats', {});
     // 删除频道
     removeChannle: (name) => {
         delete window['chat_' + name];
+        delete g_chat.lastMsg[name];
         local_remove('chat_' + name);
         $('.chat_list[data-name="' + name + '"]').remove();
     },
@@ -606,6 +610,10 @@ local_saveJson('chats', {});
 
             copyText($('.msg[data-time="' + g_chat.rm_showing[0] + '"]').find('.alert-text').text());
         });
+        registerAction('chat_msg_share', (dom, action, params) => {
+            g_chat.showMenu(false);
+            shareContent($('.msg[data-time="' + g_chat.rm_showing[0] + '"]').find('.alert-text').text());
+        });
         registerAction('chat_msg_edit', (dom, action, params) => {
             $('#div_inpuit').show();
             var par = $('.msg[data-time="' + g_chat.rm_showing[0] + '"]');
@@ -660,7 +668,7 @@ local_saveJson('chats', {});
         registerAction('chatList_remove', (dom, action, params) => {
             confirm(_l('是否删除频道')).then((d) => {
                 if (d.button == 'ok') {
-                    g_chat.removeChannle();
+                    g_chat.removeChannle(g_chat.name);
                     $('[data-action="toTab,chatList"]')[0].click();
                 }
             });
@@ -767,7 +775,7 @@ local_saveJson('chats', {});
             var data = {
                 icon: getIconValue($('#chatList_add_icon')),
                 desc: $('#modal-custom textarea').val(),
-                pin: $('[data-action="channle_pin"]').hasClass('btn-danger') ? new Date().getTime() : 0
+                pin: $('[data-action="channle_pin"]').hasClass('btn-danger') ? 0 : new Date().getTime()
             }
             if (edit) {
                 data = Object.assign(g_chat.getChannel(action[1]), data);
@@ -1099,6 +1107,9 @@ local_saveJson('chats', {});
     },
 
     openChat: (name, contentOnly = false) => {
+    	g_config.lastChanel = name;
+    	local_saveJson('config', g_config);
+    	
         g_chat.name = name;
         g_chat.lastData = '';
          g_chat.dates = [];
