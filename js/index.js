@@ -31,6 +31,7 @@ function isShow($node) {
 
 
 $(function() {
+    
     FastClick.attach(document.body);
     window.history.pushState(null, null, "#");
     window.addEventListener("popstate", function(event) {
@@ -392,13 +393,13 @@ function doAction(dom, action, params) {
 
                                 <option value="" disabled>--------</option>
                                 <option value="res/bg.jpg">少女</option>
-                                <option value="res/カエル.jpg">カエル</option>
-                                <option value="res/ウサギ.jpg">ウサギ</option>
-                                <option value="res/スター.jpg">スター</option>
-                                <option value="res/紫色の花.jpg">紫色の花</option>
-                                <option value="res/紫色の星.jpg">紫色の星</option>
-                                <option value="res/ピクセル.jpg">ピクセル</option>
-                                <option value="res/ピクセル1.jpg">ピクセル1</option>
+                                <option value="res/frog.jpg">カエル</option>
+                                <option value="res/rabbit.jpg">ウサギ</option>
+                                <option value="res/star.jpg">スター</option>
+                                <option value="res/flower1.jpg">紫色の花</option>
+                                <option value="res/star.jpg">紫色の星</option>
+                                <option value="res/night1.jpg">ピクセル</option>
+                                <option value="res/night2.jpg">ピクセル1</option>
                             </select>
                             <div class="col-4"></div>
                             <div class="input-group col-4">

@@ -577,6 +577,7 @@ local_saveJson('chats', {});
         });
         registerAction('ranking', (dom, action, params) => {
             toastPAlert('loading...', 'alert-secondary');
+            g_voice.play('loading');
             queryMsg({ type: 'ranking' });
         });
         registerAction('ranking_chooseData', (dom, action, params) => {

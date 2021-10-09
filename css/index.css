@@ -239,6 +239,10 @@ span[data-action="stricker_toTab"] img {
     /*--dm-base-body-bg-image: url(../res/bg.jpg);*/
 }
 
+* {
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+
 body {
      user-select: none;
     -webkit-user-drag: none;

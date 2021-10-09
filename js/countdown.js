@@ -313,6 +313,7 @@ var g_cd = {
         g_cd.paused = false;
         g_cd.stoped = 0;
         g_cd.pausedTime = 0;
+        g_voice.play('start');
         g_cd.timer = setInterval(() => {
             if (g_cd.paused) {
                 g_cd.pausedTime++;
@@ -345,12 +346,15 @@ var g_cd = {
                         }
                     }
                     g_cd.save(true);
+                    g_voice.play('timeover');
                     alert(_l('计时完成'));
                 }
             }
             if(t % 300 === 0 && t != 0){
                 startVibrate([200, 100, 200]);
-                // var m = t / 300;
+                var m = t / 300;
+                g_voice.number(m, ['残り'], ['分','です']);
+
                 // g_speaker.speak(g_cd.type == 'add' ? t+'分経ちました' : '残り' + t + '分');
             }
             g_cd.con_time.html(getTime(t, ':', ':', ''));

@@ -7,6 +7,8 @@ String.prototype.replaceAll = function(s1, s2) {
     return this.replace(new RegExp(s1, "gm"), s2);
 }
 
+
+
 Date.prototype.format = function(fmt) {
     var o = {
         "M+": this.getMonth() + 1, //月份 
@@ -28,6 +30,10 @@ Date.prototype.format = function(fmt) {
     return fmt;
 }
 
+
+function arrayRandom(arr){
+    return arr[randNum(0, arr.length - 1)];
+}
 
 
 function local_remove(key) {
@@ -161,7 +167,7 @@ function time_getRent(time) {
             }
             return getFormatedTime(2, time);
         }
-        return parseInt(s / 86400) + '天前';
+        return parseInt(s / 86400) + _l('天前');
     }
     // console.log(getTime(s, '时', '分', '秒前'));
     var s = '';
@@ -171,10 +177,10 @@ function time_getRent(time) {
     return s+ getFormatedTime(0, time);
 }
 
-function getTime(s, sh = '时', sm = '分', ss = '秒') {
+function getTime(s, sh = _l('时'), sm = _l('分'), ss = _l('秒')) {
     s = Number(s);
     if (s >= 86400) {
-        return parseInt(s / 86400) + '天';
+        return parseInt(s / 86400) + _l('天');
     }
     var h = 0,
         m = 0;
@@ -189,10 +195,10 @@ function getTime(s, sh = '时', sm = '分', ss = '秒') {
     return _s1(h, sh) + _s(m, sm) + _s(parseInt(s), ss);
 }
 
-function getTime1(s, sh = '时', sm = '分') {
+function getTime1(s, sh = _l('时'), sm = _l('分')) {
     s = Number(s);
     if (s >= 86400) {
-        return parseInt(s / 86400) + '天';
+        return parseInt(s / 86400) + _l('天');
     }
     var h = 0,
         m = 0;

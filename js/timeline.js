@@ -128,7 +128,7 @@ var g_active = {
         <div class="position-relative">
         <div class="normal">
             <button class="btn btn-primary" style="position: absolute;left: 10px; top: -50px;" data-action="timepicker_reset">` + _l('活动_时间_重置') + `</button>
-            <button class="btn btn-primary" style="position: absolute;right: 10px; top: -50px;" data-action="timepicker_now">` + _l('活动_时间_现在') + `</button>
+            <button class="btn btn-primary" style="position: absolute;right: 10px; top: -50px;" data-action="timeline_addLog">` + _l('活动_保存') + `</button>
         </div>
         <div class="edit hide">
         <button class="btn btn-primary" style="position: absolute;left: 10px; top: -50px;" onclick="$('[data-action=tag_group_manage]').click();" >` + _l('标签_退出分组') + `</button>
@@ -138,8 +138,7 @@ var g_active = {
         <div id="time_picker" class="normal"></div>
         <div class="row p-10 normal">
             <div id="time_picker" class="col-12"></div>
-            <input type="text" id="active_input" class="form-control col-9" placeholder="` + _l('活动_备注') + `" onkeydown="if(event.keycode == 13) $('[data-action=timeline_addLog]').click()">
-            <button class="btn btn-primary col-3" data-action="timeline_addLog">` + _l('活动_保存') + `</button>
+            <input type="text" id="active_input" class="form-control col-12" placeholder="` + _l('活动_备注') + `" onkeydown="if(event.keycode == 13) $('[data-action=timeline_addLog]').click()">
        </div>
          <div class="bg-light-lm bg-very-dark-dm p-5" id="div_tag">
              <div class="row">
@@ -328,10 +327,6 @@ var g_active = {
                 local_saveJson('tags', g_tags);
                 toastPAlert(_l('标签组_保存成功', name), 'alert-success');
                 g_active.initTag();
-            });
-
-            registerAction('timepicker_now', (dom, action, params) => {
-                g_active.range.setVal([g_active.range.getVal()[0], g_active.max]);
             });
 
 
@@ -711,6 +706,8 @@ var g_active = {
         local_saveJson('actives', g_actives);
         halfmoon.toggleModal('modal-custom');
         g_active.timeline_to(g_active.date);
+        g_voice.play('loged');
+
 
     },
     initHtml: (date) => {
