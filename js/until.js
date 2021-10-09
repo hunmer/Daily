@@ -539,12 +539,15 @@ function getIconStr(icon, name) {
 var vibrateInterval;
 // 开始震动
 function startVibrate(duration) {
+    if(!navigator.vibrate) return;
     navigator.vibrate(duration);
 }
 
 // 停止震动
 function stopVibrate() {
     // 清除间隔和停止持续振动
+    if(!navigator.vibrate) return;
+
     if(vibrateInterval) clearInterval(vibrateInterval);
     navigator.vibrate(0);
 }
@@ -552,6 +555,7 @@ function stopVibrate() {
 //在给定的持续时间和间隔时开始持续的振动
 //假定一个数字值
 function startPeristentVibrate(duration, interval) {
+    if(!navigator.vibrate) return;
     vibrateInterval = setInterval(function() {
         startVibrate(duration);
     }, interval);
