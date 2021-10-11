@@ -1,17 +1,12 @@
-/*
-  用户id
-
-*/
 
 var g_user = {
 	init: () => {
     if(g_user.inited) return;
         g_user.inited = true;
 		if(!g_config.user){
-			//g_user.modal();
+			g_user.modal();
 		}else{
       $('#sidebar_icons_float img').attr('src', _vars.img+g_config.user.icon);
-       g_user.upload();
     }
     registerAction('user_uploadIcon', (dom, action, params) => {
       $('#input_img').attr({
@@ -35,7 +30,8 @@ var g_user = {
     });
      
     registerRevice('countMsg', (data) => {
-      g_config.lastUpload = data.data;
+      console.log(data);
+      g_config.lastUpload = data.msgs;
       local_saveJson('config', g_config);
     });
     registerRevice('setProfile', (data) => {
@@ -55,11 +51,10 @@ var g_user = {
 
   upload: () => {
     var s_data = getFormatedTime(4);
-    if(g_config.lastUpload != s_data){
-      var cnt = g_chat.countMsg(s_data);
-      if(cnt > 0){
+    var cnt = g_chat.countMsg(s_data);
+    console.log(cnt);
+    if(g_config.lastUpload != cnt && cnt > 0){
         queryMsg({type: 'countMsg', msgs: cnt}, true);
-      }
     }
   },
 	

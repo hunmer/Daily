@@ -283,7 +283,7 @@ local_saveJson('chats', {});
                   <th>` + s + `</th>
                   <td><img src="` + _vars['img'] + 'icons/' + name + `.jpg" class="user-icon"></td>
                   <td>` + name + `</td>
-                  <td class="text-right">` + d[date][name] + `</td>
+                  <td class="text-right">` + d[date][name].msgs + `</td>
                 </tr>`;
                 i++;
             }
@@ -369,6 +369,8 @@ local_saveJson('chats', {});
             detail.lastMsg = {};
         }
         g_chat.lastMsg[name] = detail;
+
+
         return g_chat.lastMsg[name];
     },
     // 设置消息
@@ -518,22 +520,22 @@ local_saveJson('chats', {});
             }
         });
         registerAction('timeline_prev', (dom, action, params) => {
-            var i = g_chat.days.indexOf(g_chat.date);
-
-            if(i > 0){
-                g_chat.timeline_to(g_chat.days[i-1]);
-            }else{
-
-                toastPAlert(_l('时间线_第一页'), 'alert-secondary');
+           var i = g_chat.days.indexOf(g_chat.date);
+           if(i == -1 || i == g_chat.days.length - 1){
+            i = 0;
+           }else{
+                i++;
             }
+            g_chat.timeline_to(g_chat.days[i]);
         });
         registerAction('timeline_next', (dom, action, params) => {
-            var i = g_chat.days.indexOf(g_chat.date);
-            if(g_chat.days.length - i > 1){
-                g_chat.timeline_to(g_chat.days[i+1]);
-            }else{
-                toastPAlert(_l('时间线_最后一个'), 'alert-secondary');
-            }
+           var i = g_chat.days.indexOf(g_chat.date);
+             if(i <= 0){
+            i =  g_chat.days.length - 1;
+           }else{
+            i--;
+           }
+            g_chat.timeline_to(g_chat.days[i]);
         });
         registerAction('timeline_to', (dom, action, params) => {
             g_chat.timeline_to(action.length > 1 ? action[1] : getFormatedTime(4));
@@ -622,7 +624,7 @@ local_saveJson('chats', {});
             var old = par.find('.alert-text').html();
             g_chat.edit = {
                 time: time,
-                channle: par.attr('data-name'),
+                channle: par.attr('data-name') || g_chat.name,
                 text: old
             }
             g_chat.editor.txt.html(old);
@@ -848,6 +850,8 @@ local_saveJson('chats', {});
                 toTop();
                 g_chat.edit = {};
                 startVibrate(25);
+                 if(g_config.user) g_user.upload();
+
             }
         });
 
@@ -864,11 +868,20 @@ local_saveJson('chats', {});
         for (var name of channels) {
             for (var time of g_chat.lastMsg[name].times) {
                 var date = getFormatedTime(4, new Date(parseInt(time)));
-                if(res[date] == undefined) res[date] = 0;
-                res[date]++;
+                if(res[date] == undefined) res[date] = {
+                    cnt: 0,
+                    time: time
+                };
+                res[date].cnt++;
             }
         }
-        return res;
+        var list = [];
+         for (var date of Object.keys(res).sort(function(a, b) {
+                return res[b].time - res[a].time;
+            })) {
+            list[date] = res[date];
+         }
+        return list;
     },
     countMsg: (s_data, channel, list = false) => {
         var cnt = 0;
@@ -908,6 +921,7 @@ local_saveJson('chats', {});
                 g_chat.initChannel(name, local_readJson('chat_' + name, {}))
             }
         }
+        if(g_config.user) g_user.upload();
     },
     initHtml: () => {
         var h = '';
@@ -919,6 +933,8 @@ local_saveJson('chats', {});
             h += g_chat.getHtml(g_chat.lastMsg[name], name);
         }
         $('#content_chatList .mainContent').html(h);
+       if(g_config.user) g_user.upload();
+
 
     },
     initNav: () => {
