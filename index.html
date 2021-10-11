@@ -38,12 +38,14 @@
     <link rel="stylesheet" href="css/index.css">
     <title>Daily</title>
 </head>
-<input id="input_img" class='inputstyle hide' type="file" accept="image/*" />
-<input id="upload" class='inputstyle hide' type="file" accept=".json" onchange="parseFile(this)"/>
-<audio id='soundTip' autoplay></audio>
-<audio id='nosleep' src="res/pop.mp3" autoplay></audio>
+
 
 <body class="dark-mode with-custom-webkit-scrollbars with-custom-css-scrollbars animated fadeIn" animated='fadeIn' data-dm-shortcut-enabled="true" data-sidebar-shortcut-enabled="true" data-set-preferred-mode-onload="true">
+    <input id="input_img" class='inputstyle hide' type="file" accept="image/*" />
+    <input id="upload" class='inputstyle hide' type="file" accept=".json" onchange="parseFile(this)"/>
+    <audio id='soundTip' autoplay></audio>
+    <audio id='nosleep' src="res/pop.mp3" autoplay></audio>
+
     <div class="modal modal-full" id="modal-top" tabindex="-1" role="dialog"  style="z-index: 99999;" data-overlay-dismissal-disabled='...' data-esc-dismissal-disabled='...'>
         <div class="modal-dialog" role="document">
             <div class="modal-content modal-content-media w-500" style="position: absolute;">

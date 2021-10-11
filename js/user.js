@@ -15,9 +15,8 @@ var g_user = {
     registerAction('user_uploadIcon', (dom, action, params) => {
       $('#input_img').attr({
         'data-config': JSON.stringify({width: 200, quality: 0.5}),
-        'data-type': 'userIcon'})[0].click();;
+        'data-type': 'userIcon'})[0].click();
     });
-    
     registerAction('user_setProfile', (dom, action, params) => {
       // var v = checkInputValue($('#user_input_mail, #user_input_name, #user_input_password'));
       var v = checkInputValue($('#user_input_name'));
