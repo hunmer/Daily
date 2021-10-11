@@ -667,6 +667,7 @@ var g_active = {
                 opt.max = now.getTime() > max ? new Date(max) : now;
             opt.defaultValue = [opt.min, opt.max];
         } else {
+            opt.min = range[0];
             opt.defaultValue = range;
         }
 
