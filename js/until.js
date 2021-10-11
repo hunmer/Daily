@@ -30,6 +30,10 @@ Date.prototype.format = function(fmt) {
     return fmt;
 }
 
+function isSameDate(d1, d2){
+    return d1.getDate() == d2.getDate();
+}
+
 
 function arrayRandom(arr){
     return arr[randNum(0, arr.length - 1)];

@@ -1,6 +1,7 @@
 var _tip = $('#soundTip')[0];
+
 function back() {
-      startVibrate(25);
+    startVibrate(25);
     if (g_emoji.isShowing()) {
         g_emoji.hide();
     } else
@@ -25,13 +26,14 @@ function back() {
         });
     }
 }
+
 function isShow($node) {
     return $node.offset().top <= $(window).height() + $(window).scrollTop()
 }
 
 
 $(function() {
-    
+
     FastClick.attach(document.body);
     window.history.pushState(null, null, "#");
     window.addEventListener("popstate", function(event) {
@@ -44,12 +46,11 @@ $(function() {
         event.stopPropagation();
     });
 
-
     $(document).on('click', '[data-action]', function(event) {
             doAction(this, $(this).attr('data-action'));
         }).on('dblclick', '.msg .main', function(event) {
             g_chat.setTextStyle($(this).parent('[data-time]').attr('data-time'), 'del');
-             startVibrate(25);
+            startVibrate(25);
         })
         .on('change', '.msg .w-e-todo input[type="checkbox"]', function(event) {
             var dom = $(event.target);
@@ -60,27 +61,29 @@ $(function() {
             local_saveJson('chats', g_chats);
         })
         .on('click', 'select', function(event) {
-            if(!g_config.fixSelect) return;
+            console.log(g_config.fixSelect);
+            if (!g_config.fixSelect) return;
             event.preventDefault(true);
             g_cache.select = $(this);
             var h = '';
-            for(var option of  g_cache.select.find('option')){
-                if(!option.disabled){
-                      var v = option.value;
+            for (var option of g_cache.select.find('option')) {
+                if (!option.disabled) {
+                    var v = option.value;
                     h += `<div class="custom-radio mb-20">
-                      <input type="radio" name="radio-set-1" id="radio-`+v+`" value="`+v+`" onchange="g_cache.selectValue = this.value;"`+(option.selected ? ' checked':'')+`>
-                      <label for="radio-`+v+`">`+option.innerText+`</label>
+                      <input type="radio" name="radio-set-1" id="radio-` + v + `" value="` + v + `" onchange="g_cache.selectValue = this.value;"` + (option.selected ? ' checked' : '') + `>
+                      <label for="radio-` + v + `">` + option.innerText + `</label>
                     </div>`;
                 }
             }
+            console.log(h);
             confirm('选择一项', {
                 html: true,
                 maxHeight: 'unset',
                 height: '100%',
-                text: '<div id="confirm_select">'+h+'</div>'
+                text: '<div id="confirm_select">' + h + '</div>'
             }).then((d) => {
                 if (d.button == 'ok') {
-                    g_cache.select.find('option[value="'+g_cache.selectValue+'"]').prop('selected', true);
+                    g_cache.select.find('option[value="' + g_cache.selectValue + '"]').prop('selected', true);
                     g_cache.select[0].onchange();
                 }
             })
@@ -91,10 +94,10 @@ $(function() {
         //div.find('[data-action="up"]').css('display', this.scrollTop == 0 ? 'none' : 'block');
 
         if (g_cache.showing == 'chat' && g_chat.name != undefined) {
-            if(this.scrollTop == 0){
+            if (this.scrollTop == 0) {
                 $('#div_inpuit').css('position', 'unset');
-            }else
-            if(this.scrollTop >= $('#div_inpuit').offset().top + $('#div_inpuit').height() + 30){
+            } else
+            if (this.scrollTop >= $('#div_inpuit').offset().top + $('#div_inpuit').height() + 30) {
                 $('#div_inpuit').css('position', 'fixed');
             }
 
@@ -129,7 +132,7 @@ $(function() {
                         break;
 
                     case 'icon':
-                        var d= $('.modal.show .icon_selecter')
+                        var d = $('.modal.show .icon_selecter')
                         d.find('i').hide();
                         d.find('img').attr('src', rst.base64).show();
                         break;
@@ -141,12 +144,12 @@ $(function() {
             })
             .catch(function(err) {});
     });
-     showContent(g_config.lastShow || 'chatList');
+    showContent(g_config.lastShow || 'chatList');
     test();
 });
 
 function soundTip(url) {
-    if(!url) url = g_config.tipSound;
+    if (!url) url = g_config.tipSound;
     _tip.src = url;
     _tip.play();
 }
@@ -154,21 +157,21 @@ function soundTip(url) {
 
 function enableDebug() {
     // if (!IsPC() && g_config.debug) {
-        // loadRes([
-        //     { url: "js/vue.js", type: "js" },
-        //     { url: "js/web-console.umd.min.js", type: "js" },
-        // ], () => {
-            if (!IsPC() && g_config.debug) {
-                loadJs('js/web-console.umd.min.js', () => {
-                    new WebConsole({
-                        panelVisible: false,
-                        activeTab: 'console',
-                        entryStyle: 'button'
-                    });
-                });
-            
-        }
-        // })
+    // loadRes([
+    //     { url: "js/vue.js", type: "js" },
+    //     { url: "js/web-console.umd.min.js", type: "js" },
+    // ], () => {
+    if (!IsPC() && g_config.debug) {
+        loadJs('js/web-console.umd.min.js', () => {
+            new WebConsole({
+                panelVisible: false,
+                activeTab: 'console',
+                entryStyle: 'button'
+            });
+        });
+
+    }
+    // })
     // }
 }
 
@@ -188,7 +191,7 @@ function loadRes(files, callback) {
         }
         var target = document.getElementsByTagName('head')[0] || document.body || document.documentElement;
 
-       target.appendChild(fileref[i]).onload = function() {
+        target.appendChild(fileref[i]).onload = function() {
             //window.plugin_musicPlayer.res.push(fileref);
             if (++i == files.length) {
                 if (typeof callback == 'function') callback();
@@ -211,65 +214,65 @@ function setBg(bg) {
 
 function initSetting() {
     var light;
-    if(g_config.autoThmem){
+    if (g_config.autoThmem) {
         var h = new Date().getHours();
         light = h < 18 && h > 6;
-    }else{
+    } else {
         light = !g_config.darkMode;
     }
-    if(light){
-     $('body').removeClass('dark-mode');
+    if (light) {
+        $('body').removeClass('dark-mode');
     }
     if (g_config.bg) {
         setBg(g_config.bg);
     }
-   initCss();
-   enableDebug();
+    initCss();
+    enableDebug();
 }
 
-function setFontColor(color){
-     g_config.fontColor = color;
-     initCss();
+function setFontColor(color) {
+    g_config.fontColor = color;
+    initCss();
 }
 
-function InputValue(dom, add, callback){
+function InputValue(dom, add, callback) {
     var i = parseInt(dom.val()) + add;
-    if(i<0) i=0;
+    if (i < 0) i = 0;
     dom.val(i);
     callback(i);
 }
 
-function setBlur(i){
+function setBlur(i) {
     g_config.blur = parseInt(i);
-    if(g_config.bg){
+    if (g_config.bg) {
         setBg(g_config.bg)
     }
 }
 
-function initCss(){
-     if(g_cache.css) g_cache.css.remove();
-     var css = '';
-     if( g_config.color){
-         for(var key of ['--dm-button-group-button-primary-border-color-hover', '--lm-button-group-button-primary-border-color-hover', '--primary-color', '--lm-button-primary-bg-color', '--dm-button-primary-bg-color', '--lm-alert-primary-border-color)', '--dm-alert-primary-border-color);']){
+function initCss() {
+    if (g_cache.css) g_cache.css.remove();
+    var css = '';
+    if (g_config.color) {
+        for (var key of ['--dm-button-group-button-primary-border-color-hover', '--lm-button-group-button-primary-border-color-hover', '--primary-color', '--lm-button-primary-bg-color', '--dm-button-primary-bg-color', '--lm-alert-primary-border-color)', '--dm-alert-primary-border-color);']) {
             //  '--dm-button-primary-bg-color-hover', '--lm-button-primary-bg-color-hover'
-            css += key+':' + g_config.color+';'
+            css += key + ':' + g_config.color + ';'
         }
-     }
-     
-     if( g_config.fontColor){
-         for(var key of ['--lm-button-primary-text-color', '--dm-button-primary-text-color', '--dm-badge-primary-text-color', '--lm-badge-primary-text-color']){
-            css += key+':' + g_config.fontColor+';'
+    }
+
+    if (g_config.fontColor) {
+        for (var key of ['--lm-button-primary-text-color', '--dm-button-primary-text-color', '--dm-badge-primary-text-color', '--lm-badge-primary-text-color']) {
+            css += key + ':' + g_config.fontColor + ';'
         }
-     }
-    css = ':root{'+css+'}';
-     if(css){
-            g_cache.css = insertStyle(css);
-     }
+    }
+    css = ':root{' + css + '}';
+    if (css) {
+        g_cache.css = insertStyle(css);
+    }
 }
 
-function setColor(color){
+function setColor(color) {
     g_config.color = color;
-     initCss();
+    initCss();
 }
 
 function doAction(dom, action, params) {
@@ -278,18 +281,25 @@ function doAction(dom, action, params) {
         return g_actions[action[0]](dom, action, params);
     }
     switch (action[0]) {
+        case 'test':
+            prompt('input javascript').then((d) => {
+                var script = d.text;
+                if (script != null && script != '') {
+                    eval(script);
+                }
+            });
+            break;
 
-         
 
         case 'daily_card_switch':
             var d = $(dom);
-            if(!d.hasClass('card')){
+            if (!d.hasClass('card')) {
                 d = d.parents('.card');
             }
             var showed = d.find('.cardContent.show').removeClass('show').addClass('hide');
             var next = showed.next();
-            if(!next.length) next = showed.prev();
-            if(!next.length) next = showed;
+            if (!next.length) next = showed.prev();
+            if (!next.length) next = showed;
             next.removeClass('hide').addClass('show');
             break;
 
@@ -326,8 +336,7 @@ function doAction(dom, action, params) {
             break;
 
         case 'setting_color':
-            if (dom.value == 'custom') {
-            }else{
+            if (dom.value == 'custom') {} else {
                 setColor(dom.value);
             }
             break;
@@ -349,7 +358,7 @@ function doAction(dom, action, params) {
             g_config.passwordEnable = $('#switch-password').prop('checked');
             g_config.password = $('#input_password').val();
             g_config.autoTheme = $('#checkbox-autoTheme').prop('checked');
-            g_config.fixSelect =  $('#checkbox-fixSelect').prop('checked');
+            g_config.fixSelect = $('#checkbox-fixSelect').prop('checked');
             local_saveJson('config', g_config);
             halfmoon.toggleModal('modal-custom');
             //initSetting();
@@ -361,7 +370,7 @@ function doAction(dom, action, params) {
                 initSetting();
             }
             $('#modal-custom').find('.modal-title').html(_l('弹出_设置_标题'));
-           h = `
+            h = `
                 <div class="form-group">
                         <label>ヒント音</label>
                         <div class="row">
@@ -425,11 +434,11 @@ function doAction(dom, action, params) {
 
                          <div style="display: flex;margin-top: 10px;justify-content: space-between;">主题色:&nbsp;&nbsp;`;
 
-                         for(var color of ['#636e72', '#fd79a8', '#ff7675', '#fab1a0', '#ffeaa7', '#b2bec3', '#6c5ce7', '#0984e3', '#00cec9','#00b894']){
-                            h += `<div class="rounded-circle color-dot" style="background-color: `+color+`;" onclick="setColor('`+color+`')"></div>`;
-                         }
-                         h+=`<input type="color" value="`+g_config.color+`" onchange="doAction(this, 'setting_color')">`;
-                         h+=`
+            for (var color of ['#636e72', '#fd79a8', '#ff7675', '#fab1a0', '#ffeaa7', '#b2bec3', '#6c5ce7', '#0984e3', '#00cec9', '#00b894']) {
+                h += `<div class="rounded-circle color-dot" style="background-color: ` + color + `;" onclick="setColor('` + color + `')"></div>`;
+            }
+            h += `<input type="color" value="` + g_config.color + `" onchange="doAction(this, 'setting_color')">`;
+            h += `
                             </div>
                             <div style="display: flex; margin-top: 10px">文字色:&nbsp;&nbsp;
                                 <div class="rounded-circle color-dot bg-white" onclick="setFontColor('#dfe6e9')"></div>
@@ -445,7 +454,7 @@ function doAction(dom, action, params) {
                                   </div>
                                 </div>
                               </div>
-                              <input id='input_password' type="password" class="form-control" placeholder="`+_l('弹出_设置_输入密码')+`" value="`+(g_config.password || '')+`">
+                              <input id='input_password' type="password" class="form-control" placeholder="` + _l('弹出_设置_输入密码') + `" value="` + (g_config.password || '') + `">
                             </div>
 
                      <div class="btn-group w-full mt-10">
@@ -455,7 +464,7 @@ function doAction(dom, action, params) {
                     <button class="btn btn-primary" data-action="saveSetting">` + _l('弹出_设置_按钮_确定') + `</button>
                 </div>
                 `;
-                 $('#modal-custom').attr('data-type', 'setting').find('.modal-html').html(h);
+            $('#modal-custom').attr('data-type', 'setting').find('.modal-html').html(h);
             halfmoon.toggleModal('modal-custom');
             $('#bg_blur').val(g_config.blur || 0);
             $('#select-tip option[value="' + g_config.tipSound + '"]').prop('selected', true);
@@ -464,8 +473,8 @@ function doAction(dom, action, params) {
             } else {
                 $('option[value="' + g_config.bg + '"]').prop('selected', true);
             }
-            var d =  $('#select-color option[value="'+ g_config.color+'"]');
-            if(!d.length){
+            var d = $('#select-color option[value="' + g_config.color + '"]');
+            if (!d.length) {
                 d = $('#select-color option[value="custom"]')
             }
             d.prop('selected', true);
@@ -494,20 +503,20 @@ function doAction(dom, action, params) {
                 type: 'uploadData',
                 data: {}
             }
-            for(var key of local_getList()){
+            for (var key of local_getList()) {
                 data.data[key] = localStorage.getItem(key);
             }
             var s = JSON.stringify(data.data);
             confirm(_l('是否只下载数据')).then((d) => {
-                if(d.button == 'ok'){
+                if (d.button == 'ok') {
                     downloadData(s, 'daily.json');
                     return;
-                }else{
-                     data.md5 = md5(s);
+                } else {
+                    data.md5 = md5(s);
                     queryMsg(data);
                 }
             });
-           
+
             break;
         case 'toTab':
             hideSidebar();
@@ -534,13 +543,13 @@ function doAction(dom, action, params) {
             var c = $(dom).find('i')[0].className;
             console.log(c);
             var u = '';
-            if(c.indexOf('twitter') != -1){
+            if (c.indexOf('twitter') != -1) {
                 u = 'https://twitter.com/intent/tweet?text={text}';
-            }else
-            if(c.indexOf('facebook') != -1){
+            } else
+            if (c.indexOf('facebook') != -1) {
                 u = 'https://www.facebook.com/dialog/share?app_id=87741124305&href=http%3A%2F%2Fhunmer.github.io%2FDaily&quote={text}&display=popup';
             }
-            if(u){
+            if (u) {
                 window.open(u.replace('{text}', $('#input_share').val().trim()));
             }
             break;
@@ -560,7 +569,7 @@ function showContent(id) {
     $('.navbar-nav').html('');
     $('.navbar-fixed-bottom').css('height', '');
     g_cache.showing = id;
-    
+
     var t;
     switch (id) {
         case 'chat':
@@ -573,9 +582,9 @@ function showContent(id) {
         case 'chatList':
             t = _l('标题_聊天列表');
             g_chat.init();
-            if(!g_cache.isFirstChatList){
+            if (!g_cache.isFirstChatList) {
                 g_cache.isFirstChatList = true;
-                if(g_chat.lastMsg[g_config.lastChanel]){
+                if (g_chat.lastMsg[g_config.lastChanel]) {
                     g_chat.openChat(g_config.lastChanel);
                     return;
                 }
@@ -617,7 +626,7 @@ function showContent(id) {
             g_active.init();
             break;
     }
-    if(t){
+    if (t) {
         g_config.lastShow = id;
         local_saveJson('config', g_config);
     }
@@ -713,31 +722,30 @@ function reviceMsg(data) {
 }
 
 
-function parseFile(input){
-   var reader = new FileReader();
-   reader.readAsText(input.files[0]);
-   reader.onload = function(e){
-    try {
-      json = JSON.parse(this.result);
-      importData(json);
+function parseFile(input) {
+    var reader = new FileReader();
+    reader.readAsText(input.files[0]);
+    reader.onload = function(e) {
+        try {
+            json = JSON.parse(this.result);
+            importData(json);
+        } catch (err) {
+            alert('Corrupted data!');
+        }
     }
-    catch(err){
-      alert('Corrupted data!');
-    }
-   }
 }
 
 
-function importData(data){
+function importData(data) {
     confirm(_l('是否完全覆盖')).then((d) => {
         var b = d.button == 'ok';
-        if(b){
+        if (b) {
             local_clearAll();
         }
-        for(var key in data){
-            if(b){
+        for (var key in data) {
+            if (b) {
                 s = data[key];
-            }else{
+            } else {
                 var old = JSON.parse(localStorage.getItem(key)) || {};
                 s = JSON.stringify(Object.assign(old, JSON.parse(data[key])));
             }
@@ -748,13 +756,13 @@ function importData(data){
     })
 }
 
-function prompt_Password(){
+function prompt_Password() {
     var n = new Date().getTime();
-    if(n - g_config.lastLogin <= 3600 * 6){
+    if (n - g_config.lastLogin <= 3600 * 6) {
         return $('#page-wrapper').show();
     }
     var pin = $('#pin');
-    if(!pin.length) pin = $('<div id="pin"></div>').appendTo('body');
+    if (!pin.length) pin = $('<div id="pin"></div>').appendTo('body');
     mobiscroll.numpad('#pin', {
         theme: 'mobiscroll',
         display: 'center',
@@ -766,11 +774,11 @@ function prompt_Password(){
         closeOnOverlayTap: false,
         mask: '*',
         buttons: ['set'],
-         onSet: function (event, inst) {
+        onSet: function(event, inst) {
             checkPassword(event.valueText);
         }
     });
-     $('#pin').mobiscroll('show');
+    $('#pin').mobiscroll('show');
 
     // prompt(_l('输入密码_标题'), '', {inputPlaceholder: _l('输入密码_文本')}).then((d) => {
     //         if(d.text != g_config.password){
@@ -782,40 +790,41 @@ function prompt_Password(){
     // });
 }
 
-function checkPassword(password){
-     var b = password == g_config.password;
-    if(b){
+function checkPassword(password) {
+    var b = password == g_config.password;
+    if (b) {
         g_config.lastLogin = new Date().getTime() + 6 * 60 * 60 * 1000;
         local_saveJson('config', g_config);
         $('#page-wrapper').show();
-    }else{
-        
+    } else {
+
         alertDialog(_l('错误'), `
-            <h3 class="md-text-center">`+_l('密码错误')+`</h3>
-            <p class="md-text-center">`+_l('忘记密码了吗')+`?</p>
+            <h3 class="md-text-center">` + _l('密码错误') + `</h3>
+            <p class="md-text-center">` + _l('忘记密码了吗') + `?</p>
             `, {
             buttons: [{
-                text: _l('确定'),
-                handler: (event, inst) => {
-                    inst.hide();
-                    prompt_Password();
+                    text: _l('确定'),
+                    handler: (event, inst) => {
+                        inst.hide();
+                        prompt_Password();
+                    }
+                },
+                {
+                    text: _l('忘记密码'),
+                    handler: (event, inst) => {
+                        // TODO 密保找回
+                    }
                 }
-            },
-            {
-                text: _l('忘记密码'),
-                handler: (event, inst) => {
-                    // TODO 密保找回
-                }
-            }],
+            ],
         })
     }
 }
 
-function alertDialog(title, html, opt = {}){
+function alertDialog(title, html, opt = {}) {
     var alert = $('#alert');
-    if(!alert.length) alert = $(`<div id="alert">
+    if (!alert.length) alert = $(`<div id="alert">
             <div class="md-dialog">
-                `+html+`
+                ` + html + `
             </div>
     </div>`).appendTo('body');
     opt = Object.assign({
@@ -824,7 +833,7 @@ function alertDialog(title, html, opt = {}){
         closeOnOverlayTap: false,
         headerText: title,
         lang: 'ja',
-         anchor: $('#widgetDialog-show'), // More info about anchor: https://docs.mobiscroll.com/3-0-0_beta5/widget#!opt-anchor
+        anchor: $('#widgetDialog-show'), // More info about anchor: https://docs.mobiscroll.com/3-0-0_beta5/widget#!opt-anchor
         buttons: [{
             text: _l('确定'),
             handler: 'set'
@@ -833,45 +842,45 @@ function alertDialog(title, html, opt = {}){
             handler: 'cancel'
         }],
     }, opt);
-     mobiscroll.widget('#alert', opt);
-     $('#alert').mobiscroll('show');
+    mobiscroll.widget('#alert', opt);
+    $('#alert').mobiscroll('show');
 
 }
 
 function test() {
-            initSetting();
-            // showContent('todo');
-            
-            // showContent('active');
+    initSetting();
+    // showContent('todo');
+
+    // showContent('active');
     // doAction(null, 'openSetting');
     // g_chat.openChat('アイディア');
-    if(g_config.passwordEnable && g_config.password != ''){
-         prompt_Password();
-    }else{
+    if (g_config.passwordEnable && g_config.password != '') {
+        prompt_Password();
+    } else {
         $('#page-wrapper').show();
     }
 }
 
-halfmoon._toggleSidebar= halfmoon.toggleSidebar;
+halfmoon._toggleSidebar = halfmoon.toggleSidebar;
 halfmoon.toggleSidebar = () => {
     halfmoon._toggleSidebar();
     var btn = $('#closeSidebar');
-    
+
     if ($('#page-wrapper').attr('data-sidebar-hidden') == 'hidden') {
         btn.hide();
     } else {
         setTimeout(() => {
-             var left = $('.btn-action').offset().left - 10;
+            var left = $('.btn-action').offset().left - 10;
             btn.css({
-            left: left,
-            width: $(window).width() - left
-        }).show();
+                left: left,
+                width: $(window).width() - left
+            }).show();
         }, 500);
         g_emoji.hide();
     }
 }
 
-halfmoon._toggleModal= halfmoon.toggleModal;
+halfmoon._toggleModal = halfmoon.toggleModal;
 halfmoon.toggleModal = (id) => {
     halfmoon._toggleModal(id);
     startVibrate(50);

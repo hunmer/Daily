@@ -4,14 +4,18 @@ var g_user = {
     if(g_user.inited) return;
         g_user.inited = true;
 		if(!g_config.user){
-			g_user.modal();
+      if(!g_config.firstLogin){
+        g_config.firstLogin = true;
+        local_saveJson('config', g_config);
+        g_user.modal();
+      }
 		}else{
       $('#sidebar_icons_float img').attr('src', _vars.img+g_config.user.icon);
     }
     registerAction('user_uploadIcon', (dom, action, params) => {
       $('#input_img').attr({
         'data-config': JSON.stringify({width: 200, quality: 0.5}),
-        'data-type': 'userIcon'}).click();;
+        'data-type': 'userIcon'})[0].click();;
     });
     
     registerAction('user_setProfile', (dom, action, params) => {
@@ -30,7 +34,6 @@ var g_user = {
     });
      
     registerRevice('countMsg', (data) => {
-      console.log(data);
       g_config.lastUpload = data.msgs;
       local_saveJson('config', g_config);
     });

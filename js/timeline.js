@@ -72,8 +72,8 @@ var g_active = {
                 <div class="row mx-auto" style="width: 20%;">
                     <div class="col">
                         <a data-action="active_share" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-share" aria-hidden="true"></i></a>
-
                         <a data-action="active_add" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                        <a data-action="active_today" class="btn btn-square btn-primary rounded-circle btn-lg" role="button"><i class="fa fa-calendar-minus-o" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -229,6 +229,10 @@ var g_active = {
         timeline_to: (date) => {
             if (!date) date = new Date();
             var s_date = getFormatedTime(4, date);
+            var isToday = s_date == getFormatedTime(4, new Date());
+            $('[data-action=active_today]').css('display', isToday ? 'none' : 'block');
+            $('[data-action=active_add]').css('display', isToday ? 'block' : 'none');
+
             g_active.date = date;
             g_active.initHtml(date);
             $('#timepicker_actives').val(s_date);
@@ -391,7 +395,12 @@ var g_active = {
                 g_active.timeline_to(new Date(g_active.date.getTime() - 86400 * 1000));
             });
             registerAction('active_nextDate', (dom, action, params) => {
-                g_active.timeline_to(new Date(g_active.date.getTime() + 86400 * 1000));
+                var next = g_active.date.getTime() + 86400 * 1000;
+                if(next > new Date().setHours(23, 59, 59, 59)){
+                    return;
+                    // return toastPAlert(_l('没有更多了'), 'alert-primary');
+                }
+                g_active.timeline_to(new Date(next));
             });
 
             registerAction('active_setDate', (dom, action, params) => {
@@ -451,6 +460,9 @@ var g_active = {
                 g_active.initTag(action.length > 1 ? action[1] : $(dom).attr('data-name'));
             });
 
+          registerAction('active_today', (dom, action, params) => {
+            g_active.timeline_to();
+            });
             registerAction('active_share', (dom, action, params) => {
                 if($('#active_share').length) return;
                 var dark = $('.dark-mode').length;
@@ -633,7 +645,7 @@ var g_active = {
         },
     initTimePicker: (range = []) => {
         
-        var today = new Date();
+        var now = new Date();
         var opt = {
             theme: g_config.darkMode ? 'material-dark' : 'material',
             display: 'inline',
@@ -650,18 +662,16 @@ var g_active = {
             }
         };
         if (!range.length) { // 新建
-            opt.min = new Date(g_active.initLast());
-            var max = new Date(opt.min.getTime()).setHours(23, 59, 59, 59);
-            opt.max = today.getTime() > max ? new Date(max) : today;
+                opt.min = new Date(g_active.initLast());
+                var max = new Date(opt.min.getTime()).setHours(23, 59, 59, 59);
+                opt.max = now.getTime() > max ? new Date(max) : now;
             opt.defaultValue = [opt.min, opt.max];
         } else {
-            opt.max = today;
             opt.defaultValue = range;
         }
 
-        g_active.min = opt.min;
-        g_active.max = opt.max;
-
+        g_active.min = opt.defaultValue[0];
+        g_active.max = opt.defaultValue[1];
         g_active.range = mobiscroll.range('#time_picker', opt);
     },
 
@@ -671,8 +681,9 @@ var g_active = {
             toastPAlert(_l('没有选择标签'), 'alert-danger');
             return;
         }
-        var start = vals[0].getTime();
-        var end = vals[1].getTime();
+
+        var start = new Date(new Date(g_active.min).setHours(vals[0].getHours(), vals[0].getMinutes(), vals[0].getSeconds())).getTime();
+        var end = new Date(new Date(g_active.max).setHours(vals[1].getHours(), vals[1].getMinutes(), vals[1].getSeconds())).getTime();
 
         var date = getFormatedTime(4, start);
         for (var start1 in g_actives[date]) {
@@ -722,14 +733,18 @@ var g_active = {
                 })) {
                 h = g_active.getHtml(time, g_actives[s_date][time]) + h;
             }
-            if (g_active.lastTime != max && getFormatedTime(4, date) != getFormatedTime(4, new Date())) {
+           
+        }
+         if (g_active.lastTime != max && getFormatedTime(4, date) != getFormatedTime(4, new Date())) {
                 h = g_active.getHtml(g_active.lastTime, {
                     end: max,
                     desc: _l('活动_补充文本'),
                     tags: []
                 }, true) + h;
             }
-        }
+        // if(h == '') h = `
+        //     <h6 class="text-center">`+_l('什么都没有')+`</h6>
+        // `;
         $('#content_active .mainContent').html(h);
     },
     getHtml: (time, data, empty = false) => {
