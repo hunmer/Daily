@@ -45,6 +45,7 @@ var g_user = {
          halfmoon.toggleModal('modal-custom');
       });
        toastPAlert(_l('用户_上传成功'), 'alert-success');
+       g_user.upload();
     })
 	},
 /*
@@ -54,9 +55,8 @@ var g_user = {
   upload: () => {
     var s_data = getFormatedTime(4);
     var cnt = g_chat.countMsg(s_data);
-    console.log(cnt);
     if(g_config.lastUpload != cnt && cnt > 0){
-        queryMsg({type: 'countMsg', msgs: cnt}, true);
+        queryMsg({type: 'countMsg', msgs: cnt, time: new Date().getTime()}, true);
     }
   },
 	

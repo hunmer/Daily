@@ -162,6 +162,7 @@ function _s2(s, j = '') {
 
 
 function time_getRent(time) {
+    if(!time) return '';
     var today = new Date();
     var s = (parseInt(today.getTime()) - time) / 1000;
     if (s >= 84000) {

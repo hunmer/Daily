@@ -577,6 +577,12 @@ local_saveJson('chats', {});
             g_cache.ranking_sort = action[1];
             g_chat.showRanking(g_cache.rankingDate, false);
         });
+        
+        registerAction('getUsers', (dom, action, params) => {
+            toastPAlert('loading...', 'alert-secondary');
+            g_voice.play('loading');
+            queryMsg({ type: 'getUsers' });
+        });
         registerAction('ranking', (dom, action, params) => {
             toastPAlert('loading...', 'alert-secondary');
             g_voice.play('loading');
@@ -599,6 +605,40 @@ local_saveJson('chats', {});
                 }
             });
 
+        });
+
+        registerRevice('getUsers', (data) => {
+           var d = data.data;
+           var h = '';
+           var i = 0;
+            for (var name of Object.keys(d).sort(function(a, b) {
+                    return d[b].lastLogin - d[a].lastLogin;
+                })) {
+                i++;
+                h += `
+                <tr>
+                  <th>` + i + `</th>
+                  <td><img src="` + _vars['img'] + 'icons/' + name + `.jpg" class="user-icon"></td>
+                  <td>` + name + `</td>
+                  <td class="text-right">` + time_getRent(d[name].lastLogin) + `</td>
+                </tr>`;
+            }
+     
+
+            $('#modal-custom').find('.modal-title').html(_l('弹出_用户列表_标题'));
+            $('#modal-custom').attr('data-type', 'user_list').find('.modal-html').html(`
+        
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th width="50px">` + _l('用户列表_排序') + `</th>
+                      <th>` + _l('用户列表_头像') + `</th>
+                      <th>` + _l('用户列表_用户') + `</th>
+                      <th class="text-right text-primary">` + _l('用户列表_最后登录') + `</th>
+                    </tr>
+                  </thead>
+                  <tbody>` + h + '</tbody></table>');
+                halfmoon.toggleModal('modal-custom');
         });
 
         registerRevice('ranking', (data) => {
@@ -939,6 +979,10 @@ local_saveJson('chats', {});
     },
     initNav: () => {
         $('.navbar-nav').html(`
+            
+            <li class="nav-item" data-action="getUsers">
+              <a class="nav-link font-size-20">👨</a>
+            </li>
             <li class="nav-item" data-action="ranking">
               <a class="nav-link font-size-20">🏆</a>
             </li>

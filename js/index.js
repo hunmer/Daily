@@ -33,7 +33,13 @@ function isShow($node) {
 
 
 $(function() {
-
+    var now = new Date().getTime();
+     if(!g_config.lastUpdate || now >= g_config.lastUpdate){
+        g_config.lastUpdate = now + 86400 * 1000;
+         local_saveJson('config', g_config);
+            location.href = location.protocol+'//'+location.host+location.pathname+'?'+new Date().getTime()
+            return;
+    }
     FastClick.attach(document.body);
     window.history.pushState(null, null, "#");
     window.addEventListener("popstate", function(event) {

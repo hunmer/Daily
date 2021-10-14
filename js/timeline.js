@@ -12,7 +12,7 @@ var g_active = {
         },
         init: () => {
 
-            if (g_active.inited) return;
+            if (g_active.inited) return g_active.timeline_to();
             g_active.inited = true;
             g_actives = local_readJson('actives', {
                 // 2021_9_14: {
@@ -667,6 +667,9 @@ var g_active = {
                 opt.max = now.getTime() > max ? new Date(max) : now;
             opt.defaultValue = [opt.min, opt.max];
         } else {
+            if(isSameDate(now, range[0])){ // 当天的调整
+                opt.max = now; // 最大值为现在时间
+            }
             opt.min = range[0];
             opt.defaultValue = range;
         }
