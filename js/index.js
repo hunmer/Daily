@@ -516,7 +516,6 @@ function doAction(dom, action, params) {
             confirm(_l('是否只下载数据')).then((d) => {
                 if (d.button == 'ok') {
                     downloadData(s, 'daily.json');
-                    return;
                 } else {
                     data.md5 = md5(s);
                     queryMsg(data);
