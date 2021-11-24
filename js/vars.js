@@ -40,6 +40,8 @@ var g_dailys;
 var g_days;
 var g_chats;
 var g_times;
+var g_lists;
 var g_todos;
 var g_questions;
 var g_icons;
+

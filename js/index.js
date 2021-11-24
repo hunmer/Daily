@@ -33,13 +33,20 @@ function isShow($node) {
 
 
 $(function() {
-    var now = new Date().getTime();
-     if(!g_config.lastUpdate || now >= g_config.lastUpdate){
-        g_config.lastUpdate = now + 86400 * 1000;
-         local_saveJson('config', g_config);
-            location.href = location.protocol+'//'+location.host+location.pathname+'?'+new Date().getTime()
-            return;
-    }
+
+if(_GET['json']){
+    $.getJSON(_GET['json'], function(json, textStatus) {
+        if(textStatus == 'success') importData(json, false);
+    });
+}
+
+    // var now = new Date().getTime();
+    //  if(!g_config.lastUpdate || now >= g_config.lastUpdate){
+    //     g_config.lastUpdate = now + 86400 * 1000;
+    //      local_saveJson('config', g_config);
+    //         location.href = location.protocol+'//'+location.host+location.pathname+'?'+new Date().getTime()
+    //         return;
+    // }
     FastClick.attach(document.body);
     window.history.pushState(null, null, "#");
     window.addEventListener("popstate", function(event) {
@@ -626,6 +633,11 @@ function showContent(id) {
             g_day.init();
             break;
 
+          case 'list':
+            t = _l('标题_列表');
+            g_list.init();
+            break;
+
         case 'active':
             t = _l('标题_日活动');
             g_active.init();
@@ -741,13 +753,9 @@ function parseFile(input) {
 }
 
 
-function importData(data) {
-    confirm(_l('是否完全覆盖')).then((d) => {
-        var b = d.button == 'ok';
-        if (b) {
-            local_clearAll();
-        }
-        for (var key in data) {
+function importData(data, b_confirm = true) {
+    var fun = (b = true) => {
+         for (var key in data) {
             if (b) {
                 s = data[key];
             } else {
@@ -756,9 +764,19 @@ function importData(data) {
             }
             localStorage.setItem(key, s);
         }
-        alert('OK!');
-        location.reload();
-    })
+        location.href = '.';
+    }
+    if(b_confirm){
+        confirm(_l('是否完全覆盖')).then((d) => {
+        var b = d.button == 'ok';
+        if (b) {
+            local_clearAll();
+        }
+        fun(b); 
+        })
+    }else{
+        fun();
+    }
 }
 
 function prompt_Password() {

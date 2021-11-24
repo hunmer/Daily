@@ -30,6 +30,11 @@ Date.prototype.format = function(fmt) {
     return fmt;
 }
 
+function domValueAdd(dom, cnt){
+    var val = parseInt(dom.innerHTML);
+    dom.innerHTML = val + cnt;
+}
+
 function isSameDate(d1, d2){
     return d1.getDate() == d2.getDate();
 }
@@ -218,6 +223,25 @@ function getTime1(s, sh = _l('时'), sm = _l('分')) {
     return _s1(h, sh) + _s(m, sm);
 }
 
+function parseTime(s){
+    var r = {};
+    s = Number(s);
+    if (s >= 86400) {
+        r.d = parseInt(s / 86400);
+    }
+    var h = 0,
+        m = 0;
+    if (s >= 3600) {
+        r.h = parseInt(s / 3600);
+        s %= 3600;
+    }
+    if (s >= 60) {
+        r.m = parseInt(s / 60);
+        s %= 60;
+    }
+    r.s = s;
+    return r;
+}
 
 
 function randNum(min, max) {

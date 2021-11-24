@@ -92,6 +92,11 @@ g_voice = {
             if (s % 10 == 0) {
                 $('#nosleep')[0].play();
             }
+            var i = parseInt((new Date().getTime() - g_config.active_last) / 1000);
+            if(i % 600 == 0){
+              g_voice.playSec(i);
+            }
+            if( g_active.lastTime)
             if (h >= 6 && m >= 30 || h < 2) {
                 if (m % 10 == 0 && s == 0 && g_voice.dom.paused) {
                     g_voice.now();
@@ -100,6 +105,36 @@ g_voice = {
             }
         }, 1000);
     },
+
+    playSec: (sec) => {
+        var fun = (i, type, list) => {
+            if(!i) return;
+            var s1;
+            if(type == 'hour'){
+                s1 = 'ji'
+            }else
+             if(type == 'min'){
+                s1 = 'pun'
+            }
+            if(i % 5 == 0){
+                list.push('jihou_'+i+s1+'_01');
+            }else{
+                list.push('num/'+i+'.wav');
+                 list.push('num/'+type+'.mp3');
+            }
+
+        }
+        //var sec = 600 * 60 + 17 * 60;
+        var r = parseTime(sec);
+        if(r.day) return;
+        console.log(r);
+        var list = ['tip_line', 'jikandeesu_0'+randNum(1, 3)];
+        fun(r.h, 'hour', list);
+        fun(r.m, 'min', list);
+        //fun(r.s, 'sec', list);
+        list.push('tachimashita_01');
+        g_voice.setList(list);
+    },
     play: (src) => {
         console.log('start play : ' + src);
         if (typeof(src) == 'object') {
@@ -107,7 +142,10 @@ g_voice = {
                 g_voice.next();
             }, parseInt(src[0]))
         } else {
-            g_voice.dom.src = './res/msg/'+g_voice.type+'/' + src + '.wav';
+            if(src.indexOf('.wav') == -1 & src.indexOf('.mp3') == -1){
+                src += '.wav';
+            }
+            g_voice.dom.src = './res/msg/'+g_voice.type+'/' + src ;
             // g_voice.dom.playbackRate = 1.25;
         }
     },
@@ -115,7 +153,7 @@ g_voice = {
         var date = new Date();
         var h = date.getHours();
         // arrayRandom(['ano_01', 'anone_01', 'anoneanone_01']),
-        var r = ['tip_line', 'wooshiraseshimasu_0'+randNum(1, 4), 'jihou_tadaima_0'+randNum(1, 2), 'jihou_'+(h > 12 ? 'gogo' : 'gozen'), 'jihou_'+(h>12?h-12:h)+'ji_01', 'jihou_'+date.getMinutes()+'pun_01', 'desu_03'];
+        var r = ['tip_line', 'wooshiraseshimasu_0'+randNum(1, 4), 'jihou_tadaima_0'+randNum(1, 2), 'jihou_'+(h > 12 ? 'gogo' : 'gozen'), 'jihou_'+(h>12?h-12:h)+'ji_01', 'jihou_'+date.getMinutes()+'pun_01'];
         g_voice.setList(r);
     },
     parse: (num, r = [], e = []) => {

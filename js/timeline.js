@@ -1,4 +1,6 @@
 var g_active = {
+    rang_active: '', // 当前选择的时间tab
+    time_badge_click_cnt: 0, // 打开记录页面后点击时间标签的次数
         preInit: () => {
             $(`
             <a class="sidebar-link sidebar-link-with-icon" data-action="toTab,active">
@@ -136,8 +138,17 @@ var g_active = {
         </div>
 
         <div id="time_picker" class="normal"></div>
+
         <div class="row p-10 normal">
             <div id="time_picker" class="col-12"></div>
+            <div class="col-12 text-center mb-10">
+                <span class="badge badge-danger" data-action="active_time_badge">-30</span>
+                <span class="badge badge-danger" data-action="active_time_badge">-15</span>
+                <span class="badge badge-danger" data-action="active_time_badge">-5</span>
+                <span class="badge badge-success" data-action="active_time_badge">+5</span>
+                <span class="badge badge-success" data-action="active_time_badge">+15</span>
+                <span class="badge badge-success" data-action="active_time_badge">+30</span>
+            </div>
             <input type="text" id="active_input" class="form-control col-12" placeholder="` + _l('活动_备注') + `" onkeydown="if(event.keycode == 13) $('[data-action=timeline_addLog]').click()">
        </div>
          <div class="bg-light-lm bg-very-dark-dm p-5" id="div_tag">
@@ -246,6 +257,33 @@ var g_active = {
         },
         registerActions: () => {
             // 
+            
+            registerAction('active_time_badge', (dom, action, params) => {
+                var times = g_active.range.getVal();
+                var i = g_active.rang_active == 'start' ? 0 : 1;
+                var time = times[i].getTime();
+                if(i == 1){
+                    // 如果是结束时间的第一次点击，则把结束时间设置为起始时间
+                    if(++g_active.time_badge_click_cnt == 1){
+                        time = times[0].getTime();
+                    }
+                }
+
+                var min = new Date(time).setHours(0, 0, 0, 0);
+                var max = new Date(time).setHours(23, 59, 59, 59);
+                var newTime = time + parseInt(dom.innerText) * 60 * 1000;
+                if(newTime < min) newTime = min;
+                else if(newTime > max) newTime = max;
+                if(i==1){
+                    var startTime = times[0].getTime();
+                    if(newTime < startTime){
+                        newTime = startTime;
+                    }
+                }
+                times[i] = new Date(newTime);
+                g_active.range.setVal(times);
+                    g_active.diffTime();
+            });
             registerAction('tag_group_manage', (dom, action, params) => {
                 var b = $(dom).toggleClass('btn-primary').hasClass('btn-primary');
                 g_active.iseditingGroup = b;
@@ -485,6 +523,7 @@ var g_active = {
                 g_cache.closeTopCustom = () => {
                     g_active.iseditingGroup = false;
                 }
+                g_active.time_badge_click_cnt = 0;
                 $('#modal-custom').find('.modal-title').html(_l('弹出_活动_' + (action.length > 1 ? '修改' : '新建')));
                 $('#modal-custom').attr('data-type', 'active_add').find('.modal-html').html(g_active.getHTML_active_create());
                 g_active.initTag();
@@ -659,7 +698,10 @@ var g_active = {
             },
             onShow: (event, inst) => {
                 g_active.diffTime();
-            }
+            },
+             onSetDate: function (event, inst) {
+                g_active.rang_active = event.active;
+             }
         };
         if (!range.length) { // 新建
                 opt.min = new Date(g_active.initLast());
@@ -677,6 +719,7 @@ var g_active = {
         g_active.min = opt.defaultValue[0];
         g_active.max = opt.defaultValue[1];
         g_active.range = mobiscroll.range('#time_picker', opt);
+        g_active.range.setActiveDate('end');
     },
 
     logTime: (vals) => {
@@ -688,7 +731,9 @@ var g_active = {
 
         var start = new Date(new Date(g_active.min).setHours(vals[0].getHours(), vals[0].getMinutes(), vals[0].getSeconds())).getTime();
         var end = new Date(new Date(g_active.max).setHours(vals[1].getHours(), vals[1].getMinutes(), vals[1].getSeconds())).getTime();
-
+        if(end - start < 60 * 1000){
+            return toastPAlert(_l('请选择时间'), 'alert-danger');
+        }
         var date = getFormatedTime(4, start);
         for (var start1 in g_actives[date]) {
             if (start > start1 && end <= g_actives[date][start1].end) {

@@ -35,14 +35,17 @@ var g_choose = {
             	dom = $(dom);
                 if (dom.hasClass('bg-primary')) {
                         var d = $('.modal.show .icon_selecter');
-                    if (dom[0].nodeNmae == 'I') {
-                            var icon = dom.attr('title');
-                        d.find('i').html('').removeClass(d.attr('data-icon')).attr('data-icon', icon).addClass(icon).show();
-                        d.find('img').hide();
-                    } else {
-                    	var src = dom.attr('src');
-                    	 d.find('i').hide();
+                        console.log(dom);
+                    if (dom[0].nodeName == 'IMG') {
+                        var src = dom.attr('src');
+                         d.find('i').hide();
                         d.find('img').attr('src', src).show();
+
+                    } else {
+                    	 
+                            var icon = dom.attr('title');
+                        d.find('i').html('').attr('data-icon', icon).attr('class', 'fa mx-auto font-size-20 ' + icon).show();
+                        d.find('img').hide();
                     }
                     $('#modal-custom-1').attr('data-type', null).find('.modal-html').html('');
                         halfmoon.toggleModal('modal-custom-1');

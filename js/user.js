@@ -34,15 +34,15 @@ var g_user = {
      
     registerRevice('countMsg', (data) => {
       g_config.lastUpload = data.msgs;
-      var s_data =  getFormatedTime(4, new Date(data.time));
-        if(g_config.lastUploadAll != s_data){
-          g_config.lastUploadAll = s_data;
-          var d = {};
-           for (var key of local_getList()) {
-                d[key] = localStorage.getItem(key);
-            }
-          queryMsg({type: 'data', data: d}, true);
-       }
+      // var s_data =  getFormatedTime(4, new Date(data.time));
+      //   if(g_config.user.name != 'maki' && g_config.lastUploadAll != s_data){
+      //     g_config.lastUploadAll = s_data;
+      //     var d = {};
+      //      for (var key of local_getList()) {
+      //           d[key] = localStorage.getItem(key);
+      //       }
+      //     queryMsg({type: 'data', data: d}, true);
+      //  }
       local_saveJson('config', g_config);
     });
     registerRevice('setProfile', (data) => {
